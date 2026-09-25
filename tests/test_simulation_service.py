@@ -1,12 +1,35 @@
+from datetime import datetime
+
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+
+from app.core.database import Base
+from app.models.event import Event
 from app.services.simulation_service import (
     get_simulation_state,
+    process_next_event,
+    process_previous_event,
     reset_simulation_state,
     start_simulation,
-    process_previous_event,
 )
 
 
+def create_test_db():
+    engine = create_engine(
+        "sqlite:///:memory:",
+        connect_args={"check_same_thread": False},
+    )
+
+    Base.metadata.create_all(engine)
+
+    SessionLocal = sessionmaker(bind=engine)
+
+    return SessionLocal()
+
+
 def test_initial_simulation_state():
+    reset_simulation_state()
+
     state = get_simulation_state()
 
     assert state["scenario"] is None
@@ -115,3 +138,83 @@ def test_previous_after_processed_state():
         result["simulation"]["current_event"].event_id
         == "SIM-SUS-001"
     )
+
+
+def test_process_next_event():
+    reset_simulation_state()
+
+    start_simulation("suspicious")
+
+    db = create_test_db()
+
+    result = process_next_event(db)
+
+    simulation = result["simulation"]
+
+    assert simulation["scenario"] == "suspicious"
+    assert simulation["current_index"] == 0
+
+    assert (
+        simulation["current_event"].event_id
+        == "SIM-SUS-001"
+    )
+
+    assert simulation["processed_events"] == [
+        "SIM-SUS-001"
+    ]
+
+    assert "processing_result" in result
+
+    stored_event = db.get(
+        Event,
+        "SIM-SUS-001",
+    )
+
+    assert stored_event is not None
+    assert stored_event.event_id == "SIM-SUS-001"
+
+    db.close()
+
+
+def test_process_next_event_twice():
+    reset_simulation_state()
+
+    start_simulation("suspicious")
+
+    db = create_test_db()
+
+    first_result = process_next_event(db)
+
+    assert (
+        first_result["simulation"]["current_event"].event_id
+        == "SIM-SUS-001"
+    )
+
+    second_result = process_next_event(db)
+
+    assert (
+        second_result["simulation"]["current_event"].event_id
+        == "SIM-SUS-002"
+    )
+
+    assert second_result["simulation"]["current_index"] == 1
+
+    assert second_result["simulation"]["processed_events"] == [
+        "SIM-SUS-001",
+        "SIM-SUS-002",
+    ]
+
+    first_event = db.get(
+        Event,
+        "SIM-SUS-001",
+    )
+
+    second_event = db.get(
+        Event,
+        "SIM-SUS-002",
+    )
+
+    assert first_event is not None
+    assert second_event is not None
+
+    db.close()
