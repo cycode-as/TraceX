@@ -4,48 +4,62 @@ import { getIncidentAudit } from '../../services/incidents';
 import type { AuditLogEntry } from '../../types/incident';
 
 interface AuditTrailProps {
-  incidentId: string;
+  incidentId?: string;
+  entries?: AuditLogEntry[];
+  title?: string;
+  loading?: boolean;
+  error?: string | null;
+  onRefresh?: () => void;
 }
 
-export const AuditTrail: React.FC<AuditTrailProps> = ({ incidentId }) => {
-  const [auditLogs, setAuditLogs] = useState<AuditLogEntry[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+export const AuditTrail: React.FC<AuditTrailProps> = ({
+  incidentId,
+  entries: propEntries,
+  title = 'Audit Trail Log',
+  loading: propLoading,
+  error: propError,
+  onRefresh,
+}) => {
+  const [fetchedLogs, setFetchedLogs] = useState<AuditLogEntry[]>([]);
+  const [internalLoading, setInternalLoading] = useState<boolean>(!propEntries && !!incidentId);
+  const [internalError, setInternalError] = useState<string | null>(null);
 
   const fetchAuditLogs = async () => {
-    setLoading(true);
-    setError(null);
+    if (!incidentId) return;
+    setInternalLoading(true);
+    setInternalError(null);
     try {
       const res = await getIncidentAudit(incidentId);
       if (!res.success) {
         throw new Error(res.error?.message || 'Failed to load audit logs');
       }
-      setAuditLogs(res.data || []);
+      setFetchedLogs(res.data || []);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Error fetching audit logs');
+      setInternalError(err instanceof Error ? err.message : 'Error fetching audit logs');
     } finally {
-      setLoading(false);
+      setInternalLoading(false);
     }
   };
 
   useEffect(() => {
+    if (propEntries || !incidentId) return;
     let isMounted = true;
 
     async function init() {
       try {
-        const res = await getIncidentAudit(incidentId);
+        const res = await getIncidentAudit(incidentId!);
         if (!isMounted) return;
         if (!res.success) {
           throw new Error(res.error?.message || 'Failed to load audit logs');
         }
-        setAuditLogs(res.data || []);
+        setFetchedLogs(res.data || []);
       } catch (err: unknown) {
         if (isMounted) {
-          setError(err instanceof Error ? err.message : 'Error fetching audit logs');
+          setInternalError(err instanceof Error ? err.message : 'Error fetching audit logs');
         }
       } finally {
         if (isMounted) {
-          setLoading(false);
+          setInternalLoading(false);
         }
       }
     }
@@ -55,7 +69,19 @@ export const AuditTrail: React.FC<AuditTrailProps> = ({ incidentId }) => {
     return () => {
       isMounted = false;
     };
-  }, [incidentId]);
+  }, [incidentId, propEntries]);
+
+  const auditLogs = propEntries ?? fetchedLogs;
+  const isLoading = propLoading ?? internalLoading;
+  const displayError = propError ?? internalError;
+
+  const handleRefreshClick = () => {
+    if (onRefresh) {
+      onRefresh();
+    } else {
+      fetchAuditLogs();
+    }
+  };
 
   const formatTimestamp = (isoString: string) => {
     try {
@@ -77,7 +103,7 @@ export const AuditTrail: React.FC<AuditTrailProps> = ({ incidentId }) => {
     return 'bg-slate-800 text-slate-300 border-slate-700';
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-3 animate-pulse">
         <div className="h-5 w-36 bg-slate-800 rounded" />
@@ -89,15 +115,15 @@ export const AuditTrail: React.FC<AuditTrailProps> = ({ incidentId }) => {
     );
   }
 
-  if (error) {
+  if (displayError) {
     return (
       <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 flex items-center justify-between text-xs text-red-400 font-mono">
         <div className="flex items-center gap-2">
           <AlertCircle className="w-4 h-4 shrink-0" />
-          <span>Audit trail failed: {error}</span>
+          <span>Audit trail failed: {displayError}</span>
         </div>
         <button
-          onClick={fetchAuditLogs}
+          onClick={handleRefreshClick}
           className="px-2.5 py-1 bg-red-500/10 hover:bg-red-500/20 text-red-300 border border-red-500/30 rounded font-medium cursor-pointer"
         >
           Retry
@@ -112,13 +138,13 @@ export const AuditTrail: React.FC<AuditTrailProps> = ({ incidentId }) => {
       <div className="flex items-center justify-between border-b border-slate-800 pb-3">
         <div className="flex items-center gap-2">
           <FileText className="w-5 h-5 text-slate-400" />
-          <h2 className="text-base font-semibold text-slate-100">Audit Trail Log</h2>
+          <h2 className="text-base font-semibold text-slate-100">{title}</h2>
           <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-slate-800 text-slate-400">
             {auditLogs.length} Entries
           </span>
         </div>
         <button
-          onClick={fetchAuditLogs}
+          onClick={handleRefreshClick}
           className="text-xs text-slate-400 hover:text-slate-200 flex items-center gap-1 cursor-pointer"
         >
           <RefreshCw className="w-3.5 h-3.5" />
@@ -132,11 +158,11 @@ export const AuditTrail: React.FC<AuditTrailProps> = ({ incidentId }) => {
           No audit log entries recorded.
         </div>
       ) : (
-        <div className="bg-slate-950/80 border border-slate-800/90 rounded-lg p-3.5 font-mono text-xs space-y-2.5 max-h-[320px] overflow-y-auto">
+        <div className="bg-slate-950/80 border border-slate-800/90 rounded-lg p-3.5 font-mono text-xs space-y-2.5 max-h-[480px] overflow-y-auto">
           {auditLogs.map((log, idx) => (
             <div
               key={idx}
-              className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 p-2 rounded bg-slate-900/60 border border-slate-800/60 hover:border-slate-700/60 transition-colors"
+              className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 p-2.5 rounded bg-slate-900/60 border border-slate-800/60 hover:border-slate-700/60 transition-colors"
             >
               <div className="space-y-1">
                 <div className="flex items-center gap-2 flex-wrap">
