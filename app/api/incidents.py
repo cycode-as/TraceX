@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
+from app.services.evidence_service import get_incident_evidence
 from app.services.incident_service import (
     get_incident,
     get_incident_timeline,
@@ -43,6 +44,16 @@ def event_to_dict(event):
         "metadata": event.event_metadata,
     }
 
+def evidence_to_dict(evidence):
+    return {
+        "evidence_id": evidence.evidence_id,
+        "incident_id": evidence.incident_id,
+        "event_id": evidence.event_id,
+        "type": evidence.type,
+        "description": evidence.description,
+        "impact": evidence.impact,
+        "created_at": evidence.created_at,
+    }
 
 @router.get("")
 def list_incidents(
@@ -109,6 +120,36 @@ def retrieve_incident_timeline(
         "data": [
             event_to_dict(event)
             for event in events
+        ],
+        "error": None,
+    }
+
+@router.get("/{incident_id}/evidence")
+def retrieve_incident_evidence(
+    incident_id: str,
+    db: Session = Depends(get_db),
+):
+    incident = get_incident(
+        db,
+        incident_id,
+    )
+
+    if incident is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Incident not found",
+        )
+
+    evidence = get_incident_evidence(
+        db,
+        incident_id,
+    )
+
+    return {
+        "success": True,
+        "data": [
+            evidence_to_dict(item)
+            for item in evidence
         ],
         "error": None,
     }
