@@ -1,0 +1,93 @@
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+
+from app.core.database import get_db
+from app.schemas.event import NormalizedEvent
+from app.services.event_service import (
+    create_event,
+    get_event,
+    get_events,
+)
+
+
+router = APIRouter(
+    prefix="/api/events",
+    tags=["Events"],
+)
+
+
+@router.post("")
+def create_event_endpoint(
+    event: NormalizedEvent,
+    db: Session = Depends(get_db),
+):
+    saved_event = create_event(db, event)
+
+    return {
+        "success": True,
+        "data": {
+            "event_id": saved_event.event_id,
+            "message": "Event stored successfully",
+        },
+        "error": None,
+    }
+
+
+@router.get("")
+def list_events(
+    db: Session = Depends(get_db),
+):
+    events = get_events(db)
+
+    return {
+        "success": True,
+        "data": [
+            {
+                "event_id": event.event_id,
+                "timestamp": event.timestamp,
+                "event_type": event.event_type,
+                "user_id": event.user_id,
+                "device_id": event.device_id,
+                "ip_address": event.ip_address,
+                "location": event.location,
+                "session_id": event.session_id,
+                "resource": event.resource,
+                "action": event.action,
+                "metadata": event.event_metadata,
+            }
+            for event in events
+        ],
+        "error": None,
+    }
+
+
+@router.get("/{event_id}")
+def retrieve_event(
+    event_id: str,
+    db: Session = Depends(get_db),
+):
+    event = get_event(db, event_id)
+
+    if event is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Event not found",
+        )
+
+    return {
+        "success": True,
+        "data": {
+            "event_id": event.event_id,
+            "timestamp": event.timestamp,
+            "event_type": event.event_type,
+            "user_id": event.user_id,
+            "device_id": event.device_id,
+            "ip_address": event.ip_address,
+            "location": event.location,
+            "session_id": event.session_id,
+            "resource": event.resource,
+            "action": event.action,
+            "metadata": event.event_metadata,
+        },
+        "error": None,
+    }

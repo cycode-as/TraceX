@@ -1,0 +1,46 @@
+from sqlalchemy import select
+from sqlalchemy.orm import Session
+
+from app.models.event import Event
+from app.schemas.event import NormalizedEvent
+
+
+def create_event(
+    db: Session,
+    event: NormalizedEvent,
+) -> Event:
+
+    db_event = Event(
+        event_id=event.event_id,
+        timestamp=event.timestamp,
+        event_type=event.event_type.value,
+        user_id=event.user_id,
+        device_id=event.device_id,
+        ip_address=event.ip_address,
+        location=event.location,
+        session_id=event.session_id,
+        resource=event.resource,
+        action=event.action,
+        event_metadata=event.metadata,
+    )
+
+    db.add(db_event)
+    db.commit()
+    db.refresh(db_event)
+
+    return db_event
+
+
+def get_events(
+    db: Session,
+) -> list[Event]:
+    statement = select(Event).order_by(Event.timestamp.desc())
+
+    return list(db.scalars(statement).all())
+
+
+def get_event(
+    db: Session,
+    event_id: str,
+) -> Event | None:
+    return db.get(Event, event_id)
