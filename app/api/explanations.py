@@ -8,6 +8,7 @@ from app.services.explanation_service import (
     generate_deterministic_explanation,
 )
 from app.services.incident_service import get_incident
+from app.services.llm_service import LLMService
 
 
 router = APIRouter(
@@ -48,9 +49,47 @@ def explain_incident(
             incident=incident,
         )
 
-        explanation = generate_deterministic_explanation(
-            context=context,
-        )
+        llm_service = LLMService()
+
+        if llm_service.is_available():
+            try:
+                llm_explanation = llm_service.generate_explanation(
+                    context=context,
+                )
+
+                explanation = {
+                    "summary": llm_explanation,
+                    "why_connected": context["correlations"],
+                    "supporting_evidence": [
+                        item["description"]
+                        for item in context["supporting_evidence"]
+                    ],
+                    "mitigating_evidence": [
+                        item["description"]
+                        for item in context["mitigating_evidence"]
+                    ],
+                    "why_investigate": (
+                        f"TraceX investigation priority is "
+                        f"{context['incident']['priority']} "
+                        f"({context['incident']['priority_label']}). "
+                        f"Current status is "
+                        f"{context['incident']['status']}."
+                    ),
+                    "recommended_actions": [
+                        "Review the generated explanation "
+                        "against the underlying TraceX evidence.",
+                    ],
+                }
+
+            except Exception:
+                explanation = generate_deterministic_explanation(
+                    context=context,
+                )
+
+        else:
+            explanation = generate_deterministic_explanation(
+                context=context,
+            )
 
         validated_explanation = ExplanationResponse(
             **explanation
