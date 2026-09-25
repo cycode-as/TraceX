@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom';
 import { LayoutDashboard, AlertTriangle, Activity, PlaySquare, FileText, Shield } from 'lucide-react';
 
 const navItems = [
@@ -14,7 +14,10 @@ const Sidebar: React.FC = () => {
   return (
     <aside className="w-64 bg-slate-900 border-r border-slate-800 flex flex-col h-screen sticky top-0 shrink-0">
       {/* Brand Header */}
-      <div className="h-16 flex items-center px-6 border-b border-slate-800 gap-3">
+      <Link
+        to="/"
+        className="h-16 flex items-center px-6 border-b border-slate-800 gap-3 hover:bg-slate-800/30 transition-colors"
+      >
         <div className="p-2 rounded bg-slate-800 border border-slate-700 text-slate-200">
           <Shield className="w-5 h-5" />
         </div>
@@ -22,7 +25,7 @@ const Sidebar: React.FC = () => {
           <span className="font-bold tracking-wider text-slate-100 text-base leading-none">TraceX</span>
           <span className="text-[10px] text-slate-400 font-mono tracking-wide mt-1">SOC DASHBOARD</span>
         </div>
-      </div>
+      </Link>
 
       {/* Navigation Links */}
       <nav className="flex-1 px-3 py-4 space-y-1">
