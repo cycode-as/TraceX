@@ -60,3 +60,10 @@ def get_event(
 ) -> Event | None:
 
     return db.get(Event, event_id)
+
+def event_exists(
+    db: Session,
+    event_id: str,
+) -> bool:
+
+    return db.get(Event, event_id) is not None

@@ -4,10 +4,10 @@ from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.schemas.event import NormalizedEvent
 from app.services.event_service import (
-    create_event,
     get_event,
     get_events,
 )
+from app.services.processing_service import process_incoming_event
 
 
 router = APIRouter(
@@ -21,14 +21,28 @@ def create_event_endpoint(
     event: NormalizedEvent,
     db: Session = Depends(get_db),
 ):
-    saved_event = create_event(db, event)
+    try:
+        result = process_incoming_event(
+            db,
+            event,
+        )
+
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=409,
+            detail={
+                "success": False,
+                "data": None,
+                "error": {
+                    "code": "DUPLICATE_EVENT",
+                    "message": str(exc),
+                },
+            },
+        )
 
     return {
         "success": True,
-        "data": {
-            "event_id": saved_event.event_id,
-            "message": "Event stored successfully",
-        },
+        "data": result,
         "error": None,
     }
 
