@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 
+from app.api.analyst_actions import router as analyst_actions_router
 from app.api.events import router as events_router
 from app.api.incidents import router as incidents_router
 from app.api.simulation import router as simulation_router
@@ -12,8 +13,8 @@ from app.models.incident_event import IncidentEvent
 from app.models.evidence import Evidence
 from app.models.correlation import Correlation
 from app.models.correlation_event import CorrelationEvent
-
 from app.models.audit_log import AuditLog
+from app.models.analyst_action import AnalystAction
 
 
 Base.metadata.create_all(bind=engine)
@@ -29,8 +30,11 @@ app = FastAPI(
 app.include_router(events_router)
 app.include_router(incidents_router)
 app.include_router(simulation_router)
+app.include_router(analyst_actions_router)
 
 
 @app.get("/")
 def root():
-    return {"message": "TraceX API is running"}
+    return {
+        "message": "TraceX API is running"
+    }
