@@ -13,6 +13,8 @@ from app.models.evidence import Evidence
 from app.models.correlation import Correlation
 from app.models.correlation_event import CorrelationEvent
 
+from app.models.audit_log import AuditLog
+
 
 Base.metadata.create_all(bind=engine)
 

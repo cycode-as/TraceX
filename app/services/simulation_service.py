@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 
 from app.simulation.scenarios import get_scenario
 from app.services.processing_service import process_incoming_event
+from app.services.change_service import calculate_changes
 
 
 _simulation_state: dict[str, Any] = {
@@ -76,30 +77,39 @@ def process_next_event(db: Session) -> dict[str, Any]:
 
     event = events[next_index]
 
-    # If this event was already processed earlier,
-    # reuse its existing result instead of inserting it again.
+    previous_result = {}
+
+    if _simulation_state["current_index"] >= 0:
+        previous_event = events[_simulation_state["current_index"]]
+
+        previous_result = _simulation_state["processed_results"].get(
+            previous_event.event_id,
+            {},
+        )
+
     if event.event_id in _simulation_state["processed_results"]:
-        result = _simulation_state["processed_results"][
-            event.event_id
-        ]
+        result = _simulation_state["processed_results"][event.event_id]
     else:
         result = process_incoming_event(
             db,
             event,
         )
 
-        _simulation_state["processed_results"][
-            event.event_id
-        ] = result
+        _simulation_state["processed_results"][event.event_id] = result
 
         if event.event_id not in _simulation_state["processed_events"]:
             _simulation_state["processed_events"].append(
                 event.event_id
             )
 
+    changes = calculate_changes(
+        previous_result,
+        result,
+    )
+
     _simulation_state["current_index"] = next_index
     _simulation_state["current_event"] = event
-    _simulation_state["changes"] = result
+    _simulation_state["changes"] = changes
     _simulation_state["state"] = "PROCESSING"
 
     return {
@@ -127,15 +137,32 @@ def process_previous_event() -> dict[str, Any]:
         _simulation_state["state"] = "READY"
 
     else:
-        event = _simulation_state["events"][previous_index]
+        events = _simulation_state["events"]
 
-        _simulation_state["current_event"] = event
-        _simulation_state["changes"] = (
-            _simulation_state["processed_results"].get(
-                event.event_id,
+        current_event = events[previous_index]
+
+        current_result = _simulation_state["processed_results"].get(
+            current_event.event_id,
+            {},
+        )
+
+        if previous_index > 0:
+            previous_event = events[previous_index - 1]
+
+            previous_result = _simulation_state["processed_results"].get(
+                previous_event.event_id,
                 {},
             )
+        else:
+            previous_result = {}
+
+        changes = calculate_changes(
+            previous_result,
+            current_result,
         )
+
+        _simulation_state["current_event"] = current_event
+        _simulation_state["changes"] = changes
         _simulation_state["state"] = "PROCESSING"
 
     return {

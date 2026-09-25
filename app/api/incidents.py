@@ -9,6 +9,7 @@ from app.services.incident_service import (
     get_incidents,
 )
 from app.services.graph_service import get_incident_graph
+from app.services.audit_service import get_incident_audit_logs
 
 
 router = APIRouter(
@@ -56,6 +57,16 @@ def evidence_to_dict(evidence):
         "created_at": evidence.created_at,
     }
 
+def audit_to_dict(audit):
+    return {
+        "audit_id": audit.audit_id,
+        "incident_id": audit.incident_id,
+        "action": audit.action,
+        "actor": audit.actor,
+        "details": audit.details,
+        "timestamp": audit.timestamp,
+    }
+
 @router.get("")
 def list_incidents(
     db: Session = Depends(get_db),
@@ -71,6 +82,35 @@ def list_incidents(
         "error": None,
     }
 
+@router.get("/{incident_id}/audit")
+def retrieve_incident_audit(
+    incident_id: str,
+    db: Session = Depends(get_db),
+):
+    incident = get_incident(
+        db,
+        incident_id,
+    )
+
+    if incident is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Incident not found",
+        )
+
+    audit_logs = get_incident_audit_logs(
+        db,
+        incident_id,
+    )
+
+    return {
+        "success": True,
+        "data": [
+            audit_to_dict(item)
+            for item in audit_logs
+        ],
+        "error": None,
+    }
 
 @router.get("/{incident_id}")
 def retrieve_incident(
