@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import DateTime, String
+from sqlalchemy import DateTime, JSON, String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.core.database import Base
@@ -57,4 +57,11 @@ class Event(Base):
     action: Mapped[str | None] = mapped_column(
         String,
         nullable=True,
+    )
+
+    event_metadata: Mapped[dict] = mapped_column(
+    "metadata",
+    JSON,
+    nullable=False,
+    default=dict,
     )
