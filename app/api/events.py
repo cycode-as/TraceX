@@ -35,9 +35,17 @@ def create_event_endpoint(
 
 @router.get("")
 def list_events(
+    user_id: str | None = None,
+    device_id: str | None = None,
+    event_type: str | None = None,
     db: Session = Depends(get_db),
 ):
-    events = get_events(db)
+    events = get_events(
+        db,
+        user_id=user_id,
+        device_id=device_id,
+        event_type=event_type,
+    )
 
     return {
         "success": True,

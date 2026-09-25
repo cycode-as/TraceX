@@ -33,8 +33,23 @@ def create_event(
 
 def get_events(
     db: Session,
+    user_id: str | None = None,
+    device_id: str | None = None,
+    event_type: str | None = None,
 ) -> list[Event]:
-    statement = select(Event).order_by(Event.timestamp.desc())
+
+    statement = select(Event)
+
+    if user_id:
+        statement = statement.where(Event.user_id == user_id)
+
+    if device_id:
+        statement = statement.where(Event.device_id == device_id)
+
+    if event_type:
+        statement = statement.where(Event.event_type == event_type)
+
+    statement = statement.order_by(Event.timestamp.desc())
 
     return list(db.scalars(statement).all())
 
@@ -43,4 +58,5 @@ def get_event(
     db: Session,
     event_id: str,
 ) -> Event | None:
+
     return db.get(Event, event_id)
