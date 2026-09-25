@@ -24,6 +24,10 @@ import type { NormalizedEvent } from '../types/event';
 import StatusBadge from '../components/incidents/StatusBadge';
 import Timeline from '../components/incidents/Timeline';
 import PriorityBreakdown from '../components/incidents/PriorityBreakdown';
+import EvidencePanel from '../components/incidents/EvidencePanel';
+import CorrelationGraph from '../components/incidents/CorrelationGraph';
+import AIExplanation from '../components/incidents/AIExplanation';
+import AuditTrail from '../components/incidents/AuditTrail';
 
 interface ActionToast {
   message: string;
@@ -197,7 +201,7 @@ export const IncidentDetail: React.FC = () => {
     );
   }
 
-  if (error || !incident) {
+  if (error || !incident || !id) {
     return (
       <div className="p-6 max-w-3xl mx-auto space-y-6">
         <Link
@@ -234,6 +238,8 @@ export const IncidentDetail: React.FC = () => {
       </div>
     );
   }
+
+  const currentIncidentId = id;
 
   return (
     <div className="p-6 space-y-6 max-w-7xl mx-auto">
@@ -466,6 +472,21 @@ export const IncidentDetail: React.FC = () => {
         <div className="space-y-6">
           <PriorityBreakdown score={incident.priority} />
         </div>
+      </div>
+
+      {/* Ordered Sections: Evidence Panel → Correlation Graph → AI Explanation → Audit Trail */}
+      <div className="space-y-6 pt-4 border-t border-slate-800">
+        {/* 1. Evidence Panel */}
+        <EvidencePanel incidentId={currentIncidentId} />
+
+        {/* 2. Correlation Graph */}
+        <CorrelationGraph incidentId={currentIncidentId} />
+
+        {/* 3. AI Explanation */}
+        <AIExplanation incidentId={currentIncidentId} />
+
+        {/* 4. Audit Trail */}
+        <AuditTrail incidentId={currentIncidentId} />
       </div>
     </div>
   );
