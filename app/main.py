@@ -8,6 +8,8 @@ from app.models.event import Event
 from app.models.incident import Incident
 from app.models.incident_event import IncidentEvent
 from app.models.evidence import Evidence
+from app.models.correlation import Correlation
+from app.models.correlation_event import CorrelationEvent
 
 
 Base.metadata.create_all(bind=engine)

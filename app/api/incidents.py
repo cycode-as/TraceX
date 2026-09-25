@@ -8,6 +8,7 @@ from app.services.incident_service import (
     get_incident_timeline,
     get_incidents,
 )
+from app.services.graph_service import get_incident_graph
 
 
 router = APIRouter(
@@ -151,5 +152,32 @@ def retrieve_incident_evidence(
             evidence_to_dict(item)
             for item in evidence
         ],
+        "error": None,
+    }
+
+@router.get("/{incident_id}/graph")
+def retrieve_incident_graph(
+    incident_id: str,
+    db: Session = Depends(get_db),
+):
+    incident = get_incident(
+        db,
+        incident_id,
+    )
+
+    if incident is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Incident not found",
+        )
+
+    graph = get_incident_graph(
+        db,
+        incident_id,
+    )
+
+    return {
+        "success": True,
+        "data": graph,
         "error": None,
     }
