@@ -13,14 +13,13 @@ import {
   Terminal,
   User,
   Clock,
-  CheckCircle2,
-  XCircle,
 } from 'lucide-react';
 import { getIncidents } from '../services/incidents';
 import { getEvents } from '../services/events';
-import type { Incident, IncidentStatus } from '../types/incident';
+import type { Incident } from '../types/incident';
 import type { NormalizedEvent, EventType } from '../types/event';
 import StatCard from '../components/dashboard/StatCard';
+import StatusBadge from '../components/incidents/StatusBadge';
 
 const ANOMALY_EVENT_TYPES: EventType[] = [
   'mfa_failure',
@@ -112,47 +111,6 @@ export const Dashboard: React.FC = () => {
   const highPriorityCount = incidents.filter(
     (inc) => inc.status === 'HIGH_PRIORITY' || inc.priority >= 70
   ).length;
-
-  const getStatusBadge = (status: IncidentStatus) => {
-    switch (status) {
-      case 'HIGH_PRIORITY':
-        return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold bg-red-500/10 text-red-400 border border-red-500/30">
-            <AlertCircle className="w-3 h-3 shrink-0" />
-            HIGH PRIORITY
-          </span>
-        );
-      case 'INCIDENT_CANDIDATE':
-        return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/30">
-            <AlertTriangle className="w-3 h-3 shrink-0" />
-            CANDIDATE
-          </span>
-        );
-      case 'CONFIRMED':
-        return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/30">
-            <Shield className="w-3 h-3 shrink-0" />
-            CONFIRMED
-          </span>
-        );
-      case 'RESOLVED':
-        return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
-            <CheckCircle2 className="w-3 h-3 shrink-0" />
-            RESOLVED
-          </span>
-        );
-      case 'DISMISSED':
-      default:
-        return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold bg-slate-500/10 text-slate-400 border border-slate-500/30">
-            <XCircle className="w-3 h-3 shrink-0" />
-            DISMISSED
-          </span>
-        );
-    }
-  };
 
   const getPriorityPill = (score: number) => {
     let colorClass = 'text-blue-400 bg-blue-500/10 border-blue-500/30';
@@ -340,7 +298,9 @@ export const Dashboard: React.FC = () => {
                       <td className="py-3 px-3 max-w-xs truncate font-medium text-slate-200">
                         {inc.title}
                       </td>
-                      <td className="py-3 px-3">{getStatusBadge(inc.status)}</td>
+                      <td className="py-3 px-3">
+                        <StatusBadge status={inc.status} />
+                      </td>
                       <td className="py-3 px-3">{getPriorityPill(inc.priority)}</td>
                       <td className="py-3 px-3 text-right font-mono text-slate-400">
                         <span className="inline-flex items-center gap-1 bg-slate-800/80 px-2 py-0.5 rounded text-slate-300 border border-slate-700/50">
