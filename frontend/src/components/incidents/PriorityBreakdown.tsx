@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldAlert, Zap, Info } from 'lucide-react';
+import { ShieldAlert, Zap } from 'lucide-react';
 import type { Priority, PriorityFactors } from '../../types/graph';
 
 interface PriorityBreakdownProps {
@@ -47,60 +47,60 @@ export const PriorityBreakdown: React.FC<PriorityBreakdownProps> = ({ priority, 
   const score = priority?.score ?? propScore ?? 86;
   const factors = priority?.factors ?? DEFAULT_FACTORS;
 
-  let scoreColorClass = 'text-blue-400 bg-blue-500/10 border-blue-500/30';
+  let scoreColorClass = 'text-blue-400 bg-blue-500/10 border-blue-500/20';
   let barColorClass = 'bg-blue-500';
   let labelText = priority?.label ?? 'HIGH';
 
   if (score >= 70) {
-    scoreColorClass = 'text-red-400 bg-red-500/10 border-red-500/30';
+    scoreColorClass = 'text-red-400 bg-red-500/10 border-red-500/20';
     barColorClass = 'bg-red-500';
     labelText = 'HIGH';
   } else if (score >= 40) {
-    scoreColorClass = 'text-amber-400 bg-amber-500/10 border-amber-500/30';
+    scoreColorClass = 'text-amber-400 bg-amber-500/10 border-amber-500/20';
     barColorClass = 'bg-amber-500';
     labelText = 'MEDIUM';
   }
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-sm space-y-5">
+    <div className="bg-slate-900 border border-slate-800/60 rounded-md p-4 space-y-4">
       {/* Card Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between border-b border-slate-800/60 pb-3">
         <div className="flex items-center gap-2">
-          <ShieldAlert className="w-5 h-5 text-amber-400" />
+          <ShieldAlert className="w-4 h-4 text-amber-400" />
           <div>
-            <h2 className="text-base font-semibold text-slate-100">Investigation Priority</h2>
-            <p className="text-xs text-slate-400">Analyst triage urgency score (not attack probability)</p>
+            <h2 className="text-[11px] font-mono uppercase tracking-wider text-slate-500 font-semibold">
+              INVESTIGATION PRIORITY
+            </h2>
           </div>
         </div>
-        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-mono font-bold bg-slate-950 border border-slate-800 text-slate-300">
-          <Zap className="w-3.5 h-3.5 text-amber-400" />
+        <div className="flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-mono font-bold bg-slate-950 border border-slate-800 text-slate-300">
+          <Zap className="w-3 h-3 text-amber-400" />
           <span>{labelText}</span>
         </div>
       </div>
 
       {/* Main Overall Score Display */}
-      <div className="flex items-center gap-4 p-4 rounded-lg bg-slate-950/70 border border-slate-800">
-        <div className={`p-4 rounded-xl border text-center shrink-0 ${scoreColorClass}`}>
-          <span className="text-3xl font-bold font-mono tracking-tight">{score}</span>
-          <span className="text-[10px] block font-mono text-slate-400 uppercase mt-0.5">/ 100</span>
+      <div className="flex items-center gap-4 p-3 rounded-md bg-slate-950 border border-slate-800/80">
+        <div className={`p-3 rounded-md border text-center shrink-0 ${scoreColorClass}`}>
+          <span className="text-2xl font-bold font-mono tracking-tight">{score}</span>
+          <span className="text-[10px] block font-mono text-slate-500 uppercase mt-0.5">/ 100</span>
         </div>
 
-        <div className="space-y-1 text-xs">
-          <div className="flex items-center gap-1 text-slate-200 font-semibold">
-            <span>Urgency Assessment</span>
-            <Info className="w-3.5 h-3.5 text-slate-500" />
-          </div>
-          <p className="text-slate-400 text-xs leading-relaxed">
-            Priority score indicates the recommended order for analyst review. High scores reflect multi-factor correlations requiring immediate triage.
+        <div className="space-y-0.5 text-xs">
+          <span className="text-slate-200 font-medium block">Analyst Triage Priority</span>
+          <p className="text-slate-400 text-xs leading-normal">
+            Calculated investigation score based on weighted risk factors. Priority represents analyst review order, not attack probability.
           </p>
         </div>
       </div>
 
       {/* Factor Breakdown Bars */}
-      <div className="space-y-3 pt-1">
-        <h3 className="text-xs font-mono uppercase tracking-wider text-slate-400">Contributing Risk Factors</h3>
+      <div className="space-y-2.5">
+        <h3 className="text-[11px] font-mono uppercase tracking-wider text-slate-500">
+          Contributing Risk Factors
+        </h3>
 
-        <div className="space-y-3">
+        <div className="space-y-2.5">
           {(Object.keys(FACTOR_LABELS) as (keyof PriorityFactors)[]).map((key) => {
             const factorInfo = FACTOR_LABELS[key];
             const points = factors[key] ?? 0;
@@ -111,13 +111,13 @@ export const PriorityBreakdown: React.FC<PriorityBreakdownProps> = ({ priority, 
                 <div className="flex items-center justify-between text-xs">
                   <span className="font-medium text-slate-200">{factorInfo.name}</span>
                   <span className="font-mono text-slate-400 text-[11px]">
-                    <strong className="text-slate-200 font-bold">{points}</strong> / {factorInfo.max} pts
+                    <strong className="text-slate-200 font-bold font-mono">{points}</strong> / {factorInfo.max} pts
                   </span>
                 </div>
 
-                <div className="w-full h-2 bg-slate-950 rounded-full overflow-hidden border border-slate-800/80">
+                <div className="w-full h-1.5 bg-slate-950 rounded-full overflow-hidden border border-slate-800/80">
                   <div
-                    className={`h-full ${barColorClass} transition-all duration-300 rounded-full`}
+                    className={`h-full ${barColorClass} rounded-full`}
                     style={{ width: `${percentage}%` }}
                   />
                 </div>

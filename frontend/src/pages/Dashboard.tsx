@@ -113,16 +113,16 @@ export const Dashboard: React.FC = () => {
   ).length;
 
   const getPriorityPill = (score: number) => {
-    let colorClass = 'text-blue-400 bg-blue-500/10 border-blue-500/30';
-    if (score >= 70) colorClass = 'text-red-400 bg-red-500/10 border-red-500/30';
-    else if (score >= 40) colorClass = 'text-amber-400 bg-amber-500/10 border-amber-500/30';
+    let colorClass = 'text-blue-400 bg-blue-500/10 border-blue-500/20';
+    if (score >= 70) colorClass = 'text-red-400 bg-red-500/10 border-red-500/20';
+    else if (score >= 40) colorClass = 'text-amber-400 bg-amber-500/10 border-amber-500/20';
 
     return (
       <div className="flex items-center gap-2">
-        <span className={`px-2 py-0.5 rounded text-xs font-mono font-bold border ${colorClass}`}>
+        <span className={`px-1.5 py-0.2 rounded text-[11px] font-mono font-bold border ${colorClass}`}>
           {score}
         </span>
-        <div className="w-16 h-1.5 bg-slate-800 rounded-full overflow-hidden hidden sm:block">
+        <div className="w-12 h-1 bg-slate-800 rounded-full overflow-hidden hidden sm:block">
           <div
             className={`h-full ${
               score >= 70 ? 'bg-red-500' : score >= 40 ? 'bg-amber-500' : 'bg-blue-500'
@@ -144,21 +144,18 @@ export const Dashboard: React.FC = () => {
   };
 
   return (
-    <div className="p-6 space-y-6 max-w-7xl mx-auto">
+    <div className="p-5 space-y-5 max-w-7xl mx-auto">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-800/60">
         <div>
-          <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold tracking-tight text-slate-100">Security Overview</h1>
-            <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-mono font-semibold">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-              </span>
+          <div className="flex items-center gap-2.5">
+            <h1 className="text-xl font-bold tracking-tight text-slate-100">Security Overview</h1>
+            <div className="flex items-center gap-1 px-2 py-0.2 rounded-md bg-slate-900 border border-slate-800 text-emerald-400 text-[11px] font-mono font-medium">
+              <span className="inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
               LIVE
             </div>
           </div>
-          <p className="text-sm text-slate-400 mt-1">
+          <p className="text-xs text-slate-400 mt-0.5">
             Real-time threat detection, automated incident clustering, and telemetry metrics.
           </p>
         </div>
@@ -167,15 +164,15 @@ export const Dashboard: React.FC = () => {
           {lastUpdated && (
             <span className="text-xs font-mono text-slate-500 flex items-center gap-1">
               <Clock className="w-3.5 h-3.5" />
-              Last updated: <span className="text-slate-300">{lastUpdated}</span>
+              Updated: <span className="text-slate-300">{lastUpdated}</span>
             </span>
           )}
           <button
             onClick={loadDashboardData}
             disabled={loading}
-            className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 rounded-md transition-colors disabled:opacity-50 cursor-pointer"
+            className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium bg-slate-900 hover:bg-slate-800 border border-slate-700/80 text-slate-200 rounded-md transition-colors disabled:opacity-50 cursor-pointer font-mono"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`w-3 h-3 ${loading ? 'animate-spin' : ''}`} />
             Refresh
           </button>
         </div>
@@ -183,17 +180,17 @@ export const Dashboard: React.FC = () => {
 
       {/* Global Error Banner */}
       {error && (
-        <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4 flex items-center justify-between gap-4 text-red-400 text-sm">
-          <div className="flex items-center gap-3">
-            <AlertCircle className="w-5 h-5 shrink-0" />
+        <div className="bg-red-500/10 border border-red-500/30 rounded-md p-3 flex items-center justify-between gap-4 text-red-400 text-xs font-mono">
+          <div className="flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 shrink-0" />
             <div>
               <p className="font-semibold">Unable to load dashboard data</p>
-              <p className="text-xs text-red-400/80 mt-0.5">{error}</p>
+              <p className="text-[11px] text-red-400/80 mt-0.5">{error}</p>
             </div>
           </div>
           <button
             onClick={loadDashboardData}
-            className="px-3 py-1.5 bg-red-500/20 hover:bg-red-500/30 text-red-200 border border-red-500/40 rounded-md text-xs font-semibold transition-colors cursor-pointer"
+            className="px-2.5 py-1 bg-red-500/20 hover:bg-red-500/30 text-red-200 border border-red-500/40 rounded-md text-xs font-semibold transition-colors cursor-pointer"
           >
             Retry
           </button>
@@ -201,11 +198,11 @@ export const Dashboard: React.FC = () => {
       )}
 
       {/* Four Stat Cards Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         <StatCard
           title="Total Events"
           value={totalEventsCount}
-          subtitle="Processed in current pipeline"
+          subtitle="Processed in pipeline"
           icon={Activity}
           colorScheme="blue"
           loading={loading}
@@ -229,7 +226,7 @@ export const Dashboard: React.FC = () => {
         <StatCard
           title="High Priority"
           value={highPriorityCount}
-          subtitle="Requires immediate analyst action"
+          subtitle="Requires immediate analyst triage"
           icon={Zap}
           colorScheme="red"
           loading={loading}
@@ -237,74 +234,76 @@ export const Dashboard: React.FC = () => {
       </div>
 
       {/* Main Content Grid: Active Incidents & Live Telemetry */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         {/* Active Incidents List/Table (2 Columns) */}
-        <div className="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-sm space-y-4">
-          <div className="flex items-center justify-between">
+        <div className="lg:col-span-2 bg-slate-900 border border-slate-800/60 rounded-md p-4 space-y-3">
+          <div className="flex items-center justify-between border-b border-slate-800/60 pb-2.5">
             <div className="flex items-center gap-2">
-              <ShieldAlert className="w-5 h-5 text-amber-400" />
-              <h2 className="text-base font-semibold text-slate-100">Active Incidents</h2>
-              <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-slate-800 text-slate-400">
+              <ShieldAlert className="w-4 h-4 text-amber-400" />
+              <h2 className="text-xs font-mono uppercase tracking-wider text-slate-400 font-semibold">
+                ACTIVE INCIDENTS
+              </h2>
+              <span className="text-xs font-mono px-2 py-0.2 rounded-md bg-slate-950 text-slate-400 border border-slate-800">
                 {incidents.length}
               </span>
             </div>
             <button
               onClick={() => navigate('/incidents')}
-              className="text-xs font-medium text-slate-400 hover:text-slate-200 flex items-center gap-1 transition-colors cursor-pointer"
+              className="text-xs font-mono text-slate-400 hover:text-slate-200 flex items-center gap-1 transition-colors cursor-pointer"
             >
-              View all
-              <ChevronRight className="w-3.5 h-3.5" />
+              View Queue
+              <ChevronRight className="w-3 h-3" />
             </button>
           </div>
 
           {loading ? (
-            <div className="space-y-3">
+            <div className="space-y-2">
               {[1, 2, 3].map((n) => (
-                <div key={n} className="h-14 bg-slate-800/50 rounded-lg animate-pulse" />
+                <div key={n} className="h-10 bg-slate-800/40 rounded-md animate-pulse" />
               ))}
             </div>
           ) : incidents.length === 0 ? (
-            <div className="py-12 text-center space-y-3 border border-dashed border-slate-800 rounded-lg bg-slate-950/40">
-              <Shield className="w-10 h-10 text-slate-600 mx-auto" />
+            <div className="py-10 text-center space-y-2 border border-dashed border-slate-800/80 rounded-md bg-slate-950/40">
+              <Shield className="w-8 h-8 text-slate-600 mx-auto" />
               <div>
-                <p className="text-sm font-medium text-slate-300">No active incidents</p>
-                <p className="text-xs text-slate-500 mt-1">
-                  All security events are within normal operational thresholds.
+                <p className="text-xs font-medium text-slate-300">No active incidents</p>
+                <p className="text-[11px] text-slate-500 mt-0.5 font-mono">
+                  All security events within normal baseline.
                 </p>
               </div>
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs text-slate-300">
-                <thead className="bg-slate-950/60 text-slate-400 uppercase font-mono tracking-wider border-b border-slate-800">
+              <table className="w-full text-left text-[13px] text-slate-300">
+                <thead className="bg-slate-950 text-slate-400 uppercase font-mono text-[11px] tracking-wider border-b border-slate-800/80">
                   <tr>
-                    <th className="py-3 px-3">Incident ID</th>
-                    <th className="py-3 px-3">Title</th>
-                    <th className="py-3 px-3">Status</th>
-                    <th className="py-3 px-3">Priority</th>
-                    <th className="py-3 px-3 text-right">Events</th>
+                    <th className="py-2.5 px-3">ID</th>
+                    <th className="py-2.5 px-3">Title</th>
+                    <th className="py-2.5 px-3">Status</th>
+                    <th className="py-2.5 px-3">Priority</th>
+                    <th className="py-2.5 px-3 text-right">Events</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/60">
+                <tbody className="divide-y divide-slate-800/40">
                   {incidents.map((inc) => (
                     <tr
                       key={inc.incident_id}
                       onClick={() => navigate(`/incidents/${inc.incident_id}`)}
-                      className="hover:bg-slate-800/50 cursor-pointer transition-colors group"
+                      className="hover:bg-slate-800/40 cursor-pointer transition-colors group"
                     >
-                      <td className="py-3 px-3 font-mono font-semibold text-slate-200 group-hover:text-blue-400">
+                      <td className="py-2.5 px-3 font-mono font-semibold text-slate-200 group-hover:text-blue-400">
                         {inc.incident_id}
                       </td>
-                      <td className="py-3 px-3 max-w-xs truncate font-medium text-slate-200">
+                      <td className="py-2.5 px-3 max-w-xs truncate font-medium text-slate-200">
                         {inc.title}
                       </td>
-                      <td className="py-3 px-3">
+                      <td className="py-2.5 px-3">
                         <StatusBadge status={inc.status} />
                       </td>
-                      <td className="py-3 px-3">{getPriorityPill(inc.priority)}</td>
-                      <td className="py-3 px-3 text-right font-mono text-slate-400">
-                        <span className="inline-flex items-center gap-1 bg-slate-800/80 px-2 py-0.5 rounded text-slate-300 border border-slate-700/50">
-                          <Layers className="w-3 h-3 text-slate-400" />
+                      <td className="py-2.5 px-3">{getPriorityPill(inc.priority)}</td>
+                      <td className="py-2.5 px-3 text-right font-mono text-slate-400">
+                        <span className="inline-flex items-center gap-1 bg-slate-950 px-2 py-0.5 rounded-md text-slate-300 border border-slate-800 text-xs">
+                          <Layers className="w-3 h-3 text-slate-500" />
                           {inc.event_ids.length}
                         </span>
                       </td>
@@ -317,55 +316,57 @@ export const Dashboard: React.FC = () => {
         </div>
 
         {/* Live Telemetry Stream (1 Column) */}
-        <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-sm space-y-4">
-          <div className="flex items-center justify-between">
+        <div className="bg-slate-900 border border-slate-800/60 rounded-md p-4 space-y-3">
+          <div className="flex items-center justify-between border-b border-slate-800/60 pb-2.5">
             <div className="flex items-center gap-2">
-              <Terminal className="w-5 h-5 text-emerald-400" />
-              <h2 className="text-base font-semibold text-slate-100">Live Telemetry</h2>
+              <Terminal className="w-4 h-4 text-emerald-400" />
+              <h2 className="text-xs font-mono uppercase tracking-wider text-slate-400 font-semibold">
+                LIVE TELEMETRY
+              </h2>
             </div>
             <button
               onClick={() => navigate('/events')}
-              className="text-xs font-medium text-slate-400 hover:text-slate-200 flex items-center gap-1 transition-colors cursor-pointer"
+              className="text-xs font-mono text-slate-400 hover:text-slate-200 flex items-center gap-1 transition-colors cursor-pointer"
             >
-              Explore
-              <ChevronRight className="w-3.5 h-3.5" />
+              Stream
+              <ChevronRight className="w-3 h-3" />
             </button>
           </div>
 
           {loading ? (
-            <div className="space-y-3">
+            <div className="space-y-2">
               {[1, 2, 3, 4].map((n) => (
-                <div key={n} className="h-12 bg-slate-800/50 rounded-lg animate-pulse" />
+                <div key={n} className="h-10 bg-slate-800/40 rounded-md animate-pulse" />
               ))}
             </div>
           ) : events.length === 0 ? (
-            <div className="py-12 text-center space-y-3 border border-dashed border-slate-800 rounded-lg bg-slate-950/40">
-              <Activity className="w-10 h-10 text-slate-600 mx-auto" />
+            <div className="py-10 text-center space-y-2 border border-dashed border-slate-800/80 rounded-md bg-slate-950/40 font-mono">
+              <Activity className="w-8 h-8 text-slate-600 mx-auto" />
               <div>
-                <p className="text-sm font-medium text-slate-300">No telemetry events</p>
-                <p className="text-xs text-slate-500 mt-1">
-                  Waiting for incoming security telemetry log stream.
+                <p className="text-xs font-medium text-slate-300">No telemetry events</p>
+                <p className="text-[11px] text-slate-500 mt-0.5">
+                  Waiting for log stream.
                 </p>
               </div>
             </div>
           ) : (
-            <div className="space-y-2.5 max-h-[420px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-slate-800">
+            <div className="space-y-2 max-h-[400px] overflow-y-auto pr-1">
               {events.slice(0, 10).map((evt) => {
                 const isAnomaly = ANOMALY_EVENT_TYPES.includes(evt.event_type);
                 return (
                   <div
                     key={evt.event_id}
-                    className="p-3 bg-slate-950/60 border border-slate-800/80 rounded-lg hover:border-slate-700 transition-colors space-y-1.5"
+                    className="p-2.5 bg-slate-950 border border-slate-800/80 rounded-md hover:border-slate-700 transition-colors space-y-1 font-mono"
                   >
                     <div className="flex items-center justify-between text-xs">
-                      <span className="font-mono text-slate-400 flex items-center gap-1">
+                      <span className="text-slate-400 flex items-center gap-1 text-[11px]">
                         <Clock className="w-3 h-3 text-slate-500" />
                         {formatEventTime(evt.timestamp)}
                       </span>
                       <span
-                        className={`font-mono text-[10px] px-2 py-0.5 rounded font-semibold border ${
+                        className={`text-[10px] px-1.5 py-0.2 rounded font-semibold border ${
                           isAnomaly
-                            ? 'bg-amber-500/10 text-amber-400 border-amber-500/30'
+                            ? 'bg-amber-500/10 text-amber-400 border-amber-500/20'
                             : 'bg-slate-800 text-slate-300 border-slate-700'
                         }`}
                       >
@@ -375,20 +376,20 @@ export const Dashboard: React.FC = () => {
 
                     <div className="flex items-center justify-between text-xs text-slate-300 pt-0.5">
                       {evt.user_id ? (
-                        <span className="flex items-center gap-1 text-slate-300 font-mono">
+                        <span className="flex items-center gap-1 text-slate-300 text-[11px]">
                           <User className="w-3 h-3 text-slate-500" />
                           {evt.user_id}
                         </span>
                       ) : (
-                        <span className="text-slate-500 font-mono text-[11px]">-</span>
+                        <span className="text-slate-600 text-[11px]">-</span>
                       )}
 
                       {evt.resource ? (
-                        <span className="font-mono text-[11px] bg-slate-900 px-1.5 py-0.5 rounded border border-slate-800 text-slate-400 truncate max-w-[140px]">
+                        <span className="text-[10px] bg-slate-900 px-1.5 py-0.2 rounded border border-slate-800 text-slate-400 truncate max-w-[130px]">
                           {evt.resource}
                         </span>
                       ) : (
-                        <span className="text-slate-500 text-[11px]">-</span>
+                        <span className="text-slate-600 text-[11px]">-</span>
                       )}
                     </div>
                   </div>

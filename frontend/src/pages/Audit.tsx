@@ -67,17 +67,17 @@ export const Audit: React.FC = () => {
   }, [logs, searchQuery]);
 
   return (
-    <div className="p-6 space-y-6 max-w-7xl mx-auto">
+    <div className="p-5 space-y-5 max-w-7xl mx-auto">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-800/60">
         <div>
-          <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold tracking-tight text-slate-100">Audit Logs</h1>
-            <span className="text-xs font-mono px-2.5 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700">
+          <div className="flex items-center gap-2.5">
+            <h1 className="text-xl font-bold tracking-tight text-slate-100">Audit Logs</h1>
+            <span className="text-[11px] font-mono px-2 py-0.2 rounded-md bg-slate-900 text-slate-400 border border-slate-800">
               {logs.length} System Records
             </span>
           </div>
-          <p className="text-sm text-slate-400 mt-1">
+          <p className="text-xs text-slate-400 mt-0.5">
             System-wide audit trail recording analyst actions, automated state changes, and pipeline triggers.
           </p>
         </div>
@@ -85,26 +85,26 @@ export const Audit: React.FC = () => {
         <button
           onClick={fetchAuditData}
           disabled={loading}
-          className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 rounded-md transition-colors disabled:opacity-50 cursor-pointer self-start sm:self-auto"
+          className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium bg-slate-900 hover:bg-slate-800 border border-slate-700/80 text-slate-200 rounded-md transition-colors disabled:opacity-50 cursor-pointer self-start sm:self-auto font-mono"
         >
-          <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
+          <RefreshCw className={`w-3 h-3 ${loading ? 'animate-spin' : ''}`} />
           Refresh
         </button>
       </div>
 
       {/* Global Error Banner */}
       {error && (
-        <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4 flex items-center justify-between gap-4 text-red-400 text-sm">
-          <div className="flex items-center gap-3">
-            <AlertCircle className="w-5 h-5 shrink-0" />
+        <div className="bg-red-500/10 border border-red-500/30 rounded-md p-3 flex items-center justify-between gap-4 text-red-400 text-xs font-mono">
+          <div className="flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 shrink-0" />
             <div>
               <p className="font-semibold">Unable to fetch system audit logs</p>
-              <p className="text-xs text-red-400/80 mt-0.5">{error}</p>
+              <p className="text-[11px] text-red-400/80 mt-0.5">{error}</p>
             </div>
           </div>
           <button
             onClick={fetchAuditData}
-            className="px-3 py-1.5 bg-red-500/20 hover:bg-red-500/30 text-red-200 border border-red-500/40 rounded-md text-xs font-semibold transition-colors cursor-pointer"
+            className="px-2.5 py-1 bg-red-500/20 hover:bg-red-500/30 text-red-200 border border-red-500/40 rounded-md text-xs font-semibold transition-colors cursor-pointer"
           >
             Retry
           </button>
@@ -112,27 +112,27 @@ export const Audit: React.FC = () => {
       )}
 
       {/* Control Bar: Search Input */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900 p-3 rounded-xl border border-slate-800">
-        <div className="flex items-center gap-2 text-xs font-mono text-slate-400">
-          <FileText className="w-4 h-4 text-slate-500" />
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-900 p-2.5 rounded-md border border-slate-800/60 font-mono">
+        <div className="flex items-center gap-2 text-xs text-slate-400">
+          <FileText className="w-3.5 h-3.5 text-slate-500" />
           <span>Showing {filteredLogs.length} of {logs.length} audit entries</span>
         </div>
 
-        <div className="relative w-full sm:w-80">
-          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+        <div className="relative w-full sm:w-72">
+          <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search action, description, or time..."
-            className="w-full pl-9 pr-8 py-1.5 text-xs bg-slate-950 border border-slate-800 rounded-lg text-slate-200 placeholder-slate-500 focus:outline-none focus:border-slate-700 transition-colors font-mono"
+            placeholder="Search action, description..."
+            className="w-full pl-8 pr-7 py-1 text-xs bg-slate-950 border border-slate-800 rounded-md text-slate-200 placeholder-slate-500 focus:outline-none focus:border-slate-700 transition-colors font-mono"
           />
           {searchQuery && (
             <button
               onClick={() => setSearchQuery('')}
               className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300"
             >
-              <X className="w-3.5 h-3.5" />
+              <X className="w-3 h-3" />
             </button>
           )}
         </div>
@@ -140,7 +140,7 @@ export const Audit: React.FC = () => {
 
       {/* Audit Trail Component */}
       <AuditTrail
-        title="System Audit Console Log"
+        title="SYSTEM AUDIT CONSOLE LOG"
         entries={filteredLogs}
         loading={loading}
         error={error}

@@ -37,17 +37,19 @@ export const WhatChanged: React.FC<WhatChangedProps> = ({ previousState, current
   const previousStateLabel = previousState?.state || 'INCIDENT_CANDIDATE';
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-sm space-y-4 animate-in fade-in slide-in-from-bottom-3 duration-300">
+    <div className="bg-slate-900 border border-slate-800/60 rounded-md p-4 space-y-3">
       {/* Panel Header */}
-      <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+      <div className="flex items-center justify-between border-b border-slate-800/60 pb-2.5">
         <div className="flex items-center gap-2">
-          <TrendingUp className="w-5 h-5 text-emerald-400" />
-          <h2 className="text-base font-semibold text-slate-100">State Delta — What Changed?</h2>
+          <TrendingUp className="w-4 h-4 text-emerald-400" />
+          <h2 className="text-xs font-mono uppercase tracking-wider text-slate-400 font-semibold">
+            STATE DELTA — WHAT CHANGED?
+          </h2>
         </div>
         {incidentId && (
           <button
             onClick={() => navigate(`/incidents/${incidentId}`)}
-            className="flex items-center gap-1.5 px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white rounded-md text-xs font-medium transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 px-2.5 py-1 bg-blue-600 hover:bg-blue-500 text-white rounded-md text-xs font-medium transition-colors cursor-pointer"
           >
             <span>View Incident {incidentId}</span>
             <ExternalLink className="w-3.5 h-3.5" />
@@ -56,22 +58,22 @@ export const WhatChanged: React.FC<WhatChangedProps> = ({ previousState, current
       </div>
 
       {/* Grid of Delta Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs font-mono">
         {/* Priority Score Delta */}
-        <div className="p-3.5 bg-slate-950/80 border border-slate-800 rounded-lg space-y-1.5">
-          <span className="text-slate-400 font-mono text-[10px] uppercase block">
+        <div className="p-3 bg-slate-950 border border-slate-800/80 rounded-md space-y-1">
+          <span className="text-slate-500 text-[10px] uppercase block">
             Investigation Priority
           </span>
           <div className="flex items-center gap-2">
-            <span className="font-mono font-bold text-slate-400 text-sm">{previousScore}</span>
+            <span className="font-bold text-slate-400 text-xs">{previousScore}</span>
             <ArrowRight className="w-3 h-3 text-slate-600" />
-            <span className="font-mono font-bold text-slate-100 text-lg">{currentScore}</span>
+            <span className="font-bold text-slate-100 text-base">{currentScore}</span>
             {scoreDelta !== 0 && (
               <span
-                className={`ml-auto font-mono text-[10px] font-bold px-1.5 py-0.5 rounded border ${
+                className={`ml-auto font-mono text-[10px] font-bold px-1.5 py-0.2 rounded border ${
                   scoreDelta > 0
-                    ? 'bg-red-500/10 text-red-400 border-red-500/30'
-                    : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
+                    ? 'bg-red-500/10 text-red-400 border-red-500/20'
+                    : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
                 }`}
               >
                 {scoreDelta > 0 ? `+${scoreDelta}` : scoreDelta}
@@ -81,11 +83,11 @@ export const WhatChanged: React.FC<WhatChangedProps> = ({ previousState, current
         </div>
 
         {/* Incident Status Delta */}
-        <div className="p-3.5 bg-slate-950/80 border border-slate-800 rounded-lg space-y-1.5">
-          <span className="text-slate-400 font-mono text-[10px] uppercase block">
+        <div className="p-3 bg-slate-950 border border-slate-800/80 rounded-md space-y-1">
+          <span className="text-slate-500 text-[10px] uppercase block">
             Incident State
           </span>
-          <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
+          <div className="flex items-center gap-1 flex-wrap pt-0.5">
             <StatusBadge status={previousStateLabel} size="sm" />
             <ArrowRight className="w-3 h-3 text-slate-600 shrink-0" />
             <StatusBadge status={currentStateLabel} size="sm" />
@@ -93,17 +95,17 @@ export const WhatChanged: React.FC<WhatChangedProps> = ({ previousState, current
         </div>
 
         {/* Event Count Delta */}
-        <div className="p-3.5 bg-slate-950/80 border border-slate-800 rounded-lg space-y-1.5">
-          <span className="text-slate-400 font-mono text-[10px] uppercase block">
-            Processed Telemetry Events
+        <div className="p-3 bg-slate-950 border border-slate-800/80 rounded-md space-y-1">
+          <span className="text-slate-500 text-[10px] uppercase block">
+            Telemetry Events
           </span>
           <div className="flex items-center gap-2">
-            <Layers className="w-4 h-4 text-blue-400 shrink-0" />
-            <span className="font-mono font-bold text-slate-100 text-base">
+            <Layers className="w-3.5 h-3.5 text-blue-400 shrink-0" />
+            <span className="font-bold text-slate-100 text-sm">
               {currentEventCount} events
             </span>
             {currentEventCount !== previousEventCount && (
-              <span className="ml-auto text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">
+              <span className="ml-auto text-[10px] text-emerald-400 bg-emerald-500/10 px-1.5 py-0.2 rounded border border-emerald-500/20">
                 +{currentEventCount - previousEventCount}
               </span>
             )}
@@ -111,13 +113,13 @@ export const WhatChanged: React.FC<WhatChangedProps> = ({ previousState, current
         </div>
 
         {/* Evidence Findings Count */}
-        <div className="p-3.5 bg-slate-950/80 border border-slate-800 rounded-lg space-y-1.5">
-          <span className="text-slate-400 font-mono text-[10px] uppercase block">
+        <div className="p-3 bg-slate-950 border border-slate-800/80 rounded-md space-y-1">
+          <span className="text-slate-500 text-[10px] uppercase block">
             Evidence Findings
           </span>
           <div className="flex items-center gap-2">
-            <FileText className="w-4 h-4 text-amber-400 shrink-0" />
-            <span className="font-mono font-bold text-slate-100 text-base">
+            <FileText className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+            <span className="font-bold text-slate-100 text-sm">
               {Math.min(currentEventCount, 4)} items
             </span>
           </div>
