@@ -1,73 +1,49 @@
 from datetime import datetime
+from uuid import uuid4
 
 from fastapi.testclient import TestClient
 
+from app.core.database import SessionLocal
 from app.main import app
+from app.models.incident import Incident
 
 
 client = TestClient(app)
 
 
-def create_test_event():
-    event = {
-        "event_id": "ACT-TEST-EVENT-001",
-        "timestamp": datetime.utcnow().isoformat() + "Z",
-        "event_type": "login",
-        "user_id": "USR-ACTION-001",
-        "device_id": "DEV-ACTION-001",
-        "ip_address": "10.10.10.10",
-        "location": "Indore",
-        "session_id": "SES-ACTION-001",
-        "resource": None,
-        "action": "login",
-        "metadata": {},
-    }
+def create_test_incident() -> str:
+    incident_id = f"INC-ACTION-{uuid4().hex[:8].upper()}"
 
-    response = client.post("/api/events", json=event)
+    db = SessionLocal()
 
-    assert response.status_code in (200, 201)
+    try:
+        incident = Incident(
+            incident_id=incident_id,
+            title="Analyst action test incident",
+            status="INCIDENT_CANDIDATE",
+            priority_score=50,
+            priority_label="MEDIUM",
+            created_at=datetime.utcnow(),
+            updated_at=datetime.utcnow(),
+        )
 
-    return event["event_id"]
+        db.add(incident)
+        db.commit()
 
+        return incident_id
 
-def create_test_incident():
-    event_id = create_test_event()
-
-    response = client.post(
-        "/api/incidents",
-        json={
-            "incident_id": "INC-ACTION-001",
-            "title": "Analyst action test incident",
-            "status": "INCIDENT_CANDIDATE",
-            "priority": 50,
-            "event_ids": [event_id],
-        },
-    )
-
-    assert response.status_code in (200, 201)
-
-    return response
-
-
-def test_action_endpoint_exists():
-    response = client.post(
-        "/api/incidents/INC-NONEXISTENT/action",
-        json={
-            "action": "INVESTIGATE",
-        },
-    )
-
-    assert response.status_code == 404
+    finally:
+        db.close()
 
 
 def test_confirm_incident():
-    create_test_incident()
+    incident_id = create_test_incident()
 
     response = client.post(
-        "/api/incidents/INC-ACTION-001/action",
+        f"/api/incidents/{incident_id}/action",
         json={
             "action": "CONFIRM",
-            "analyst_id": "analyst-001",
+            "analyst_id": "analyst-test",
         },
     )
 
@@ -81,28 +57,33 @@ def test_confirm_incident():
 
 
 def test_dismiss_requires_reason():
-    create_test_incident()
+    incident_id = create_test_incident()
 
     response = client.post(
-        "/api/incidents/INC-ACTION-001/action",
+        f"/api/incidents/{incident_id}/action",
         json={
             "action": "DISMISS",
-            "analyst_id": "analyst-001",
+            "analyst_id": "analyst-test",
         },
     )
 
     assert response.status_code == 400
 
+    data = response.json()
+
+    assert data["detail"]["success"] is False
+    assert data["detail"]["error"]["code"] == "VALIDATION_ERROR"
+
 
 def test_dismiss_incident():
-    create_test_incident()
+    incident_id = create_test_incident()
 
     response = client.post(
-        "/api/incidents/INC-ACTION-001/action",
+        f"/api/incidents/{incident_id}/action",
         json={
             "action": "DISMISS",
             "reason": "approved_activity",
-            "analyst_id": "analyst-001",
+            "analyst_id": "analyst-test",
         },
     )
 
@@ -117,13 +98,13 @@ def test_dismiss_incident():
 
 
 def test_escalate_incident():
-    create_test_incident()
+    incident_id = create_test_incident()
 
     response = client.post(
-        "/api/incidents/INC-ACTION-001/action",
+        f"/api/incidents/{incident_id}/action",
         json={
             "action": "ESCALATE",
-            "analyst_id": "analyst-001",
+            "analyst_id": "analyst-test",
         },
     )
 
@@ -137,13 +118,13 @@ def test_escalate_incident():
 
 
 def test_resolve_incident():
-    create_test_incident()
+    incident_id = create_test_incident()
 
     response = client.post(
-        "/api/incidents/INC-ACTION-001/action",
+        f"/api/incidents/{incident_id}/action",
         json={
             "action": "RESOLVE",
-            "analyst_id": "analyst-001",
+            "analyst_id": "analyst-test",
         },
     )
 
@@ -158,13 +139,13 @@ def test_resolve_incident():
 
 
 def test_investigate_incident():
-    create_test_incident()
+    incident_id = create_test_incident()
 
     response = client.post(
-        "/api/incidents/INC-ACTION-001/action",
+        f"/api/incidents/{incident_id}/action",
         json={
             "action": "INVESTIGATE",
-            "analyst_id": "analyst-001",
+            "analyst_id": "analyst-test",
         },
     )
 

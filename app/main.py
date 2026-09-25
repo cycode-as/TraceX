@@ -4,6 +4,7 @@ from app.api.analyst_actions import router as analyst_actions_router
 from app.api.events import router as events_router
 from app.api.incidents import router as incidents_router
 from app.api.simulation import router as simulation_router
+from app.api.explanations import router as explanations_router
 
 from app.core.database import Base, engine
 
@@ -31,6 +32,7 @@ app.include_router(events_router)
 app.include_router(incidents_router)
 app.include_router(simulation_router)
 app.include_router(analyst_actions_router)
+app.include_router(explanations_router)
 
 
 @app.get("/")
