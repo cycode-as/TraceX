@@ -2,6 +2,8 @@ from fastapi import FastAPI
 
 from app.api.events import router as events_router
 from app.api.incidents import router as incidents_router
+from app.api.simulation import router as simulation_router
+
 from app.core.database import Base, engine
 
 from app.models.event import Event
@@ -24,6 +26,7 @@ app = FastAPI(
 
 app.include_router(events_router)
 app.include_router(incidents_router)
+app.include_router(simulation_router)
 
 
 @app.get("/")
