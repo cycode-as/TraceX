@@ -1,10 +1,12 @@
 from .anomaly import detect_anomaly
 from .baseline import build_baseline
 from .correlation import correlate_events
+from .criticality import evaluate_resource_criticality
 from .entities import resolve_entities
 from .evidence import generate_evidence
 from .features import extract_features
 from .incident import decide_incident
+from .priority import calculate_priority
 from .schemas import (
     HistoricalContext,
     IntelligenceResult,
@@ -25,11 +27,12 @@ class IntelligencePipeline:
     Phase 6: Event correlation
     Phase 7: Incident decision
     Phase 8: Evidence generation
-
-    Future stages:
-
     Phase 9: Resource criticality
     Phase 10: Priority calculation
+
+    Future stage:
+
+    Phase 11: Full pipeline hardening/integration
     """
 
     def process(
@@ -106,6 +109,26 @@ class IntelligencePipeline:
         )
 
         # --------------------------------------------------
+        # Phase 9: Resource criticality
+        # --------------------------------------------------
+
+        criticality = evaluate_resource_criticality(
+            normalized_event
+        )
+
+        # --------------------------------------------------
+        # Phase 10: Priority calculation
+        # --------------------------------------------------
+
+        priority = calculate_priority(
+            anomaly=anomaly,
+            correlations=correlations,
+            incident=incident,
+            evidence=evidence,
+            criticality=criticality,
+        )
+
+        # --------------------------------------------------
         # Final intelligence result
         # --------------------------------------------------
 
@@ -115,6 +138,7 @@ class IntelligencePipeline:
             correlations=correlations,
             incident=incident,
             evidence=evidence,
+            priority=priority,
         )
 
 
