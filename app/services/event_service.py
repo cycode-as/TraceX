@@ -1,3 +1,4 @@
+from datetime import datetime
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -36,6 +37,10 @@ def get_events(
     user_id: str | None = None,
     device_id: str | None = None,
     event_type: str | None = None,
+    start_time: datetime | None = None,
+    end_time: datetime | None = None,
+    limit: int | None = None,
+    offset: int | None = None,
 ) -> list[Event]:
 
     statement = select(Event)
@@ -49,7 +54,19 @@ def get_events(
     if event_type:
         statement = statement.where(Event.event_type == event_type)
 
+    if start_time:
+        statement = statement.where(Event.timestamp >= start_time)
+
+    if end_time:
+        statement = statement.where(Event.timestamp <= end_time)
+
     statement = statement.order_by(Event.timestamp.desc())
+
+    if offset is not None:
+        statement = statement.offset(offset)
+
+    if limit is not None:
+        statement = statement.limit(limit)
 
     return list(db.scalars(statement).all())
 
@@ -60,6 +77,7 @@ def get_event(
 ) -> Event | None:
 
     return db.get(Event, event_id)
+
 
 def event_exists(
     db: Session,
