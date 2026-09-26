@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from datetime import datetime
 from typing import Any, Dict, Optional
 
 from .schemas import NormalizedEvent
@@ -7,16 +6,8 @@ from .schemas import NormalizedEvent
 
 @dataclass
 class EventFeatures:
-    """
-    Features extracted from a normalized security event.
-
-    These are intermediate intelligence signals.
-    They are not themselves an anomaly or an incident.
-    """
-
     event_id: str
     event_type: str
-
     hour: int
     day_of_week: int
 
@@ -28,7 +19,7 @@ class EventFeatures:
     has_resource: bool
 
     is_sensitive_resource: bool
-    transfer_size_bytes: float
+    transfer_size_bytes: int
 
     mfa_failure: bool
     privilege_change: bool
@@ -40,7 +31,13 @@ class EventFeatures:
 
 class FeatureExtractor:
     """
-    Converts NormalizedEvent into EventFeatures.
+    Extracts deterministic security features from a normalized event.
+
+    Metadata may contain explicit signals such as:
+        mfa_failure
+        new_device
+        new_location
+        privilege_change
     """
 
     SENSITIVE_RESOURCE_KEYWORDS = {
@@ -54,25 +51,24 @@ class FeatureExtractor:
         "credentials",
     }
 
-    def extract(self, event: NormalizedEvent) -> EventFeatures:
-        """
-        Extract deterministic features from one event.
-        """
+    TRANSFER_SIZE_KEYS = (
+        "transfer_size_bytes",
+        "transfer_size",
+        "bytes_transferred",
+    )
 
-        timestamp = event.timestamp
+    def extract(
+        self,
+        event: NormalizedEvent,
+    ) -> EventFeatures:
 
         metadata = event.metadata or {}
-
-        resource = (event.resource or "").lower()
-
-        transfer_size = self._extract_transfer_size(metadata)
 
         return EventFeatures(
             event_id=event.event_id,
             event_type=event.event_type,
-
-            hour=timestamp.hour,
-            day_of_week=timestamp.weekday(),
+            hour=event.timestamp.hour,
+            day_of_week=event.timestamp.weekday(),
 
             has_user=bool(event.user_id),
             has_device=bool(event.device_id),
@@ -81,62 +77,97 @@ class FeatureExtractor:
             has_session=bool(event.session_id),
             has_resource=bool(event.resource),
 
-            is_sensitive_resource=self._is_sensitive_resource(resource),
+            is_sensitive_resource=self._is_sensitive_resource(
+                event.resource
+            ),
 
-            transfer_size_bytes=transfer_size,
+            transfer_size_bytes=self._get_transfer_size(
+                metadata
+            ),
 
-            mfa_failure=event.event_type == "mfa_failure",
-            privilege_change=event.event_type == "privilege_change",
-            new_device=event.event_type == "new_device",
-            new_location=event.event_type == "new_location",
+            mfa_failure=self._get_bool(
+                metadata,
+                "mfa_failure",
+            ),
+
+            privilege_change=(
+                event.event_type == "privilege_change"
+                or self._get_bool(
+                    metadata,
+                    "privilege_change",
+                )
+            ),
+
+            new_device=self._get_bool(
+                metadata,
+                "new_device",
+            ),
+
+            new_location=self._get_bool(
+                metadata,
+                "new_location",
+            ),
 
             metadata=metadata,
         )
 
-    def _is_sensitive_resource(self, resource: str) -> bool:
-        if not resource:
-            return False
+    def _get_bool(
+        self,
+        metadata: Dict[str, Any],
+        key: str,
+    ) -> bool:
+        value = metadata.get(key, False)
 
-        return any(
-            keyword in resource
-            for keyword in self.SENSITIVE_RESOURCE_KEYWORDS
-        )
+        if isinstance(value, bool):
+            return value
 
-    def _extract_transfer_size(self, metadata: Dict[str, Any]) -> float:
-        """
-        Extract transfer size from event metadata.
+        if isinstance(value, str):
+            return value.strip().lower() in {
+                "true",
+                "1",
+                "yes",
+                "y",
+            }
 
-        Supports:
-            transfer_size
-            transfer_size_bytes
-            bytes_transferred
-        """
+        if isinstance(value, (int, float)):
+            return value != 0
 
-        possible_keys = (
-            "transfer_size_bytes",
-            "transfer_size",
-            "bytes_transferred",
-        )
+        return False
 
-        for key in possible_keys:
+    def _get_transfer_size(
+        self,
+        metadata: Dict[str, Any],
+    ) -> int:
+        for key in self.TRANSFER_SIZE_KEYS:
             value = metadata.get(key)
 
             if value is None:
                 continue
 
             try:
-                return float(value)
+                return max(0, int(value))
             except (TypeError, ValueError):
-                return 0.0
+                return 0
 
-        return 0.0
+        return 0
+
+    def _is_sensitive_resource(
+        self,
+        resource: Optional[str],
+    ) -> bool:
+        if not resource:
+            return False
+
+        normalized = resource.strip().lower()
+
+        return any(
+            keyword in normalized
+            for keyword in self.SENSITIVE_RESOURCE_KEYWORDS
+        )
 
 
-def extract_features(event: NormalizedEvent) -> EventFeatures:
-    """
-    Convenience function for feature extraction.
-    """
-
+def extract_features(
+    event: NormalizedEvent,
+) -> EventFeatures:
     extractor = FeatureExtractor()
-
     return extractor.extract(event)

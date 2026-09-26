@@ -34,14 +34,8 @@ class IncidentDecisionEngine:
         correlations: List[CorrelationResult],
         context: HistoricalContext,
     ) -> IncidentResult:
-        """
-        Decide whether the current activity should create,
-        update, or leave an incident unchanged.
-        """
 
-        # If Backend already supplied an existing incident,
-        # suspicious activity should update that incident
-        # rather than create a duplicate.
+        # Existing incidents are handled first.
         if context.existing_incident:
             return self._existing_incident_decision(
                 event=event,
@@ -49,13 +43,14 @@ class IncidentDecisionEngine:
                 correlations=correlations,
             )
 
-        # An event that is not anomalous does not create
-        # an incident candidate.
+        # No anomaly means no incident candidate.
         if not anomaly.is_anomaly:
             return IncidentResult(
                 action="NO_INCIDENT",
                 status=None,
-                reason="No significant behavioral anomaly detected.",
+                reason=(
+                    "No significant behavioral anomaly detected."
+                ),
                 event_ids=[],
             )
 
@@ -65,18 +60,22 @@ class IncidentDecisionEngine:
             if correlation.strength >= self.CORRELATION_THRESHOLD
         ]
 
-        # A strong anomaly can independently justify
-        # creating an incident candidate.
+        # A strong anomaly is independently sufficient to
+        # create an incident candidate.
         if anomaly.score >= self.STRONG_ANOMALY_THRESHOLD:
             return IncidentResult(
                 action="CREATE",
                 status="INCIDENT_CANDIDATE",
-                reason="Strong behavioral anomaly detected.",
-                event_ids=[event.event_id],
+                reason=(
+                    "Strong behavioral anomaly detected."
+                ),
+                event_ids=self._collect_event_ids(
+                    event=event,
+                    correlations=strong_correlations,
+                ),
             )
 
-        # A moderate anomaly supported by meaningful
-        # correlation should become an incident candidate.
+        # A moderate anomaly requires supporting correlation.
         if (
             anomaly.score >= self.ANOMALY_THRESHOLD
             and strong_correlations
@@ -94,6 +93,8 @@ class IncidentDecisionEngine:
                 ),
             )
 
+        # Anomaly exists, but evidence is not sufficient
+        # for an incident candidate.
         return IncidentResult(
             action="NO_INCIDENT",
             status=None,
@@ -110,10 +111,6 @@ class IncidentDecisionEngine:
         anomaly: AnomalyResult,
         correlations: List[CorrelationResult],
     ) -> IncidentResult:
-        """
-        Decide whether suspicious activity should update
-        an existing incident.
-        """
 
         strong_correlation = any(
             correlation.strength >= self.CORRELATION_THRESHOLD
@@ -149,15 +146,13 @@ class IncidentDecisionEngine:
         event: NormalizedEvent,
         correlations: List[CorrelationResult],
     ) -> List[str]:
-        """
-        Collect unique event IDs belonging to the
-        current incident candidate.
-        """
 
         event_ids = {event.event_id}
 
         for correlation in correlations:
-            event_ids.update(correlation.event_ids)
+            event_ids.update(
+                correlation.event_ids
+            )
 
         return sorted(event_ids)
 
@@ -168,9 +163,6 @@ def decide_incident(
     correlations: List[CorrelationResult],
     context: HistoricalContext,
 ) -> IncidentResult:
-    """
-    Convenience function for incident decision.
-    """
 
     engine = IncidentDecisionEngine()
 

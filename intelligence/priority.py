@@ -21,7 +21,6 @@ class PriorityCalculator:
 
     MAX_SCORE = 100.0
 
-    # Contract factor weights.
     BEHAVIORAL_ANOMALY_WEIGHT = 0.30
     CORRELATION_WEIGHT = 0.20
     ASSET_CRITICALITY_WEIGHT = 0.20
@@ -36,28 +35,45 @@ class PriorityCalculator:
         evidence: List[EvidenceResult],
         criticality: ResourceCriticality,
     ) -> PriorityResult:
-        """
-        Calculate investigation priority from explainable factors.
-        """
 
-        behavioral_anomaly = self._behavioral_anomaly_score(
-            anomaly
+        # No active incident candidate means there is no
+        # investigation priority to calculate.
+        if incident.action in {
+            "NO_INCIDENT",
+            "NO_CHANGE",
+        }:
+            return PriorityResult(
+                score=0.0,
+                label="LOW",
+                factors={
+                    "behavioral_anomaly": 0.0,
+                    "correlation_strength": 0.0,
+                    "asset_criticality": 0.0,
+                    "incident_progression": 0.0,
+                    "evidence_strength": 0.0,
+                },
+            )
+
+        behavioral_anomaly = (
+            self._behavioral_anomaly_score(anomaly)
         )
 
-        correlation_strength = self._correlation_score(
-            correlations
+        correlation_strength = (
+            self._correlation_score(correlations)
         )
 
         asset_criticality = (
-            criticality.score * 100
+            self._clamp(
+                criticality.score * 100
+            )
         )
 
-        incident_progression = self._progression_score(
-            correlations
+        incident_progression = (
+            self._progression_score(correlations)
         )
 
-        evidence_strength = self._evidence_score(
-            evidence
+        evidence_strength = (
+            self._evidence_score(evidence)
         )
 
         factors: Dict[str, float] = {
@@ -93,24 +109,9 @@ class PriorityCalculator:
             self.MAX_SCORE,
         )
 
-        label = self._label(score)
-
-        # If there is no incident, priority should remain zero.
-        if incident.action in {
-            "NO_INCIDENT",
-            "NO_CHANGE",
-        }:
-            score = 0.0
-            label = "LOW"
-
-            factors = {
-                factor: 0.0
-                for factor in factors
-            }
-
         return PriorityResult(
             score=round(score, 2),
-            label=label,
+            label=self._label(score),
             factors=factors,
         )
 
@@ -118,10 +119,6 @@ class PriorityCalculator:
         self,
         anomaly: AnomalyResult,
     ) -> float:
-        """
-        Convert anomaly score 0-1 into 0-100.
-        """
-
         return self._clamp(
             anomaly.score * 100
         )
@@ -130,9 +127,6 @@ class PriorityCalculator:
         self,
         correlations: List[CorrelationResult],
     ) -> float:
-        """
-        Use the strongest meaningful correlation.
-        """
 
         if not correlations:
             return 0.0
@@ -150,13 +144,6 @@ class PriorityCalculator:
         self,
         correlations: List[CorrelationResult],
     ) -> float:
-        """
-        Estimate progression from the amount and strength
-        of correlated activity.
-
-        This is intentionally bounded so a large event history
-        cannot overwhelm the priority score.
-        """
 
         if not correlations:
             return 0.0
@@ -170,9 +157,6 @@ class PriorityCalculator:
         if not strong_correlations:
             return 0.0
 
-        # One strong correlation = 50.
-        # Two or more strong correlations = 75.
-        # Three or more = 100.
         count = len(strong_correlations)
 
         if count == 1:
@@ -187,33 +171,10 @@ class PriorityCalculator:
         self,
         evidence: List[EvidenceResult],
     ) -> float:
-        """
-        Score evidence strength based on evidence categories.
-
-        Supporting/anomaly/correlation/progression evidence
-        contributes to the investigation priority.
-        """
 
         if not evidence:
             return 0.0
 
-        type_weights = {
-            "SUPPORTING": 1.0,
-            "CORRELATION": 0.9,
-            "PROGRESSION": 1.0,
-            "ANOMALY": 0.8,
-            "MITIGATING": -0.5,
-        }
-
-        total = 0.0
-
-        for item in evidence:
-            total += type_weights.get(
-                item.type,
-                0.5,
-            )
-
-        # Normalize based on useful evidence count.
         useful_evidence = sum(
             1
             for item in evidence
@@ -223,8 +184,6 @@ class PriorityCalculator:
         if useful_evidence == 0:
             return 0.0
 
-        # 5 meaningful evidence items are enough to
-        # reach maximum evidence strength.
         return self._clamp(
             useful_evidence / 5 * 100
         )
@@ -233,9 +192,6 @@ class PriorityCalculator:
         self,
         score: float,
     ) -> str:
-        """
-        Convert a 0-100 score into the contract labels.
-        """
 
         if score >= 80:
             return "CRITICAL"
@@ -265,9 +221,6 @@ def calculate_priority(
     evidence: List[EvidenceResult],
     criticality: ResourceCriticality,
 ) -> PriorityResult:
-    """
-    Convenience function for priority calculation.
-    """
 
     calculator = PriorityCalculator()
 
