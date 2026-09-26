@@ -18,21 +18,23 @@ class IntelligencePipeline:
     """
     Main TraceX Intelligence entry point.
 
-    Current pipeline stages:
+    Pipeline:
+        1. Feature extraction
+        2. Behavioral baseline
+        3. Anomaly detection
+        4. Entity resolution
+        5. Event correlation
+        6. Incident decision
+        7. Evidence generation
+        8. Resource criticality
+        9. Priority calculation
 
-    Phase 2: Feature extraction
-    Phase 3: Behavioral baseline
-    Phase 4: Anomaly detection
-    Phase 5: Entity resolution
-    Phase 6: Event correlation
-    Phase 7: Incident decision
-    Phase 8: Evidence generation
-    Phase 9: Resource criticality
-    Phase 10: Priority calculation
+    Intelligence is deterministic and produces structured data.
 
-    Future stage:
-
-    Phase 11: Full pipeline hardening/integration
+    This pipeline does NOT:
+    - write to the database
+    - mutate backend incident state
+    - calculate attack probability
     """
 
     def process(
@@ -41,55 +43,37 @@ class IntelligencePipeline:
         historical_context: HistoricalContext,
     ) -> IntelligenceResult:
 
-        # --------------------------------------------------
         # Phase 2: Feature extraction
-        # --------------------------------------------------
-
         features = extract_features(
             normalized_event
         )
 
-        # --------------------------------------------------
         # Phase 3: Behavioral baseline
-        # --------------------------------------------------
-
         baseline = build_baseline(
             event=normalized_event,
             features=features,
             context=historical_context,
         )
 
-        # --------------------------------------------------
         # Phase 4: Anomaly detection
-        # --------------------------------------------------
-
         anomaly = detect_anomaly(
             event=normalized_event,
             features=features,
             baseline=baseline,
         )
 
-        # --------------------------------------------------
         # Phase 5: Entity resolution
-        # --------------------------------------------------
-
         entities = resolve_entities(
-            normalized_event,
+            normalized_event
         )
 
-        # --------------------------------------------------
         # Phase 6: Event correlation
-        # --------------------------------------------------
-
         correlations = correlate_events(
             event=normalized_event,
             context=historical_context,
         )
 
-        # --------------------------------------------------
         # Phase 7: Incident decision
-        # --------------------------------------------------
-
         incident = decide_incident(
             event=normalized_event,
             anomaly=anomaly,
@@ -97,10 +81,7 @@ class IntelligencePipeline:
             context=historical_context,
         )
 
-        # --------------------------------------------------
         # Phase 8: Evidence generation
-        # --------------------------------------------------
-
         evidence = generate_evidence(
             event=normalized_event,
             anomaly=anomaly,
@@ -108,18 +89,12 @@ class IntelligencePipeline:
             incident=incident,
         )
 
-        # --------------------------------------------------
         # Phase 9: Resource criticality
-        # --------------------------------------------------
-
         criticality = evaluate_resource_criticality(
             normalized_event
         )
 
-        # --------------------------------------------------
-        # Phase 10: Priority calculation
-        # --------------------------------------------------
-
+        # Phase 10: Investigation priority
         priority = calculate_priority(
             anomaly=anomaly,
             correlations=correlations,
@@ -127,10 +102,6 @@ class IntelligencePipeline:
             evidence=evidence,
             criticality=criticality,
         )
-
-        # --------------------------------------------------
-        # Final intelligence result
-        # --------------------------------------------------
 
         return IntelligenceResult(
             anomalies=[anomaly],
@@ -144,15 +115,19 @@ class IntelligencePipeline:
 
 def process_event(
     normalized_event: NormalizedEvent,
-    historical_context: HistoricalContext,
+    historical_context: HistoricalContext | None = None,
 ) -> IntelligenceResult:
     """
-    Convenience function for processing one normalized event.
+    Convenience entry point for backend integration.
+
+    Historical context is optional. When omitted, the event
+    is processed without historical behavioral context.
     """
 
     pipeline = IntelligencePipeline()
 
     return pipeline.process(
-        normalized_event,
-        historical_context,
+        normalized_event=normalized_event,
+        historical_context=historical_context
+        or HistoricalContext(),
     )
