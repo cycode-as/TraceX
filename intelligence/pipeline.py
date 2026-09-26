@@ -1,3 +1,4 @@
+from .anomaly import detect_anomaly
 from .baseline import build_baseline
 from .features import extract_features
 from .schemas import (
@@ -18,25 +19,26 @@ class IntelligencePipeline:
         historical_context: HistoricalContext,
     ) -> IntelligenceResult:
 
-        # Phase 2:
-        # Convert raw normalized event into deterministic features.
+        # Phase 2: feature extraction
         features = extract_features(normalized_event)
 
-        # Phase 3:
-        # Build behavioral baseline from historical context.
+        # Phase 3: behavioral baseline
         baseline = build_baseline(
             event=normalized_event,
             features=features,
             context=historical_context,
         )
 
-        # Phase 4 will consume:
-        #   features
-        #   baseline
-        #
-        # and produce anomaly results.
+        # Phase 4: anomaly detection
+        anomaly = detect_anomaly(
+            event=normalized_event,
+            features=features,
+            baseline=baseline,
+        )
 
-        return IntelligenceResult()
+        return IntelligenceResult(
+            anomalies=[anomaly],
+        )
 
 
 def process_event(
