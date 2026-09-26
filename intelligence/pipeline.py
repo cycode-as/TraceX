@@ -1,5 +1,6 @@
 from .anomaly import detect_anomaly
 from .baseline import build_baseline
+from .correlation import correlate_events
 from .entities import resolve_entities
 from .features import extract_features
 from .schemas import (
@@ -20,29 +21,38 @@ class IntelligencePipeline:
         historical_context: HistoricalContext,
     ) -> IntelligenceResult:
 
-        # Phase 2
+        # Phase 2: Feature extraction
         features = extract_features(normalized_event)
 
-        # Phase 3
+        # Phase 3: Behavioral baseline
         baseline = build_baseline(
             event=normalized_event,
             features=features,
             context=historical_context,
         )
 
-        # Phase 4
+        # Phase 4: Anomaly detection
         anomaly = detect_anomaly(
             event=normalized_event,
             features=features,
             baseline=baseline,
         )
 
-        # Phase 5
-        entities = resolve_entities(normalized_event)
+        # Phase 5: Entity resolution
+        entities = resolve_entities(
+            normalized_event,
+        )
+
+        # Phase 6: Event correlation
+        correlations = correlate_events(
+            event=normalized_event,
+            context=historical_context,
+        )
 
         return IntelligenceResult(
             anomalies=[anomaly],
             entities=entities,
+            correlations=correlations,
         )
 
 
