@@ -29,9 +29,17 @@ class HistoricalContext(BaseModel):
     Historical information supplied by Backend to Intelligence.
     """
 
-    user_events: List[NormalizedEvent] = Field(default_factory=list)
-    device_events: List[NormalizedEvent] = Field(default_factory=list)
-    related_events: List[NormalizedEvent] = Field(default_factory=list)
+    user_events: List[NormalizedEvent] = Field(
+        default_factory=list
+    )
+
+    device_events: List[NormalizedEvent] = Field(
+        default_factory=list
+    )
+
+    related_events: List[NormalizedEvent] = Field(
+        default_factory=list
+    )
 
     existing_incident: Optional[Dict[str, Any]] = None
 
@@ -71,15 +79,20 @@ class CorrelationResult(BaseModel):
 class IncidentResult(BaseModel):
     """
     Intelligence decision about incident creation/update.
+
+    The intelligence layer produces this result.
+    Backend remains the source of truth for actual incident state.
     """
 
     action: str
     status: Optional[str] = None
+    reason: Optional[str] = None
+    event_ids: List[str] = Field(default_factory=list)
 
 
 class EvidenceResult(BaseModel):
     """
-    Evidence produced from TraceX events and Intelligence reasoning.
+    Evidence produced from TraceX events and intelligence reasoning.
     """
 
     evidence_id: str
@@ -92,6 +105,8 @@ class EvidenceResult(BaseModel):
 class PriorityResult(BaseModel):
     """
     Investigation priority.
+
+    Priority is NOT attack probability.
     """
 
     score: float
@@ -104,12 +119,22 @@ class IntelligenceResult(BaseModel):
     Complete output of the Intelligence pipeline.
     """
 
-    anomalies: List[AnomalyResult] = Field(default_factory=list)
-    entities: List[EntityResult] = Field(default_factory=list)
-    correlations: List[CorrelationResult] = Field(default_factory=list)
+    anomalies: List[AnomalyResult] = Field(
+        default_factory=list
+    )
+
+    entities: List[EntityResult] = Field(
+        default_factory=list
+    )
+
+    correlations: List[CorrelationResult] = Field(
+        default_factory=list
+    )
 
     incident: Optional[IncidentResult] = None
 
-    evidence: List[EvidenceResult] = Field(default_factory=list)
+    evidence: List[EvidenceResult] = Field(
+        default_factory=list
+    )
 
     priority: Optional[PriorityResult] = None
