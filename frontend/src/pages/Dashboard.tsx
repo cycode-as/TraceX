@@ -38,34 +38,21 @@ export const Dashboard: React.FC = () => {
   const isLoading = isIncidentsLoading || isEventsLoading;
 
   return (
-    <div className="p-4 sm:p-6 space-y-5 max-w-7xl mx-auto font-sans" style={{ color: '#E6EAF2' }}>
+    <div className="p-4 sm:p-6 space-y-5 max-w-7xl mx-auto font-body-md text-on-surface">
       {/* ── Page Header ── */}
-      <div
-        className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4"
-        style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.07)' }}
-      >
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-outline-variant">
         <div>
           <div className="flex items-center gap-2.5">
-            <h1 className="text-xl font-bold tracking-tight text-white font-heading">
+            <h1 className="font-headline-lg text-on-surface">
               SOC Incident Intelligence
             </h1>
             {/* Live badge */}
-            <div
-              className="flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-mono font-semibold"
-              style={{
-                background:  'rgba(16, 185, 129, 0.1)',
-                border:      '1px solid rgba(16, 185, 129, 0.3)',
-                color:       '#34D399',
-              }}
-            >
-              <span
-                className="inline-flex rounded-full h-1.5 w-1.5 animate-pulse"
-                style={{ background: '#34D399' }}
-              />
+            <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-sm font-label-sm bg-secondary-container/20 text-secondary border border-secondary/40">
+              <span className="inline-flex rounded-full h-1.5 w-1.5 bg-secondary animate-pulse" />
               REAL-TIME PIPELINE
             </div>
           </div>
-          <p className="text-xs mt-1 font-body" style={{ color: '#9AA4B2' }}>
+          <p className="font-body-sm text-on-surface-variant mt-1">
             Automated entity resolution, behavioral anomaly clustering, and dynamic investigation priority.
           </p>
         </div>
@@ -74,24 +61,10 @@ export const Dashboard: React.FC = () => {
         <button
           onClick={handleManualRefresh}
           disabled={isLoading}
-          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono font-semibold rounded-lg border transition-all duration-200 disabled:opacity-50 cursor-pointer self-start sm:self-auto"
-          style={{
-            background:   '#121821',
-            borderColor:  'rgba(255, 255, 255, 0.08)',
-            color:        '#E6EAF2',
-          }}
-          onMouseEnter={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(59, 130, 246, 0.4)';
-            (e.currentTarget as HTMLButtonElement).style.color       = '#60A5FA';
-          }}
-          onMouseLeave={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(255, 255, 255, 0.08)';
-            (e.currentTarget as HTMLButtonElement).style.color       = '#E6EAF2';
-          }}
+          className="btn-ghost flex items-center gap-1.5 font-code-sm"
         >
           <RefreshCw
-            className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`}
-            style={{ color: isLoading ? '#60A5FA' : 'inherit' }}
+            className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin text-primary' : ''}`}
           />
           Refetch Data
         </button>

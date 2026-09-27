@@ -10,57 +10,32 @@ import {
 } from 'lucide-react';
 
 const navItems = [
-  { name: 'Dashboard',         path: '/',           icon: LayoutDashboard },
-  { name: 'Incidents Queue',   path: '/incidents',  icon: AlertTriangle },
-  { name: 'Telemetry Events',  path: '/events',     icon: Activity },
-  { name: 'Simulation Mode',   path: '/simulation', icon: PlaySquare },
-  { name: 'Audit Logs',        path: '/audit',      icon: FileText },
+  { name: 'Dashboard',        path: '/',           icon: LayoutDashboard },
+  { name: 'Incidents Queue',  path: '/incidents',  icon: AlertTriangle   },
+  { name: 'Telemetry Events', path: '/events',     icon: Activity        },
+  { name: 'Simulation Mode',  path: '/simulation', icon: PlaySquare      },
+  { name: 'Audit Logs',       path: '/audit',      icon: FileText        },
 ];
 
 export const Sidebar: React.FC = () => {
   return (
     <aside
-      className="w-56 flex flex-col h-screen sticky top-0 shrink-0 font-mono"
-      style={{
-        backgroundColor: '#121821',
-        borderRight: '1px solid rgba(255, 255, 255, 0.07)',
-      }}
+      className="w-56 flex flex-col h-screen sticky top-0 shrink-0 font-code-sm bg-surface-container-lowest border-r border-outline-variant"
     >
       {/* ── Brand Header ── */}
       <Link
         to="/"
-        className="h-14 flex items-center px-4 gap-3 transition-all duration-200 group"
-        style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.07)' }}
+        className="h-14 flex items-center px-4 gap-3 border-b border-outline-variant"
       >
-        {/* Icon with Electric Blue glow */}
-        <div
-          className="p-1.5 rounded-lg flex items-center justify-center transition-all duration-300 group-hover:scale-105"
-          style={{
-            background: 'rgba(59, 130, 246, 0.15)',
-            border: '1px solid rgba(59, 130, 246, 0.4)',
-            boxShadow: '0 0 14px rgba(59, 130, 246, 0.25)',
-          }}
-        >
-          <Shield className="w-4 h-4" style={{ color: '#3B82F6' }} />
+        <div className="p-1.5 rounded-md flex items-center justify-center bg-surface-container-high border border-outline-variant">
+          <Shield className="w-4 h-4 text-primary" />
         </div>
 
-        {/* Brand text */}
         <div className="flex flex-col">
-          <span
-            className="font-bold tracking-widest text-sm leading-none font-heading"
-            style={{
-              background: 'linear-gradient(to right, #3B82F6, #60A5FA)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-            }}
-          >
+          <span className="font-headline-sm text-primary tracking-wider leading-none">
             TraceX
           </span>
-          <span
-            className="text-[9px] tracking-wider mt-1 font-mono"
-            style={{ color: '#9AA4B2' }}
-          >
+          <span className="font-label-sm text-on-surface-variant mt-1">
             SOC DASHBOARD
           </span>
         </div>
@@ -76,41 +51,23 @@ export const Sidebar: React.FC = () => {
               to={item.path}
               end={item.path === '/'}
               className={({ isActive }) =>
-                `flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold transition-all duration-200 ${
-                  isActive ? 'active-nav' : 'inactive-nav'
+                `flex items-center gap-2.5 px-3 py-2 rounded-md font-body-sm transition-colors ${
+                  isActive
+                    ? 'bg-surface-container-high border border-outline text-primary font-semibold'
+                    : 'text-on-surface-variant border border-transparent hover:bg-surface-container-low hover:text-on-surface'
                 }`
-              }
-              style={({ isActive }) =>
-                isActive
-                  ? {
-                      background: '#1A2230',
-                      border: '1px solid rgba(59, 130, 246, 0.5)',
-                      color: '#60A5FA',
-                      boxShadow: '0 0 12px rgba(59, 130, 246, 0.15)',
-                    }
-                  : {
-                      background: 'transparent',
-                      border: '1px solid transparent',
-                      color: '#9AA4B2',
-                    }
               }
             >
               {({ isActive }) => (
                 <>
                   <Icon
-                    className="w-4 h-4 shrink-0 transition-colors duration-200"
-                    style={{ color: isActive ? '#3B82F6' : '#9AA4B2' }}
+                    className={`w-4 h-4 shrink-0 ${
+                      isActive ? 'text-primary' : 'text-on-surface-variant'
+                    }`}
                   />
                   <span>{item.name}</span>
-                  {/* Active indicator bar */}
                   {isActive && (
-                    <span
-                      className="ml-auto w-1 h-4 rounded-full"
-                      style={{
-                        background: '#3B82F6',
-                        boxShadow: '0 0 8px rgba(59, 130, 246, 0.6)',
-                      }}
-                    />
+                    <span className="ml-auto w-1 h-3 rounded-sm bg-primary" />
                   )}
                 </>
               )}
@@ -120,30 +77,17 @@ export const Sidebar: React.FC = () => {
       </nav>
 
       {/* ── Footer Status ── */}
-      <div
-        className="p-3 text-[10px] font-mono"
-        style={{ borderTop: '1px solid rgba(255, 255, 255, 0.07)' }}
-      >
-        {/* Engine Status */}
+      <div className="p-3 font-code-sm border-t border-outline-variant text-on-surface-variant space-y-1">
         <div className="flex justify-between items-center">
-          <span style={{ color: '#9AA4B2' }}>Engine Status:</span>
-          <span className="flex items-center gap-1.5 font-bold" style={{ color: '#10B981' }}>
-            <span
-              className="w-1.5 h-1.5 rounded-full animate-pulse"
-              style={{ background: '#10B981', boxShadow: '0 0 6px #10B981' }}
-            />
+          <span>Engine Status:</span>
+          <span className="flex items-center gap-1.5 font-semibold text-secondary">
+            <span className="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse" />
             ONLINE
           </span>
         </div>
-        <div className="mt-1" style={{ color: 'rgba(154, 164, 178, 0.5)' }}>
+        <div className="text-[10px] text-on-surface-variant opacity-75">
           FastAPI backend @ :8000
         </div>
-
-        {/* Thin Electric Blue accent line at bottom */}
-        <div
-          className="mt-3 h-px rounded-full"
-          style={{ background: 'linear-gradient(to right, rgba(37,99,235,0.6), rgba(59,130,246,0.3), transparent)' }}
-        />
       </div>
     </aside>
   );

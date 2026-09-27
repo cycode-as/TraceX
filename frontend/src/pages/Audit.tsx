@@ -72,7 +72,6 @@ export const Audit: React.FC = () => {
     };
   }, []);
 
-  // Categorize an audit log entry
   const getCategory = (log: AuditLogEntry): AuditFilterCategory => {
     const act = log.action.toUpperCase();
     if (
@@ -96,38 +95,30 @@ export const Audit: React.FC = () => {
     return 'PIPELINE';
   };
 
-  // Compute category counts for KPI cards and filter tabs
   const stats = useMemo(() => {
-    let analystCount = 0;
-    let stateCount = 0;
-    let pipelineCount = 0;
+    const total = logs.length;
+    let analyst = 0;
+    let state = 0;
+    let pipeline = 0;
 
-    logs.forEach((log) => {
-      const cat = getCategory(log);
-      if (cat === 'ANALYST') analystCount++;
-      else if (cat === 'STATE') stateCount++;
-      else pipelineCount++;
+    logs.forEach((l) => {
+      const cat = getCategory(l);
+      if (cat === 'ANALYST') analyst++;
+      else if (cat === 'STATE') state++;
+      else pipeline++;
     });
 
-    return {
-      total: logs.length,
-      analyst: analystCount,
-      state: stateCount,
-      pipeline: pipelineCount,
-    };
+    return { total, analyst, state, pipeline };
   }, [logs]);
 
-  // Filtered logs
   const filteredLogs = useMemo(() => {
     return logs.filter((log) => {
-      // Category filter
       if (selectedCategory !== 'ALL') {
         if (getCategory(log) !== selectedCategory) {
           return false;
         }
       }
 
-      // Search query filter (matches action, entity ID / description, timestamp, actor)
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase().trim();
         const matchAction = log.action.toLowerCase().includes(q);
@@ -155,79 +146,41 @@ export const Audit: React.FC = () => {
     }
   };
 
-  const getActionBadge = (action: string) => {
+  const getActionBadgeStyle = (action: string) => {
     const act = action.toUpperCase();
     if (act.includes('RESOLV')) {
-      return {
-        bg: 'rgba(16, 185, 129, 0.12)',
-        border: 'rgba(16, 185, 129, 0.35)',
-        color: '#10B981',
-        label: action,
-      };
+      return 'bg-secondary-container/20 text-secondary border-secondary/40';
     }
     if (act.includes('DISMISS')) {
-      return {
-        bg: 'rgba(245, 158, 11, 0.12)',
-        border: 'rgba(245, 158, 11, 0.35)',
-        color: '#F59E0B',
-        label: action,
-      };
+      return 'bg-surface-container-high text-on-surface-variant border-outline-variant';
     }
     if (act.includes('STATUS') || act.includes('STATE') || act.includes('PRIORITY')) {
-      return {
-        bg: 'rgba(139, 92, 246, 0.12)',
-        border: 'rgba(139, 92, 246, 0.35)',
-        color: '#A78BFA',
-        label: action,
-      };
+      return 'bg-tertiary-container/20 text-tertiary border-tertiary/40';
     }
     if (act.includes('ANALYST') || act.includes('INVESTIGAT') || act.includes('CONFIRM') || act.includes('ESCALAT')) {
-      return {
-        bg: 'rgba(59, 130, 246, 0.12)',
-        border: 'rgba(59, 130, 246, 0.35)',
-        color: '#60A5FA',
-        label: action,
-      };
+      return 'bg-primary-container/20 text-primary border-primary/40';
     }
-    return {
-      bg: 'rgba(6, 182, 212, 0.12)',
-      border: 'rgba(6, 182, 212, 0.35)',
-      color: '#22D3EE',
-      label: action,
-    };
+    return 'bg-primary-container/20 text-primary border-primary/40';
   };
 
   return (
-    <div
-      className="p-5 sm:p-6 space-y-6 max-w-7xl mx-auto min-h-screen font-sans"
-      style={{ color: '#E6EAF2' }}
-    >
+    <div className="p-5 sm:p-6 space-y-6 max-w-7xl mx-auto min-h-screen font-body-md text-on-surface">
       {/* ── Top Header ── */}
-      <div
-        className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5"
-        style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.07)' }}
-      >
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-outline-variant">
         <div className="space-y-1">
           <div className="flex items-center gap-3">
-            <span
-              className="text-[11px] font-mono uppercase tracking-widest px-2 py-0.5 rounded"
-              style={{
-                background: 'rgba(59, 130, 246, 0.1)',
-                border: '1px solid rgba(59, 130, 246, 0.25)',
-                color: '#60A5FA',
-              }}
-            >
+            <span className="font-label-sm px-2 py-0.5 rounded-sm bg-primary-container/20 text-primary border border-primary/40">
               SOC AUDIT TRAIL
             </span>
-            <div className="flex items-center gap-1.5 text-xs font-mono" style={{ color: '#9AA4B2' }}>
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <div className="flex items-center gap-1.5 font-code-sm text-on-surface-variant">
+              <span className="w-2 h-2 rounded-full bg-secondary animate-pulse" />
               <span>Audit Logging Active</span>
             </div>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white font-heading">
+          <h1 className="font-headline-lg text-on-surface">
             System Audit Logs
           </h1>
-          <p className="text-xs sm:text-sm max-w-3xl" style={{ color: '#9AA4B2' }}>
+          <p className="font-body-sm text-on-surface-variant max-w-3xl">
             Comprehensive activity and operations log capturing analyst triage verdicts, automated status transitions, anomaly correlations, and pipeline trigger telemetry.
           </p>
         </div>
@@ -235,139 +188,85 @@ export const Audit: React.FC = () => {
         <button
           onClick={fetchAuditData}
           disabled={loading}
-          className="flex items-center gap-2 px-4 py-2 text-xs font-mono font-semibold rounded-lg text-white transition-all duration-200 disabled:opacity-50 cursor-pointer self-start md:self-center shadow-lg"
-          style={{
-            background: '#3B82F6',
-            boxShadow: '0 0 24px rgba(59, 130, 246, 0.35)',
-            border: '1px solid rgba(59, 130, 246, 0.5)',
-          }}
-          onMouseEnter={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.background = '#2563EB';
-          }}
-          onMouseLeave={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.background = '#3B82F6';
-          }}
+          className="btn-primary self-start md:self-center font-code-sm"
         >
           <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
           <span>{loading ? 'Refreshing...' : 'Refresh Records'}</span>
         </button>
       </div>
 
-      {/* ── KPI Summary Cards (Electric Blue SOC Hierarchy) ── */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 font-mono">
+      {/* ── KPI Summary Cards ── */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 font-code-sm">
         {/* Total Records */}
-        <div
-          className="p-4 rounded-xl space-y-2 transition-all duration-200"
-          style={{
-            background: '#121821',
-            border: '1px solid rgba(255, 255, 255, 0.06)',
-            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.4)',
-          }}
-        >
+        <div className="p-4 rounded-md space-y-2 bg-surface-container border border-outline-variant">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: '#9AA4B2' }}>
+            <span className="font-label-sm text-on-surface-variant">
               Total Log Entries
             </span>
-            <FileText className="w-4 h-4" style={{ color: '#3B82F6' }} />
+            <FileText className="w-4 h-4 text-primary" />
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-2xl sm:text-3xl font-black text-white font-mono">{stats.total}</span>
-            <span className="text-[10px]" style={{ color: '#6B7785' }}>RECORDS</span>
+            <span className="text-2xl sm:text-3xl font-extrabold text-on-surface">{stats.total}</span>
+            <span className="font-code-sm text-on-surface-variant">RECORDS</span>
           </div>
         </div>
 
         {/* Analyst Actions */}
-        <div
-          className="p-4 rounded-xl space-y-2 transition-all duration-200"
-          style={{
-            background: '#121821',
-            border: '1px solid rgba(255, 255, 255, 0.06)',
-            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.4)',
-          }}
-        >
+        <div className="p-4 rounded-md space-y-2 bg-surface-container border border-outline-variant">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: '#9AA4B2' }}>
+            <span className="font-label-sm text-on-surface-variant">
               Analyst Actions
             </span>
-            <UserCheck className="w-4 h-4" style={{ color: '#10B981' }} />
+            <UserCheck className="w-4 h-4 text-secondary" />
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-2xl sm:text-3xl font-black text-white font-mono">{stats.analyst}</span>
-            <span className="text-[10px]" style={{ color: '#10B981' }}>TRIAGE EVENTS</span>
+            <span className="text-2xl sm:text-3xl font-extrabold text-on-surface">{stats.analyst}</span>
+            <span className="font-code-sm text-secondary">TRIAGE EVENTS</span>
           </div>
         </div>
 
         {/* State Transitions */}
-        <div
-          className="p-4 rounded-xl space-y-2 transition-all duration-200"
-          style={{
-            background: '#121821',
-            border: '1px solid rgba(255, 255, 255, 0.06)',
-            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.4)',
-          }}
-        >
+        <div className="p-4 rounded-md space-y-2 bg-surface-container border border-outline-variant">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: '#9AA4B2' }}>
+            <span className="font-label-sm text-on-surface-variant">
               State & Priority
             </span>
-            <ShieldAlert className="w-4 h-4" style={{ color: '#A78BFA' }} />
+            <ShieldAlert className="w-4 h-4 text-tertiary" />
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-2xl sm:text-3xl font-black text-white font-mono">{stats.state}</span>
-            <span className="text-[10px]" style={{ color: '#A78BFA' }}>MUTATIONS</span>
+            <span className="text-2xl sm:text-3xl font-extrabold text-on-surface">{stats.state}</span>
+            <span className="font-code-sm text-tertiary">MUTATIONS</span>
           </div>
         </div>
 
         {/* Pipeline & Telemetry */}
-        <div
-          className="p-4 rounded-xl space-y-2 transition-all duration-200"
-          style={{
-            background: '#121821',
-            border: '1px solid rgba(255, 255, 255, 0.06)',
-            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.4)',
-          }}
-        >
+        <div className="p-4 rounded-md space-y-2 bg-surface-container border border-outline-variant">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: '#9AA4B2' }}>
+            <span className="font-label-sm text-on-surface-variant">
               Pipeline Telemetry
             </span>
-            <Activity className="w-4 h-4" style={{ color: '#06B6D4' }} />
+            <Activity className="w-4 h-4 text-primary" />
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-2xl sm:text-3xl font-black text-white font-mono">{stats.pipeline}</span>
-            <span className="text-[10px]" style={{ color: '#06B6D4' }}>NORMALIZED</span>
+            <span className="text-2xl sm:text-3xl font-extrabold text-on-surface">{stats.pipeline}</span>
+            <span className="font-code-sm text-primary">NORMALIZED</span>
           </div>
         </div>
       </div>
 
       {/* ── Error Banner ── */}
       {error && (
-        <div
-          className="rounded-xl p-4 flex items-center justify-between gap-4 text-xs font-mono"
-          style={{
-            background: 'rgba(239, 68, 68, 0.08)',
-            border: '1px solid rgba(239, 68, 68, 0.35)',
-            boxShadow: '0 0 20px rgba(239, 68, 68, 0.15)',
-            color: '#F87171',
-          }}
-        >
+        <div className="rounded-md p-4 flex items-center justify-between gap-4 font-code-sm bg-error-container/20 border border-error/40 text-error">
           <div className="flex items-center gap-2.5">
             <AlertCircle className="w-5 h-5 shrink-0" />
             <div>
               <p className="font-semibold text-sm">Failed to synchronize audit records</p>
-              <p className="text-[11px] mt-0.5" style={{ color: 'rgba(248, 113, 113, 0.8)' }}>
-                {error}
-              </p>
+              <p className="text-[11px] text-error/80 mt-0.5">{error}</p>
             </div>
           </div>
           <button
             onClick={fetchAuditData}
-            className="px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer transition-all duration-200"
-            style={{
-              background: 'rgba(239, 68, 68, 0.2)',
-              border: '1px solid rgba(239, 68, 68, 0.4)',
-              color: '#FEE2E2',
-            }}
+            className="px-3 py-1.5 rounded-sm font-code-sm bg-error-container text-on-error-container border border-error cursor-pointer"
           >
             Retry Connection
           </button>
@@ -375,13 +274,7 @@ export const Audit: React.FC = () => {
       )}
 
       {/* ── Filter & Search Toolbar ── */}
-      <div
-        className="flex flex-col md:flex-row md:items-center justify-between gap-3.5 p-3 rounded-xl font-mono"
-        style={{
-          background: '#121821',
-          border: '1px solid rgba(255, 255, 255, 0.06)',
-        }}
-      >
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3.5 p-3 rounded-md font-code-sm bg-surface-container border border-outline-variant">
         {/* Category Tabs */}
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0">
           {(
@@ -397,30 +290,19 @@ export const Audit: React.FC = () => {
               <button
                 key={tab.id}
                 onClick={() => setSelectedCategory(tab.id)}
-                className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium cursor-pointer whitespace-nowrap transition-all duration-200"
-                style={
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-sm text-xs font-semibold cursor-pointer whitespace-nowrap transition-colors ${
                   isActive
-                    ? {
-                        background: '#1A2230',
-                        border: '1px solid rgba(59, 130, 246, 0.5)',
-                        color: '#60A5FA',
-                        boxShadow: '0 0 12px rgba(59, 130, 246, 0.15)',
-                      }
-                    : {
-                        background: 'transparent',
-                        border: '1px solid transparent',
-                        color: '#9AA4B2',
-                      }
-                }
+                    ? 'bg-surface-container-high border border-primary text-primary'
+                    : 'bg-transparent border border-transparent text-on-surface-variant hover:text-on-surface'
+                }`}
               >
                 <span>{tab.label}</span>
                 <span
-                  className="px-1.5 py-0.2 rounded text-[10px] font-bold"
-                  style={
+                  className={`px-1.5 py-0.2 rounded-sm text-[10px] font-bold ${
                     isActive
-                      ? { background: 'rgba(59, 130, 246, 0.25)', color: '#93C5FD' }
-                      : { background: '#0B0F14', color: '#6B7785', border: '1px solid rgba(255,255,255,0.05)' }
-                  }
+                      ? 'bg-primary-container/30 text-primary'
+                      : 'bg-surface-container-lowest border border-outline-variant text-on-surface-variant'
+                  }`}
                 >
                   {tab.count}
                 </span>
@@ -429,38 +311,20 @@ export const Audit: React.FC = () => {
           })}
         </div>
 
-        {/* Search Input with Electric Blue Focus State */}
+        {/* Search Input */}
         <div className="relative w-full md:w-80">
-          <Search
-            className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2"
-            style={{ color: '#6B7785' }}
-          />
+          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search action, entity ID, description..."
-            className="w-full pl-9 pr-8 py-1.5 text-xs rounded-lg font-mono transition-all duration-200"
-            style={{
-              background: '#0B0F14',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
-              color: '#E6EAF2',
-              outline: 'none',
-            }}
-            onFocus={(e) => {
-              (e.currentTarget as HTMLInputElement).style.borderColor = '#3B82F6';
-              (e.currentTarget as HTMLInputElement).style.boxShadow = '0 0 16px rgba(59, 130, 246, 0.25)';
-            }}
-            onBlur={(e) => {
-              (e.currentTarget as HTMLInputElement).style.borderColor = 'rgba(255, 255, 255, 0.08)';
-              (e.currentTarget as HTMLInputElement).style.boxShadow = 'none';
-            }}
+            className="w-full pl-9 pr-8 py-1.5 font-code-sm rounded-sm bg-surface-container-lowest border border-outline-variant text-on-surface focus:border-primary focus:outline-none"
           />
           {searchQuery && (
             <button
               onClick={() => setSearchQuery('')}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 cursor-pointer transition-colors duration-200"
-              style={{ color: '#9AA4B2' }}
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface cursor-pointer"
             >
               <X className="w-3.5 h-3.5" />
             </button>
@@ -469,32 +333,24 @@ export const Audit: React.FC = () => {
       </div>
 
       {/* ── Main Audit Table Console ── */}
-      <div
-        className="rounded-xl overflow-hidden font-mono"
-        style={{
-          background: '#121821',
-          border: '1px solid rgba(255, 255, 255, 0.06)',
-          boxShadow: '0 4px 24px rgba(0, 0, 0, 0.5)',
-        }}
-      >
+      <div className="rounded-md overflow-hidden font-code-sm bg-surface-container border border-outline-variant">
         {loading ? (
           <div className="p-6 space-y-3">
             {[1, 2, 3, 4, 5, 6].map((n) => (
               <div
                 key={n}
-                className="h-12 rounded-lg animate-pulse"
-                style={{ background: '#1A2230' }}
+                className="h-12 rounded-sm bg-surface-container-high animate-pulse"
               />
             ))}
           </div>
         ) : filteredLogs.length === 0 ? (
-          <div className="py-16 text-center space-y-3 px-4 font-mono">
-            <Filter className="w-12 h-12 mx-auto" style={{ color: '#6B7785' }} />
+          <div className="py-16 text-center space-y-3 px-4 font-code-sm">
+            <Filter className="w-12 h-12 mx-auto text-on-surface-variant" />
             <div>
-              <h3 className="text-base font-semibold text-white font-heading">
+              <h3 className="font-headline-sm text-on-surface">
                 No matching audit log records
               </h3>
-              <p className="text-xs mt-1 max-w-sm mx-auto" style={{ color: '#9AA4B2' }}>
+              <p className="font-body-sm text-on-surface-variant mt-1 max-w-sm mx-auto">
                 No events match current filter category or query term "{searchQuery}".
               </p>
             </div>
@@ -504,12 +360,7 @@ export const Audit: React.FC = () => {
                   setSearchQuery('');
                   setSelectedCategory('ALL');
                 }}
-                className="mt-2 px-3.5 py-1.5 text-xs font-semibold rounded-lg border cursor-pointer transition-all duration-200"
-                style={{
-                  background: 'rgba(59, 130, 246, 0.1)',
-                  border: '1px solid rgba(59, 130, 246, 0.3)',
-                  color: '#60A5FA',
-                }}
+                className="btn-ghost mt-2"
               >
                 Clear all filters
               </button>
@@ -519,107 +370,62 @@ export const Audit: React.FC = () => {
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead>
-                <tr
-                  className="text-[11px] uppercase tracking-wider font-mono font-semibold"
-                  style={{
-                    background: '#0B0F14',
-                    borderBottom: '1px solid rgba(255, 255, 255, 0.07)',
-                    color: '#9AA4B2',
-                  }}
-                >
-                  <th className="py-3 px-4 w-48">Timestamp</th>
-                  <th className="py-3 px-4 w-52">Action / Event</th>
-                  <th className="py-3 px-4 w-40">Actor / Origin</th>
-                  <th className="py-3 px-4">Log Description / Context</th>
-                  <th className="py-3 px-4 w-28 text-right">Status</th>
+                <tr className="font-label-sm bg-surface-container-lowest border-b border-outline-variant text-on-surface-variant">
+                  <th className="py-3 px-4 w-48 font-semibold">Timestamp</th>
+                  <th className="py-3 px-4 w-52 font-semibold">Action / Event</th>
+                  <th className="py-3 px-4 w-40 font-semibold">Actor / Origin</th>
+                  <th className="py-3 px-4 font-semibold">Log Description / Context</th>
+                  <th className="py-3 px-4 w-28 text-right font-semibold">Status</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredLogs.map((log, idx) => {
-                  const badge = getActionBadge(log.action);
+                  const badgeStyle = getActionBadgeStyle(log.action);
                   const isAnalyst = getCategory(log) === 'ANALYST';
 
                   return (
                     <tr
                       key={idx}
-                      className="transition-all duration-150 group"
-                      style={{
-                        borderBottom: '1px solid rgba(255, 255, 255, 0.04)',
-                        background: 'transparent',
-                      }}
-                      onMouseEnter={(e) => {
-                        (e.currentTarget as HTMLTableRowElement).style.background = 'rgba(59, 130, 246, 0.04)';
-                      }}
-                      onMouseLeave={(e) => {
-                        (e.currentTarget as HTMLTableRowElement).style.background = 'transparent';
-                      }}
+                      className="hover:bg-surface-container-high/60 transition-colors border-b border-outline-variant/40 font-code-sm"
                     >
                       {/* Timestamp */}
-                      <td className="py-3 px-4 whitespace-nowrap" style={{ color: '#9AA4B2' }}>
-                        <div className="flex items-center gap-1.5 font-mono text-[11px]">
-                          <Clock className="w-3.5 h-3.5" style={{ color: '#6B7785' }} />
+                      <td className="py-3 px-4 whitespace-nowrap text-on-surface-variant">
+                        <div className="flex items-center gap-1.5 font-code-sm">
+                          <Clock className="w-3.5 h-3.5 text-on-surface-variant" />
                           <span>{formatTimestamp(log.timestamp)}</span>
                         </div>
                       </td>
 
                       {/* Action Badge */}
                       <td className="py-3 px-4 whitespace-nowrap">
-                        <span
-                          className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold border tracking-wide font-mono"
-                          style={{
-                            background: badge.bg,
-                            borderColor: badge.border,
-                            color: badge.color,
-                          }}
-                        >
-                          {badge.label}
+                        <span className={`inline-flex items-center px-2 py-0.5 rounded-sm font-code-sm font-bold border tracking-wide ${badgeStyle}`}>
+                          {log.action}
                         </span>
                       </td>
 
                       {/* Actor / Origin */}
                       <td className="py-3 px-4 whitespace-nowrap">
                         {isAnalyst ? (
-                          <span
-                            className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-medium"
-                            style={{
-                              background: '#1A2230',
-                              border: '1px solid rgba(16, 185, 129, 0.25)',
-                              color: '#6EE7B7',
-                            }}
-                          >
-                            <User className="w-3 h-3 text-emerald-400" />
+                          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-sm font-code-sm bg-secondary-container/20 text-secondary border border-secondary/40">
+                            <User className="w-3 h-3 text-secondary" />
                             <span>ANALYST</span>
                           </span>
                         ) : (
-                          <span
-                            className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-medium"
-                            style={{
-                              background: '#1A2230',
-                              border: '1px solid rgba(59, 130, 246, 0.25)',
-                              color: '#93C5FD',
-                            }}
-                          >
-                            <Terminal className="w-3 h-3 text-blue-400" />
+                          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-sm font-code-sm bg-primary-container/20 text-primary border border-primary/40">
+                            <Terminal className="w-3 h-3 text-primary" />
                             <span>SYSTEM ENGINE</span>
                           </span>
                         )}
                       </td>
 
                       {/* Description */}
-                      <td className="py-3 px-4 font-sans text-xs leading-relaxed" style={{ color: '#E6EAF2' }}>
-                        <span className="font-mono text-xs">{log.description}</span>
+                      <td className="py-3 px-4 font-body-sm text-on-surface leading-relaxed">
+                        <span className="font-code-sm">{log.description}</span>
                       </td>
 
                       {/* Log Status */}
                       <td className="py-3 px-4 text-right whitespace-nowrap">
-                        <span
-                          className="inline-flex items-center gap-1 text-[10px] font-bold font-mono px-1.5 py-0.5 rounded"
-                          style={{
-                            color: '#34D399',
-                            background: 'rgba(16, 185, 129, 0.08)',
-                            border: '1px solid rgba(16, 185, 129, 0.2)',
-                          }}
-                        >
+                        <span className="inline-flex items-center gap-1 font-label-sm px-1.5 py-0.5 rounded-sm text-secondary bg-secondary-container/20 border border-secondary/40">
                           <CheckCircle2 className="w-3 h-3" />
                           RECORDED
                         </span>
@@ -633,20 +439,13 @@ export const Audit: React.FC = () => {
         )}
 
         {/* Footer Summary */}
-        <div
-          className="p-3 flex items-center justify-between text-xs font-mono"
-          style={{
-            background: '#0B0F14',
-            borderTop: '1px solid rgba(255, 255, 255, 0.07)',
-            color: '#9AA4B2',
-          }}
-        >
+        <div className="p-3 flex items-center justify-between font-code-sm bg-surface-container-lowest border-t border-outline-variant text-on-surface-variant">
           <span>
-            Showing <strong className="text-white">{filteredLogs.length}</strong> of{' '}
-            <strong className="text-white">{logs.length}</strong> total records
+            Showing <strong className="text-on-surface">{filteredLogs.length}</strong> of{' '}
+            <strong className="text-on-surface">{logs.length}</strong> total records
           </span>
-          <div className="flex items-center gap-2 text-[11px]" style={{ color: '#6B7785' }}>
-            <Cpu className="w-3.5 h-3.5 text-blue-400" />
+          <div className="flex items-center gap-2 font-code-sm text-on-surface-variant">
+            <Cpu className="w-3.5 h-3.5 text-primary" />
             <span>TraceX Autonomous Security Correlation Engine v2.4</span>
           </div>
         </div>

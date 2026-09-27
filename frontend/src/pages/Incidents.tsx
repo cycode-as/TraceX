@@ -46,7 +46,6 @@ function formatRelativeTime(dateString: string): string {
   }
 }
 
-// Extract entity / primary user ID from incident title or fallback
 function extractEntity(incident: Incident): string {
   const match = incident.title.match(/USR-\d+/i);
   if (match) return match[0].toUpperCase();
@@ -60,7 +59,6 @@ export const Incidents: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Filters & Sorting state
   const [activeTab, setActiveTab] = useState<FilterTab>('All');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [sortField, setSortField] = useState<SortField>('priority');
@@ -111,7 +109,6 @@ export const Incidents: React.FC = () => {
     };
   }, []);
 
-  // Compute tab counts
   const tabCounts = useMemo(() => {
     return {
       All: incidents.length,
@@ -123,11 +120,9 @@ export const Incidents: React.FC = () => {
     };
   }, [incidents]);
 
-  // Filtered and Sorted Incidents
   const filteredIncidents = useMemo(() => {
     return incidents
       .filter((inc) => {
-        // Tab Filtering
         if (activeTab === 'High' && !(inc.status === 'HIGH_PRIORITY' || inc.priority >= 70)) {
           return false;
         }
@@ -144,7 +139,6 @@ export const Incidents: React.FC = () => {
           return false;
         }
 
-        // Search Query Filtering
         if (searchQuery.trim()) {
           const q = searchQuery.toLowerCase().trim();
           const matchesId = inc.incident_id.toLowerCase().includes(q);
@@ -178,53 +172,46 @@ export const Incidents: React.FC = () => {
   };
 
   const getPriorityPill = (score: number) => {
-    const s =
-      score >= 70
-        ? { color: '#F87171', bg: 'rgba(239,68,68,0.1)', border: 'rgba(239,68,68,0.25)', bar: '#EF4444' }
-        : score >= 40
-        ? { color: '#FCD34D', bg: 'rgba(245,158,11,0.1)', border: 'rgba(245,158,11,0.25)', bar: '#F59E0B' }
-        : { color: '#60A5FA', bg: 'rgba(59,130,246,0.1)', border: 'rgba(59,130,246,0.2)', bar: '#3B82F6' };
+    const isCritical = score >= 70;
+    const isWarning = score >= 40;
 
     return (
       <div className="flex items-center gap-2">
         <span
-          className="px-1.5 py-0.5 rounded text-[11px] font-mono font-bold border"
-          style={{ color: s.color, background: s.bg, borderColor: s.border }}
+          className={`px-1.5 py-0.5 rounded-sm font-code-sm font-bold border ${
+            isCritical
+              ? 'bg-error-container/20 text-error border-error/40'
+              : isWarning
+              ? 'bg-secondary-container/20 text-secondary border-secondary/40'
+              : 'bg-primary-container/20 text-primary border-primary/40'
+          }`}
         >
           {score}
         </span>
-        <div
-          className="w-12 h-1 rounded-full overflow-hidden hidden sm:block"
-          style={{ background: 'rgba(30, 41, 59, 0.8)' }}
-        >
-          <div className="h-full rounded-full" style={{ width: `${Math.min(100, score)}%`, background: s.bar }} />
+        <div className="w-12 h-1 rounded-sm bg-surface-container-highest overflow-hidden hidden sm:block">
+          <div
+            className={`h-full rounded-sm ${
+              isCritical ? 'bg-error' : isWarning ? 'bg-secondary' : 'bg-primary'
+            }`}
+            style={{ width: `${Math.min(100, score)}%` }}
+          />
         </div>
       </div>
     );
   };
 
   return (
-    <div className="p-5 space-y-5 max-w-7xl mx-auto font-sans" style={{ color: '#E6EAF2' }}>
+    <div className="p-5 space-y-5 max-w-7xl mx-auto font-body-md text-on-surface">
       {/* ── Page Header ── */}
-      <div
-        className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4"
-        style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.07)' }}
-      >
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-outline-variant">
         <div>
           <div className="flex items-center gap-2.5">
-            <h1 className="text-xl font-bold tracking-tight text-white font-heading">Incidents</h1>
-            <span
-              className="text-[11px] font-mono px-2 py-0.5 rounded-full font-bold"
-              style={{
-                background:  'rgba(59, 130, 246, 0.12)',
-                border:      '1px solid rgba(59, 130, 246, 0.3)',
-                color:       '#60A5FA',
-              }}
-            >
+            <h1 className="font-headline-lg text-on-surface">Incidents</h1>
+            <span className="font-label-sm px-2 py-0.5 rounded-sm bg-primary-container/20 text-primary border border-primary/40">
               {incidents.length} Total
             </span>
           </div>
-          <p className="text-xs mt-1 font-body" style={{ color: '#9AA4B2' }}>
+          <p className="font-body-sm text-on-surface-variant mt-1">
             Security incident queue, threat triage, and active response management.
           </p>
         </div>
@@ -232,39 +219,26 @@ export const Incidents: React.FC = () => {
         <button
           onClick={fetchIncidentsData}
           disabled={loading}
-          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono font-semibold rounded-lg border transition-all duration-200 disabled:opacity-50 cursor-pointer self-start sm:self-auto"
-          style={{ background: '#121821', borderColor: 'rgba(255, 255, 255, 0.08)', color: '#E6EAF2' }}
-          onMouseEnter={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(59, 130, 246, 0.4)';
-            (e.currentTarget as HTMLButtonElement).style.color = '#60A5FA';
-          }}
-          onMouseLeave={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(255, 255, 255, 0.08)';
-            (e.currentTarget as HTMLButtonElement).style.color = '#E6EAF2';
-          }}
+          className="btn-ghost flex items-center gap-1.5 font-code-sm"
         >
-          <RefreshCw className={`w-3 h-3 ${loading ? 'animate-spin' : ''}`} style={{ color: loading ? '#60A5FA' : 'inherit' }} />
+          <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-primary' : ''}`} />
           Refresh
         </button>
       </div>
 
       {/* ── Error Banner ── */}
       {error && (
-        <div
-          className="rounded-xl p-3 flex items-center justify-between gap-4 text-xs font-mono"
-          style={{ background: 'rgba(239, 68, 68, 0.08)', border: '1px solid rgba(239, 68, 68, 0.3)', color: '#F87171' }}
-        >
+        <div className="rounded-md p-3 flex items-center justify-between gap-4 font-code-sm bg-error-container/20 border border-error/40 text-error">
           <div className="flex items-center gap-2">
             <AlertCircle className="w-4 h-4 shrink-0" />
             <div>
               <p className="font-semibold">Unable to fetch incidents queue</p>
-              <p className="text-[11px] mt-0.5" style={{ color: 'rgba(248, 113, 113, 0.8)' }}>{error}</p>
+              <p className="text-[11px] mt-0.5 text-error/80">{error}</p>
             </div>
           </div>
           <button
             onClick={fetchIncidentsData}
-            className="px-2.5 py-1 rounded-lg text-xs font-semibold cursor-pointer transition-all duration-200"
-            style={{ background: 'rgba(239, 68, 68, 0.2)', border: '1px solid rgba(239, 68, 68, 0.4)', color: '#FEE2E2' }}
+            className="px-2.5 py-1 rounded-sm font-code-sm bg-error-container text-on-error-container border border-error cursor-pointer"
           >
             Retry
           </button>
@@ -272,10 +246,7 @@ export const Incidents: React.FC = () => {
       )}
 
       {/* ── Control Bar: Tabs + Search ── */}
-      <div
-        className="flex flex-col md:flex-row md:items-center justify-between gap-3 p-2.5 rounded-xl font-mono"
-        style={{ background: '#121821', border: '1px solid rgba(255, 255, 255, 0.07)' }}
-      >
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 p-2.5 rounded-md font-code-sm bg-surface-container border border-outline-variant">
         {/* Filter Tabs */}
         <div className="flex items-center gap-1 overflow-x-auto pb-1 md:pb-0">
           {(['All', 'High', 'Investigating', 'Unresolved'] as FilterTab[]).map((tab) => {
@@ -285,30 +256,19 @@ export const Incidents: React.FC = () => {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium cursor-pointer whitespace-nowrap transition-all duration-200"
-                style={
+                className={`flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-xs font-semibold cursor-pointer whitespace-nowrap transition-colors ${
                   isActive
-                    ? {
-                        background:  '#1A2230',
-                        border:      '1px solid rgba(59, 130, 246, 0.5)',
-                        color:       '#60A5FA',
-                        boxShadow:   '0 0 12px rgba(59, 130, 246, 0.15)',
-                      }
-                    : {
-                        background:  'transparent',
-                        border:      '1px solid transparent',
-                        color:       '#9AA4B2',
-                      }
-                }
+                    ? 'bg-surface-container-high border border-primary text-primary'
+                    : 'bg-transparent border border-transparent text-on-surface-variant hover:text-on-surface'
+                }`}
               >
                 <span>{tab}</span>
                 <span
-                  className="px-1.5 py-0.5 rounded text-[10px] font-bold"
-                  style={
+                  className={`px-1.5 py-0.5 rounded-sm text-[10px] font-bold ${
                     isActive
-                      ? { background: 'rgba(59, 130, 246, 0.25)', color: '#93C5FD' }
-                      : { background: '#0B0F14', border: '1px solid rgba(255, 255, 255, 0.05)', color: '#6B7785' }
-                  }
+                      ? 'bg-primary-container/30 text-primary'
+                      : 'bg-surface-container-lowest border border-outline-variant text-on-surface-variant'
+                  }`}
                 >
                   {count}
                 </span>
@@ -319,33 +279,18 @@ export const Incidents: React.FC = () => {
 
         {/* Search Input */}
         <div className="relative w-full md:w-72">
-          <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2" style={{ color: '#6B7785' }} />
+          <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Filter by ID, title, status..."
-            className="w-full pl-8 pr-7 py-1.5 text-xs rounded-lg font-mono transition-all duration-200"
-            style={{
-              background:   '#0B0F14',
-              border:       '1px solid rgba(255, 255, 255, 0.08)',
-              color:        '#E6EAF2',
-              outline:      'none',
-            }}
-            onFocus={(e) => {
-              (e.currentTarget as HTMLInputElement).style.borderColor = '#3B82F6';
-              (e.currentTarget as HTMLInputElement).style.boxShadow   = '0 0 16px rgba(59, 130, 246, 0.25)';
-            }}
-            onBlur={(e) => {
-              (e.currentTarget as HTMLInputElement).style.borderColor = 'rgba(255, 255, 255, 0.08)';
-              (e.currentTarget as HTMLInputElement).style.boxShadow   = 'none';
-            }}
+            className="w-full pl-8 pr-7 py-1.5 font-code-sm rounded-sm bg-surface-container-lowest border border-outline-variant text-on-surface focus:border-primary focus:outline-none"
           />
           {searchQuery && (
             <button
               onClick={() => setSearchQuery('')}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 cursor-pointer transition-colors duration-200"
-              style={{ color: '#9AA4B2' }}
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface cursor-pointer"
             >
               <X className="w-3 h-3" />
             </button>
@@ -354,38 +299,29 @@ export const Incidents: React.FC = () => {
       </div>
 
       {/* ── Main Table Panel ── */}
-      <div
-        className="rounded-xl overflow-hidden font-mono"
-        style={{ background: '#121821', border: '1px solid rgba(255, 255, 255, 0.07)', boxShadow: '0 4px 24px rgba(0, 0, 0, 0.4)' }}
-      >
+      <div className="rounded-md overflow-hidden font-code-sm bg-surface-container border border-outline-variant">
         {loading ? (
           <div className="p-4 space-y-2">
             {[1, 2, 3, 4, 5].map((n) => (
               <div
                 key={n}
-                className="h-10 rounded-lg animate-pulse"
-                style={{ background: '#1A2230' }}
+                className="h-10 rounded-sm bg-surface-container-high animate-pulse"
               />
             ))}
           </div>
         ) : filteredIncidents.length === 0 ? (
-          <div className="py-12 text-center space-y-2 px-4 font-mono">
-            <Filter className="w-10 h-10 mx-auto" style={{ color: '#6B7785' }} />
+          <div className="py-12 text-center space-y-2 px-4 font-code-sm">
+            <Filter className="w-10 h-10 mx-auto text-on-surface-variant" />
             <div>
-              <h3 className="text-sm font-medium text-white font-heading">No incidents match active filters</h3>
-              <p className="text-xs mt-0.5 max-w-sm mx-auto" style={{ color: '#9AA4B2' }}>
+              <h3 className="font-headline-sm text-on-surface">No incidents match active filters</h3>
+              <p className="font-body-sm text-on-surface-variant mt-0.5 max-w-sm mx-auto">
                 Reset search query or filter tab.
               </p>
             </div>
             {(searchQuery || activeTab !== 'All') && (
               <button
                 onClick={() => { setSearchQuery(''); setActiveTab('All'); }}
-                className="mt-2 px-3 py-1.5 text-xs font-semibold rounded-lg border cursor-pointer transition-all duration-200"
-                style={{
-                  background:  'rgba(59, 130, 246, 0.1)',
-                  border:      '1px solid rgba(59, 130, 246, 0.3)',
-                  color:       '#60A5FA',
-                }}
+                className="btn-ghost mt-2"
               >
                 Clear all filters
               </button>
@@ -395,50 +331,39 @@ export const Incidents: React.FC = () => {
           <div className="overflow-x-auto">
             <table className="w-full text-left text-[13px]">
               <thead>
-                <tr
-                  className="font-mono text-[11px] uppercase tracking-wider font-semibold"
-                  style={{
-                    background:   '#0B0F14',
-                    borderBottom: '1px solid rgba(255, 255, 255, 0.07)',
-                    color:        '#9AA4B2',
-                  }}
-                >
+                <tr className="font-label-sm bg-surface-container-lowest border-b border-outline-variant text-on-surface-variant">
                   <th className="py-2.5 px-3.5 font-semibold">Incident ID</th>
                   <th className="py-2.5 px-3.5 font-semibold">Title</th>
                   <th className="py-2.5 px-3.5 font-semibold">Status</th>
                   <th
-                    className="py-2.5 px-3.5 font-semibold cursor-pointer select-none transition-colors duration-200"
+                    className="py-2.5 px-3.5 font-semibold cursor-pointer select-none hover:text-primary transition-colors"
                     onClick={() => toggleSort('priority')}
-                    onMouseEnter={(e) => { (e.currentTarget as HTMLTableCellElement).style.color = '#60A5FA'; }}
-                    onMouseLeave={(e) => { (e.currentTarget as HTMLTableCellElement).style.color = '#9AA4B2'; }}
                   >
                     <div className="flex items-center gap-1">
                       <span>Priority</span>
                       {sortField === 'priority' ? (
                         sortDirection === 'desc'
-                          ? <ArrowDown className="w-3 h-3 text-blue-400" />
-                          : <ArrowUp className="w-3 h-3 text-blue-400" />
+                          ? <ArrowDown className="w-3 h-3 text-primary" />
+                          : <ArrowUp className="w-3 h-3 text-primary" />
                       ) : (
-                        <ArrowUpDown className="w-3 h-3" style={{ color: '#6B7785' }} />
+                        <ArrowUpDown className="w-3 h-3 text-on-surface-variant" />
                       )}
                     </div>
                   </th>
                   <th className="py-2.5 px-3.5 font-semibold">Entity</th>
                   <th className="py-2.5 px-3.5 font-semibold text-center">Events</th>
                   <th
-                    className="py-2.5 px-3.5 font-semibold cursor-pointer select-none transition-colors duration-200 text-right"
+                    className="py-2.5 px-3.5 font-semibold cursor-pointer select-none hover:text-primary transition-colors text-right"
                     onClick={() => toggleSort('updated_at')}
-                    onMouseEnter={(e) => { (e.currentTarget as HTMLTableCellElement).style.color = '#60A5FA'; }}
-                    onMouseLeave={(e) => { (e.currentTarget as HTMLTableCellElement).style.color = '#9AA4B2'; }}
                   >
                     <div className="flex items-center justify-end gap-1">
                       <span>Updated</span>
                       {sortField === 'updated_at' ? (
                         sortDirection === 'desc'
-                          ? <ArrowDown className="w-3 h-3 text-blue-400" />
-                          : <ArrowUp className="w-3 h-3 text-blue-400" />
+                          ? <ArrowDown className="w-3 h-3 text-primary" />
+                          : <ArrowUp className="w-3 h-3 text-primary" />
                       ) : (
-                        <ArrowUpDown className="w-3 h-3" style={{ color: '#6B7785' }} />
+                        <ArrowUpDown className="w-3 h-3 text-on-surface-variant" />
                       )}
                     </div>
                   </th>
@@ -451,18 +376,12 @@ export const Incidents: React.FC = () => {
                     <tr
                       key={inc.incident_id}
                       onClick={() => navigate(`/incidents/${inc.incident_id}`)}
-                      className="cursor-pointer group transition-all duration-200 font-mono"
-                      style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.04)' }}
-                      onMouseEnter={(e) => { (e.currentTarget as HTMLTableRowElement).style.background = 'rgba(59, 130, 246, 0.04)'; }}
-                      onMouseLeave={(e) => { (e.currentTarget as HTMLTableRowElement).style.background = 'transparent'; }}
+                      className="cursor-pointer group hover:bg-surface-container-high/60 transition-colors border-b border-outline-variant/40"
                     >
-                      <td
-                        className="py-2.5 px-3.5 font-mono font-semibold transition-colors group-hover:underline"
-                        style={{ color: '#60A5FA' }}
-                      >
+                      <td className="py-2.5 px-3.5 font-code-sm font-semibold text-primary group-hover:underline">
                         {inc.incident_id}
                       </td>
-                      <td className="py-2.5 px-3.5 font-medium max-w-sm truncate" style={{ color: '#E6EAF2' }}>
+                      <td className="py-2.5 px-3.5 font-body-sm font-medium text-on-surface max-w-sm truncate">
                         {inc.title}
                       </td>
                       <td className="py-2.5 px-3.5">
@@ -470,34 +389,20 @@ export const Incidents: React.FC = () => {
                       </td>
                       <td className="py-2.5 px-3.5">{getPriorityPill(inc.priority)}</td>
                       <td className="py-2.5 px-3.5">
-                        <span
-                          className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs font-medium"
-                          style={{
-                            background:  '#1A2230',
-                            border:      '1px solid rgba(255, 255, 255, 0.06)',
-                            color:       '#E6EAF2',
-                          }}
-                        >
-                          <User className="w-3 h-3" style={{ color: '#9AA4B2' }} />
+                        <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-sm font-code-sm bg-surface-container-low border border-outline-variant text-on-surface">
+                          <User className="w-3 h-3 text-on-surface-variant" />
                           {entity}
                         </span>
                       </td>
                       <td className="py-2.5 px-3.5 text-center">
-                        <span
-                          className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium"
-                          style={{
-                            background:  '#1A2230',
-                            border:      '1px solid rgba(255, 255, 255, 0.06)',
-                            color:       '#E6EAF2',
-                          }}
-                        >
-                          <Layers className="w-3 h-3" style={{ color: '#9AA4B2' }} />
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-sm font-code-sm bg-surface-container-low border border-outline-variant text-on-surface">
+                          <Layers className="w-3 h-3 text-on-surface-variant" />
                           {inc.event_ids.length}
                         </span>
                       </td>
-                      <td className="py-2.5 px-3.5 text-right text-xs" style={{ color: '#9AA4B2' }}>
+                      <td className="py-2.5 px-3.5 text-right font-code-sm text-on-surface-variant">
                         <span className="inline-flex items-center justify-end gap-1">
-                          <Clock className="w-3 h-3" style={{ color: '#6B7785' }} />
+                          <Clock className="w-3 h-3 text-on-surface-variant" />
                           {formatRelativeTime(inc.updated_at)}
                         </span>
                       </td>
