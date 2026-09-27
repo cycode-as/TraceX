@@ -27,8 +27,9 @@ export const Dashboard: React.FC = () => {
       ) || e.metadata?.anomaly === true
   ).length;
 
-  const candidatesCount = incidents.filter(
-    (inc) => inc.status === 'INCIDENT_CANDIDATE' || inc.status === 'ANOMALY' || inc.status === 'SUSPICIOUS_PATTERN'
+  // Active Incidents: all non-resolved and non-dismissed incidents (including HIGH_PRIORITY, INCIDENT_CANDIDATE, CONFIRMED, etc.)
+  const activeIncidentsCount = incidents.filter(
+    (inc) => inc.status !== 'RESOLVED' && inc.status !== 'DISMISSED'
   ).length;
 
   const highPriorityCount = incidents.filter(
@@ -95,9 +96,9 @@ export const Dashboard: React.FC = () => {
           loading={isLoading}
         />
         <StatCard
-          title="Incident Candidates"
-          value={candidatesCount}
-          subtitle="Automated clustering"
+          title="Active Incidents"
+          value={activeIncidentsCount}
+          subtitle="Active threat queue"
           icon={ShieldAlert}
           colorScheme="purple"
           loading={isLoading}

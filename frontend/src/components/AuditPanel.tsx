@@ -41,41 +41,41 @@ export const AuditPanel: React.FC<AuditPanelProps> = ({ auditLogs = [], loading 
   };
 
   return (
-    <div className={`bg-[#0F1420] border border-[#1E2530] rounded-md p-4 space-y-3 font-mono ${className}`}>
-      <div className="flex items-center justify-between border-b border-[#1E2530] pb-2.5">
+    <div className={`bg-surface-container border border-outline-variant rounded-md p-4 space-y-3 font-code-sm ${className}`}>
+      <div className="flex items-center justify-between border-b border-outline-variant pb-2.5 font-code-sm">
         <div className="flex items-center gap-2">
-          <History className="w-4 h-4 text-cyan-400" />
-          <h3 className="text-xs uppercase font-bold tracking-wider text-slate-300">
-            SYSTEM & ANALYST AUDIT TRAIL
+          <History className="w-4 h-4 text-primary" />
+          <h3 className="font-label-md text-on-surface">
+            SYSTEM &amp; ANALYST AUDIT TRAIL
           </h3>
         </div>
-        <span className="text-[11px] text-slate-400">{logs.length} Audit Entries</span>
+        <span className="font-code-sm text-on-surface-variant">{logs.length} Audit Entries</span>
       </div>
 
       {loading ? (
         <div className="space-y-2">
           {[1, 2, 3].map((n) => (
-            <div key={n} className="h-12 bg-[#0B0E14] rounded-md animate-pulse border border-[#1E2530]" />
+            <div key={n} className="h-12 bg-surface-container-high rounded-md animate-pulse border border-outline-variant" />
           ))}
         </div>
       ) : (
-        <div className="space-y-2 max-h-[350px] overflow-y-auto pr-1">
+        <div className="space-y-2 max-h-[350px] overflow-y-auto pr-1 font-code-sm">
           {logs.map((log, idx) => (
             <div
               key={idx}
-              className="p-3 bg-[#0B0E14] border border-[#1E2530] rounded-md hover:border-slate-700 transition-colors space-y-1"
+              className="p-3 bg-surface-container-lowest border border-outline-variant rounded-md hover:border-outline transition-colors space-y-1"
             >
-              <div className="flex items-center justify-between text-xs">
-                <span className="font-bold text-cyan-400 flex items-center gap-1.5">
-                  <UserCheck className="w-3.5 h-3.5 text-cyan-400" />
+              <div className="flex items-center justify-between font-code-sm">
+                <span className="font-bold text-primary flex items-center gap-1.5">
+                  <UserCheck className="w-3.5 h-3.5 text-primary" />
                   {log.action}
                 </span>
-                <span className="text-[11px] text-slate-500 flex items-center gap-1">
-                  <Clock className="w-3 h-3 text-slate-600" />
+                <span className="font-code-sm text-on-surface-variant flex items-center gap-1">
+                  <Clock className="w-3 h-3 text-on-surface-variant" />
                   {formatTime(log.timestamp)}
                 </span>
               </div>
-              <p className="text-xs text-slate-300 font-sans leading-relaxed">{log.description}</p>
+              <p className="font-body-sm text-on-surface leading-relaxed">{log.description}</p>
             </div>
           ))}
         </div>

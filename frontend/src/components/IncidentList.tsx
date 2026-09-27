@@ -23,29 +23,29 @@ export const IncidentList: React.FC<IncidentListProps> = ({ incidents, loading =
     }
   };
 
-  const getPriorityStyle = (score: number) => {
-    if (score >= 70) return { color: '#F87171', bg: 'rgba(239,68,68,0.1)', border: 'rgba(239,68,68,0.25)', bar: '#EF4444' };
-    if (score >= 40) return { color: '#FCD34D', bg: 'rgba(245,158,11,0.1)', border: 'rgba(245,158,11,0.25)', bar: '#F59E0B' };
-    return { color: '#60A5FA', bg: 'rgba(59,130,246,0.1)', border: 'rgba(59,130,246,0.2)', bar: '#3B82F6' };
-  };
-
   const getPriorityPill = (score: number) => {
-    const s = getPriorityStyle(score);
+    const isCritical = score >= 70;
+    const isWarning = score >= 40;
+
     return (
       <div className="flex items-center gap-2">
         <span
-          className="px-1.5 py-0.5 rounded text-[11px] font-mono font-bold border"
-          style={{ color: s.color, background: s.bg, borderColor: s.border }}
+          className={`px-1.5 py-0.5 rounded-sm font-code-sm font-bold border ${
+            isCritical
+              ? 'bg-error-container/20 text-error border-error/40'
+              : isWarning
+              ? 'bg-secondary-container/20 text-secondary border-secondary/40'
+              : 'bg-primary-container/20 text-primary border-primary/40'
+          }`}
         >
           {score}
         </span>
-        <div
-          className="w-12 h-1 rounded-full overflow-hidden hidden sm:block"
-          style={{ background: 'rgba(30, 41, 59, 0.8)' }}
-        >
+        <div className="w-12 h-1 rounded-sm bg-surface-container-highest overflow-hidden hidden sm:block">
           <div
-            className="h-full rounded-full"
-            style={{ width: `${Math.min(100, score)}%`, background: s.bar }}
+            className={`h-full rounded-sm ${
+              isCritical ? 'bg-error' : isWarning ? 'bg-secondary' : 'bg-primary'
+            }`}
+            style={{ width: `${Math.min(100, score)}%` }}
           />
         </div>
       </div>
@@ -53,35 +53,19 @@ export const IncidentList: React.FC<IncidentListProps> = ({ incidents, loading =
   };
 
   return (
-    <div
-      className={`rounded-xl p-4 space-y-3 ${className}`}
-      style={{
-        background: '#121821',
-        border:     '1px solid rgba(255, 255, 255, 0.07)',
-      }}
-    >
+    <div className={`rounded-md p-4 space-y-3 bg-surface-container border border-outline-variant ${className}`}>
       {/* ── Header ── */}
-      <div
-        className="flex items-center justify-between pb-2.5"
-        style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.07)' }}
-      >
-        <div className="flex items-center gap-2 font-mono">
-          <ShieldAlert className="w-4 h-4" style={{ color: '#3B82F6' }} />
-          <h2 className="text-xs uppercase tracking-wider text-white font-semibold">
+      <div className="flex items-center justify-between pb-2.5 border-b border-outline-variant font-code-sm">
+        <div className="flex items-center gap-2">
+          <ShieldAlert className="w-4 h-4 text-primary" />
+          <h2 className="font-label-md text-on-surface">
             INCIDENT CLUSTERS &amp; QUEUE
           </h2>
-          <span
-            className="text-xs font-mono px-2 py-0.5 rounded font-bold"
-            style={{
-              background:  'rgba(59, 130, 246, 0.12)',
-              border:      '1px solid rgba(59, 130, 246, 0.3)',
-              color:       '#60A5FA',
-            }}
-          >
+          <span className="font-label-sm px-2 py-0.5 rounded-sm bg-primary-container/20 text-primary border border-primary/40">
             {incidents.length}
           </span>
         </div>
-        <span className="text-[11px] font-mono" style={{ color: '#9AA4B2' }}>
+        <span className="font-code-sm text-on-surface-variant">
           Click entry to open Incident Detail
         </span>
       </div>
@@ -92,35 +76,21 @@ export const IncidentList: React.FC<IncidentListProps> = ({ incidents, loading =
           {[1, 2, 3].map((n) => (
             <div
               key={n}
-              className="h-12 rounded-lg animate-pulse"
-              style={{ background: '#1A2230', border: '1px solid rgba(255, 255, 255, 0.06)' }}
+              className="h-12 rounded-sm bg-surface-container-high animate-pulse border border-outline-variant"
             />
           ))}
         </div>
       ) : incidents.length === 0 ? (
-        <div
-          className="py-12 text-center space-y-2 rounded-lg font-mono"
-          style={{
-            border:     '1px dashed rgba(255, 255, 255, 0.08)',
-            background: '#0B0F14',
-          }}
-        >
-          <ShieldAlert className="w-8 h-8 mx-auto" style={{ color: '#6B7785' }} />
-          <p className="text-xs" style={{ color: '#9AA4B2' }}>No active security incidents</p>
+        <div className="py-12 text-center space-y-2 rounded-sm font-code-sm border border-dashed border-outline-variant bg-surface-container-lowest">
+          <ShieldAlert className="w-8 h-8 mx-auto text-on-surface-variant" />
+          <p className="font-body-sm text-on-surface-variant">No active security incidents</p>
         </div>
       ) : (
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs font-sans">
+          <table className="w-full text-left text-xs font-body-md">
             {/* ── Table Header ── */}
             <thead>
-              <tr
-                className="font-mono text-[11px] uppercase tracking-wider font-semibold"
-                style={{
-                  background:   '#0B0F14',
-                  borderBottom: '1px solid rgba(255, 255, 255, 0.07)',
-                  color:        '#9AA4B2',
-                }}
-              >
+              <tr className="font-label-sm bg-surface-container-lowest border-b border-outline-variant text-on-surface-variant">
                 <th className="py-2.5 px-3 font-semibold">INCIDENT ID</th>
                 <th className="py-2.5 px-3 font-semibold">PRIMARY USER</th>
                 <th className="py-2.5 px-3 font-semibold">STATE</th>
@@ -135,23 +105,16 @@ export const IncidentList: React.FC<IncidentListProps> = ({ incidents, loading =
                 <tr
                   key={inc.incident_id}
                   onClick={() => navigate(`/incidents/${inc.incident_id}`)}
-                  className="cursor-pointer group transition-all duration-200 font-mono"
-                  style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.04)' }}
-                  onMouseEnter={(e) => {
-                    (e.currentTarget as HTMLTableRowElement).style.background = 'rgba(59, 130, 246, 0.04)';
-                  }}
-                  onMouseLeave={(e) => {
-                    (e.currentTarget as HTMLTableRowElement).style.background = 'transparent';
-                  }}
+                  className="cursor-pointer group hover:bg-surface-container-high/60 transition-colors border-b border-outline-variant/40 font-code-sm"
                 >
                   {/* Incident ID */}
-                  <td className="py-3 px-3 font-bold group-hover:underline" style={{ color: '#60A5FA' }}>
+                  <td className="py-3 px-3 font-bold text-primary group-hover:underline">
                     {inc.incident_id}
                   </td>
                   {/* Primary User */}
-                  <td className="py-3 px-3 text-slate-200">
+                  <td className="py-3 px-3 text-on-surface">
                     <span className="flex items-center gap-1.5">
-                      <User className="w-3.5 h-3.5" style={{ color: '#9AA4B2' }} />
+                      <User className="w-3.5 h-3.5 text-on-surface-variant" />
                       {inc.primary_user || inc.user_id || 'USR-007'}
                     </span>
                   </td>
@@ -160,9 +123,9 @@ export const IncidentList: React.FC<IncidentListProps> = ({ incidents, loading =
                     <StateBadge status={inc.status} />
                   </td>
                   {/* Time Window */}
-                  <td className="py-3 px-3 text-[11px]" style={{ color: '#9AA4B2' }}>
+                  <td className="py-3 px-3 font-code-sm text-on-surface-variant">
                     <span className="flex items-center gap-1">
-                      <Clock className="w-3 h-3" style={{ color: '#6B7785' }} />
+                      <Clock className="w-3 h-3 text-on-surface-variant" />
                       {formatTimeWindow(inc.created_at, inc.updated_at)}
                     </span>
                   </td>
@@ -170,10 +133,7 @@ export const IncidentList: React.FC<IncidentListProps> = ({ incidents, loading =
                   <td className="py-3 px-3">{getPriorityPill(inc.priority)}</td>
                   {/* Action */}
                   <td className="py-3 px-3 text-right">
-                    <span
-                      className="inline-flex items-center gap-1 font-semibold text-[11px] transition-all duration-200 group-hover:translate-x-1"
-                      style={{ color: '#60A5FA' }}
-                    >
+                    <span className="inline-flex items-center gap-1 font-semibold font-code-sm text-primary transition-transform group-hover:translate-x-1">
                       Inspect
                       <ChevronRight className="w-3.5 h-3.5" />
                     </span>
