@@ -26,19 +26,18 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onEnter }) => {
       className="fixed inset-0 z-50 flex flex-col items-center justify-center p-6 bg-[#000000] text-white font-mono select-none overflow-hidden"
     >
       <div className="w-full max-w-4xl flex flex-col items-center justify-center space-y-6 sm:space-y-8 my-auto">
-        {/* 1. Heading: TraceX Logo & Name */}
+        {/* 1. Unified TraceX Enterprise Brand Lockup */}
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
-          className="flex items-center gap-3 px-4 py-2 rounded-full bg-[#3B82F6]/10 border border-[#3B82F6]/30 text-white text-lg sm:text-xl font-mono font-bold tracking-wider shadow-[0_0_20px_rgba(59,130,246,0.3)]"
+          className="flex items-center justify-center"
         >
           <img
             src={traceXLogo}
             alt="TraceX Logo"
-            className="w-7 h-7 sm:w-8 sm:h-8 object-contain rounded-md filter drop-shadow-[0_0_8px_rgba(59,130,246,0.6)]"
+            className="h-24 sm:h-32 w-auto object-contain"
           />
-          <span className="text-white tracking-widest font-headline-sm">TraceX</span>
         </motion.div>
 
         {/* 2. Rotating Icon Cloud */}
