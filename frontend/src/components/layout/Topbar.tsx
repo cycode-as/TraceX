@@ -1,26 +1,15 @@
 import React from 'react';
-import { NavLink, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import {
   Play,
   RotateCcw,
   Shield,
   Activity,
   RefreshCw,
-  LayoutDashboard,
-  AlertTriangle,
-  PlaySquare,
-  FileText,
 } from 'lucide-react';
 import { useSimulation } from '../../hooks/useSimulation';
 import { useEvents } from '../../hooks/useEvents';
-
-const navItems = [
-  { name: 'Dashboard',        path: '/',           icon: LayoutDashboard },
-  { name: 'Incidents Queue',  path: '/incidents',  icon: AlertTriangle   },
-  { name: 'Telemetry Events', path: '/events',     icon: Activity        },
-  { name: 'Simulation Mode',  path: '/simulation', icon: PlaySquare      },
-  { name: 'Audit Logs',       path: '/audit',      icon: FileText        },
-];
+import Dock from './Dock';
 
 export const Topbar: React.FC = () => {
   const { nextEvent, resetSimulation, isNextLoading, isResetLoading } = useSimulation();
@@ -99,41 +88,15 @@ export const Topbar: React.FC = () => {
         </div>
       </div>
 
-      {/* ── Row 2: Centered Horizontal Navigation & Status ── */}
-      <div className="px-5 h-11 flex items-center justify-between bg-surface-container-lowest relative">
+      {/* ── Row 2: Centered Animated Dock Navigation ── */}
+      <div className="px-5 py-2.5 flex items-center justify-between bg-surface-container-lowest/90 relative min-h-[72px]">
+        {/* Left Spacer for symmetry */}
         <div className="w-32 hidden md:block" />
 
-        {/* Centered Navigation Links */}
-        <nav className="flex items-center gap-1 overflow-x-auto justify-center mx-auto">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            return (
-              <NavLink
-                key={item.path}
-                to={item.path}
-                end={item.path === '/'}
-                className={({ isActive }) =>
-                  `flex items-center gap-2 px-3 py-1 rounded-md font-body-sm transition-colors whitespace-nowrap ${
-                    isActive
-                      ? 'bg-surface-container-high border border-primary text-primary font-semibold'
-                      : 'text-on-surface-variant border border-transparent hover:bg-surface-container-low hover:text-on-surface'
-                  }`
-                }
-              >
-                {({ isActive }) => (
-                  <>
-                    <Icon
-                      className={`w-3.5 h-3.5 shrink-0 ${
-                        isActive ? 'text-primary' : 'text-on-surface-variant'
-                      }`}
-                    />
-                    <span>{item.name}</span>
-                  </>
-                )}
-              </NavLink>
-            );
-          })}
-        </nav>
+        {/* Centered Animated Dock Navbar */}
+        <div className="mx-auto flex justify-center py-1">
+          <Dock />
+        </div>
 
         {/* Engine Status Indicator on far right */}
         <div className="hidden sm:flex items-center gap-1.5 font-code-sm text-secondary font-semibold shrink-0">
