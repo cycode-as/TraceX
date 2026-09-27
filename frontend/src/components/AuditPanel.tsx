@@ -1,6 +1,7 @@
 import React from 'react';
 import { History, UserCheck, Clock } from 'lucide-react';
 import type { AuditLogEntry } from '../types/incident';
+import { NumberTicker } from '@/registry/magicui/number-ticker';
 
 interface AuditPanelProps {
   auditLogs?: AuditLogEntry[];
@@ -49,7 +50,9 @@ export const AuditPanel: React.FC<AuditPanelProps> = ({ auditLogs = [], loading 
             SYSTEM &amp; ANALYST AUDIT TRAIL
           </h3>
         </div>
-        <span className="font-code-sm text-on-surface-variant">{logs.length} Audit Entries</span>
+        <span className="font-code-sm text-on-surface-variant">
+          <NumberTicker value={logs.length} /> Audit Entries
+        </span>
       </div>
 
       {loading ? (

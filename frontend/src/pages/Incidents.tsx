@@ -16,6 +16,8 @@ import {
 import { getIncidents } from '../services/incidents';
 import type { Incident } from '../types/incident';
 import StatusBadge from '../components/incidents/StatusBadge';
+import { NumberTicker } from '@/registry/magicui/number-ticker';
+
 
 type FilterTab = 'All' | 'High' | 'Investigating' | 'Unresolved';
 type SortField = 'priority' | 'updated_at';
@@ -186,7 +188,7 @@ export const Incidents: React.FC = () => {
               : 'bg-primary-container/20 text-primary border-primary/40'
           }`}
         >
-          {score}
+          <NumberTicker value={score} />
         </span>
         <div className="w-12 h-1 rounded-sm bg-surface-container-highest overflow-hidden hidden sm:block">
           <div
@@ -208,7 +210,7 @@ export const Incidents: React.FC = () => {
           <div className="flex items-center gap-2.5">
             <h1 className="font-headline-lg text-on-surface">Incidents</h1>
             <span className="font-label-sm px-2 py-0.5 rounded-sm bg-primary-container/20 text-primary border border-primary/40">
-              {incidents.length} Total
+              <NumberTicker value={incidents.length} /> Total
             </span>
           </div>
           <p className="font-body-sm text-on-surface-variant mt-1">
@@ -270,7 +272,7 @@ export const Incidents: React.FC = () => {
                       : 'bg-surface-container-lowest border border-outline-variant text-on-surface-variant'
                   }`}
                 >
-                  {count}
+                  <NumberTicker value={count} />
                 </span>
               </button>
             );
@@ -397,7 +399,7 @@ export const Incidents: React.FC = () => {
                       <td className="py-2.5 px-3.5 text-center">
                         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-sm font-code-sm bg-surface-container-low border border-outline-variant text-on-surface">
                           <Layers className="w-3 h-3 text-on-surface-variant" />
-                          {inc.event_ids.length}
+                          <NumberTicker value={inc.event_ids.length} />
                         </span>
                       </td>
                       <td className="py-2.5 px-3.5 text-right font-code-sm text-on-surface-variant">

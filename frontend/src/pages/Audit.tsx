@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { getAuditLog } from '../services/audit';
 import type { AuditLogEntry } from '../types/incident';
+import { NumberTicker } from '@/registry/magicui/number-ticker';
 
 type AuditFilterCategory = 'ALL' | 'ANALYST' | 'STATE' | 'PIPELINE';
 
@@ -206,7 +207,9 @@ export const Audit: React.FC = () => {
             <FileText className="w-4 h-4 text-primary" />
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-2xl sm:text-3xl font-black text-on-surface font-mono">{stats.total}</span>
+            <span className="text-2xl sm:text-3xl font-black text-on-surface font-mono">
+              <NumberTicker value={stats.total} />
+            </span>
             <span className="font-code-sm text-on-surface-variant">RECORDS</span>
           </div>
         </div>
@@ -220,7 +223,9 @@ export const Audit: React.FC = () => {
             <UserCheck className="w-4 h-4 text-secondary" />
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-2xl sm:text-3xl font-black text-on-surface font-mono">{stats.analyst}</span>
+            <span className="text-2xl sm:text-3xl font-black text-on-surface font-mono">
+              <NumberTicker value={stats.analyst} />
+            </span>
             <span className="font-code-sm text-secondary">TRIAGE EVENTS</span>
           </div>
         </div>
@@ -234,7 +239,9 @@ export const Audit: React.FC = () => {
             <ShieldAlert className="w-4 h-4 text-tertiary" />
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-2xl sm:text-3xl font-black text-on-surface font-mono">{stats.state}</span>
+            <span className="text-2xl sm:text-3xl font-black text-on-surface font-mono">
+              <NumberTicker value={stats.state} />
+            </span>
             <span className="font-code-sm text-tertiary">MUTATIONS</span>
           </div>
         </div>
@@ -248,7 +255,9 @@ export const Audit: React.FC = () => {
             <Activity className="w-4 h-4 text-primary" />
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-2xl sm:text-3xl font-black text-on-surface font-mono">{stats.pipeline}</span>
+            <span className="text-2xl sm:text-3xl font-black text-on-surface font-mono">
+              <NumberTicker value={stats.pipeline} />
+            </span>
             <span className="font-code-sm text-primary">NORMALIZED</span>
           </div>
         </div>
@@ -304,7 +313,7 @@ export const Audit: React.FC = () => {
                       : 'bg-surface-container-lowest border border-outline-variant text-on-surface-variant'
                   }`}
                 >
-                  {tab.count}
+                  <NumberTicker value={tab.count} />
                 </span>
               </button>
             );
@@ -441,8 +450,8 @@ export const Audit: React.FC = () => {
         {/* Footer Summary */}
         <div className="p-3 flex items-center justify-between font-code-sm bg-surface-container-lowest border-t border-outline-variant text-on-surface-variant">
           <span>
-            Showing <strong className="text-on-surface">{filteredLogs.length}</strong> of{' '}
-            <strong className="text-on-surface">{logs.length}</strong> total records
+            Showing <strong className="text-on-surface"><NumberTicker value={filteredLogs.length} /></strong> of{' '}
+            <strong className="text-on-surface"><NumberTicker value={logs.length} /></strong> total records
           </span>
           <div className="flex items-center gap-2 font-code-sm text-on-surface-variant">
             <Cpu className="w-3.5 h-3.5 text-primary" />

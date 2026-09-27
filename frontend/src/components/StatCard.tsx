@@ -1,5 +1,7 @@
 import React from 'react';
 import type { LucideIcon } from 'lucide-react';
+import { NumberTicker } from '@/registry/magicui/number-ticker';
+
 
 export interface StatCardProps {
   title: string;
@@ -147,7 +149,13 @@ export const StatCard: React.FC<StatCardProps> = ({
       <div className="mt-3">
         <div className="flex items-baseline gap-2">
           <span className="text-2xl font-black tracking-tight text-on-surface font-mono">
-            {value}
+            {typeof value === 'number' ? (
+              <NumberTicker value={value} />
+            ) : typeof value === 'string' && !isNaN(Number(value)) && value.trim() !== '' ? (
+              <NumberTicker value={Number(value)} />
+            ) : (
+              value
+            )}
           </span>
           {change && (
             <span

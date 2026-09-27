@@ -2,6 +2,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, TrendingUp, AlertTriangle, FileText, ArrowRight } from 'lucide-react';
 import type { StateDiff } from '../hooks/useSimulation';
+import { NumberTicker } from '@/registry/magicui/number-ticker';
 
 interface WhatChangedBannerProps {
   diffs: StateDiff[];
@@ -101,6 +102,9 @@ export const WhatChangedBanner: React.FC<WhatChangedBannerProps> = ({ diffs, cla
           <div className="flex items-center gap-2 flex-wrap">
             {diffs.map((diff) => {
               const { bg, border, color, glow, Icon } = getChipStyle(diff.type);
+              const isFromNum = typeof diff.from === 'number' || (typeof diff.from === 'string' && !isNaN(Number(diff.from)) && diff.from.trim() !== '');
+              const isToNum = typeof diff.to === 'number' || (typeof diff.to === 'string' && !isNaN(Number(diff.to)) && diff.to.trim() !== '');
+
               return (
                 <motion.div
                   key={diff.id}
@@ -113,9 +117,13 @@ export const WhatChangedBanner: React.FC<WhatChangedBannerProps> = ({ diffs, cla
                   <Icon className="w-3.5 h-3.5 shrink-0" />
                   {diff.from !== undefined && diff.to !== undefined ? (
                     <span className="flex items-center gap-1">
-                      <span>{String(diff.from)}</span>
+                      <span>
+                        {isFromNum ? <NumberTicker value={Number(diff.from)} /> : String(diff.from)}
+                      </span>
                       <ArrowRight className="w-3 h-3" style={{ color: 'var(--color-muted)' }} />
-                      <strong className="font-bold text-white">{String(diff.to)}</strong>
+                      <strong className="font-bold text-white">
+                        {isToNum ? <NumberTicker value={Number(diff.to)} /> : String(diff.to)}
+                      </strong>
                     </span>
                   ) : (
                     <span>{diff.label}</span>

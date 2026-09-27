@@ -12,6 +12,8 @@ import type { Priority } from '../types/graph';
 import WhatChanged from '../components/simulation/WhatChanged';
 import Terminal from '../components/simulation/Terminal';
 import { getSimulationThreatScore, getThreatSeverity } from '../services/threatScore';
+import { NumberTicker } from '@/registry/magicui/number-ticker';
+
 
 // ─── MD3 SOC Palette (inline style constants) ────────────────────────────────
 const C = {
@@ -1018,12 +1020,15 @@ export const Simulation: React.FC = () => {
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
                   <span className="text-3xl font-black leading-none" style={{ color: C.onSurfaceMd3, fontFamily: 'Inter, sans-serif' }}>
-                    {currentScore}
+                    <NumberTicker value={currentScore} />
                   </span>
                   <span className="text-[10px] font-mono uppercase mt-0.5" style={{ color: C.outlineMd3 }}>/ 100 Score</span>
                   {scoreDelta !== 0 && (
                     <span className="text-[11px] font-mono font-bold mt-0.5" style={{ color: C.errorMd3 }}>
-                      {scoreDelta > 0 ? `+${scoreDelta}` : scoreDelta} Shift
+                      <NumberTicker
+                        value={scoreDelta}
+                        format={(v) => (v > 0 ? `+${Math.round(v)}` : `${Math.round(v)}`)}
+                      /> Shift
                     </span>
                   )}
                 </div>
@@ -1039,7 +1044,9 @@ export const Simulation: React.FC = () => {
                       <div key={fd.key}>
                         <div className="flex justify-between text-[11px] font-mono mb-0.5">
                           <span style={{ color: C.onSurfaceVariantMd3 }}>{fd.label}</span>
-                          <span className="font-semibold" style={{ color: C.onSurfaceMd3 }}>{pct}%</span>
+                          <span className="font-semibold" style={{ color: C.onSurfaceMd3 }}>
+                            <NumberTicker value={pct} />%
+                          </span>
                         </div>
                         <div className="w-full h-1.5 rounded-full overflow-hidden" style={{ background: C.surfaceContainerHigh }}>
                           <div
@@ -1094,7 +1101,7 @@ export const Simulation: React.FC = () => {
             <div className="flex items-baseline justify-between">
               <div className="flex items-baseline gap-1.5 font-mono">
                 <span className="text-3xl font-black leading-none" style={{ color: C.onSurfaceMd3, fontFamily: 'Inter, sans-serif' }}>
-                  {simThreatScore}
+                  <NumberTicker value={simThreatScore} />
                 </span>
                 <span className="text-xs font-medium" style={{ color: C.outlineMd3 }}>/ 100</span>
               </div>

@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import type { SimulationState, Incident } from '../../types/incident';
 import type { Priority } from '../../types/graph';
 import type { NormalizedEvent } from '../../types/event';
+import { NumberTicker } from '@/registry/magicui/number-ticker';
+
 
 interface WhatChangedProps {
   previousState?: SimulationState | null;
@@ -150,7 +152,12 @@ export const WhatChanged: React.FC<WhatChangedProps> = ({ previousState, current
                   className="inline-flex items-center gap-1 text-[10px] font-mono font-bold px-2 py-0.5 rounded"
                   style={{ background: 'rgba(255,180,171,0.18)', color: C.errorMd3 }}
                 >
-                  ▲ PRIORITY SURGE: {scoreDelta > 0 ? `+${scoreDelta}` : scoreDelta} PTS ({previousScore} → {currentScore})
+                  ▲ PRIORITY SURGE:{' '}
+                  <NumberTicker
+                    value={scoreDelta}
+                    format={(v) => (v > 0 ? `+${Math.round(v)}` : `${Math.round(v)}`)}
+                  />{' '}
+                  PTS (<NumberTicker value={previousScore} /> → <NumberTicker value={currentScore} />)
                 </span>
               )}
             </div>

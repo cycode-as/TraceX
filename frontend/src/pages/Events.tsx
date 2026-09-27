@@ -19,6 +19,8 @@ import {
 } from 'lucide-react';
 import { getEvents } from '../services/events';
 import type { NormalizedEvent, EventType } from '../types/event';
+import { NumberTicker } from '@/registry/magicui/number-ticker';
+
 
 const ANOMALY_EVENT_TYPES: EventType[] = [
   'mfa_failure',
@@ -121,7 +123,7 @@ export const Events: React.FC = () => {
           <div className="flex items-center gap-2.5">
             <h1 className="font-headline-lg text-on-surface">Telemetry Events</h1>
             <span className="font-label-sm px-2 py-0.5 rounded-sm bg-primary-container/20 text-primary border border-primary/40">
-              {events.length} Streamed
+              <NumberTicker value={events.length} /> Streamed
             </span>
           </div>
           <p className="font-body-sm text-on-surface-variant mt-1">
@@ -163,7 +165,7 @@ export const Events: React.FC = () => {
         <div className="flex items-center gap-2 text-on-surface-variant font-code-sm">
           <Activity className="w-3.5 h-3.5 text-primary" />
           <span>
-            Showing {paginatedEvents.length} of {filteredEvents.length} filtered events
+            Showing <NumberTicker value={paginatedEvents.length} /> of <NumberTicker value={filteredEvents.length} /> filtered events
           </span>
         </div>
 

@@ -14,6 +14,8 @@ import AIExplanation from '../components/AIExplanation';
 import ActionBar from '../components/ActionBar';
 import { getThreatScoreForIncident } from '../services/threatScore';
 import type { AnalystActionType, DismissalReason } from '../types/incident';
+import { NumberTicker } from '@/registry/magicui/number-ticker';
+
 
 export const IncidentDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -144,7 +146,7 @@ export const IncidentDetail: React.FC = () => {
           <div className="flex items-baseline justify-between">
             <div className="flex items-baseline gap-1.5 font-mono">
               <span className="text-3xl sm:text-4xl font-black text-on-surface leading-none">
-                {incident.priority}
+                <NumberTicker value={incident.priority} />
               </span>
               <span className="text-xs text-on-surface-variant font-medium">/100</span>
             </div>
@@ -197,7 +199,7 @@ export const IncidentDetail: React.FC = () => {
           <div className="flex items-baseline justify-between">
             <div className="flex items-baseline gap-1.5 font-mono">
               <span className="text-3xl sm:text-4xl font-black text-on-surface leading-none">
-                {threatScore}
+                <NumberTicker value={threatScore} />
               </span>
               <span className="text-xs text-on-surface-variant font-medium">/100</span>
             </div>
@@ -247,7 +249,9 @@ export const IncidentDetail: React.FC = () => {
               <Clock className="w-3.5 h-3.5 text-primary" />
               EVENT TIMELINE
             </div>
-            <span className="font-code-sm text-on-surface-variant">{timeline.length} events</span>
+            <span className="font-code-sm text-on-surface-variant">
+              <NumberTicker value={timeline.length} /> events
+            </span>
           </div>
           <Timeline events={timeline} />
         </div>

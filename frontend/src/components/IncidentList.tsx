@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ShieldAlert, User, Clock, ChevronRight } from 'lucide-react';
 import type { Incident } from '../types/incident';
 import StateBadge from './StateBadge';
+import { NumberTicker } from '@/registry/magicui/number-ticker';
 
 interface IncidentListProps {
   incidents: Incident[];
@@ -38,7 +39,7 @@ export const IncidentList: React.FC<IncidentListProps> = ({ incidents, loading =
               : 'bg-primary-container/20 text-primary border-primary/40'
           }`}
         >
-          {score}
+          <NumberTicker value={score} />
         </span>
         <div className="w-12 h-1 rounded-sm bg-surface-container-highest overflow-hidden hidden sm:block">
           <div
@@ -62,7 +63,7 @@ export const IncidentList: React.FC<IncidentListProps> = ({ incidents, loading =
             INCIDENT CLUSTERS &amp; QUEUE
           </h2>
           <span className="font-label-sm px-2 py-0.5 rounded-sm bg-primary-container/20 text-primary border border-primary/40">
-            {incidents.length}
+            <NumberTicker value={incidents.length} />
           </span>
         </div>
         <span className="font-code-sm text-on-surface-variant">

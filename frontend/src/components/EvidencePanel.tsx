@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { AlertTriangle, ShieldCheck, CheckCircle2, Info, ChevronRight, X, Database, Lightbulb } from 'lucide-react';
 import type { Evidence } from '../types/evidence';
+import { NumberTicker } from '@/registry/magicui/number-ticker';
 
 interface EvidencePanelProps {
   evidenceList?: Evidence[];
@@ -114,7 +115,7 @@ export const EvidencePanel: React.FC<EvidencePanelProps> = ({
             <div className="flex items-center justify-between border-b border-error/20 pb-2 font-code-sm">
               <div className="flex items-center gap-2 text-error font-bold">
                 <AlertTriangle className="w-4 h-4" />
-                <span>SUPPORTING EVIDENCE ({supportingItems.length})</span>
+                <span>SUPPORTING EVIDENCE (<NumberTicker value={supportingItems.length} />)</span>
               </div>
               <span className="font-label-sm px-1.5 py-0.5 rounded-sm bg-error-container/20 text-error border border-error/40">
                 INCREASES PRIORITY
@@ -162,7 +163,7 @@ export const EvidencePanel: React.FC<EvidencePanelProps> = ({
             <div className="flex items-center justify-between border-b border-secondary/20 pb-2 font-code-sm">
               <div className="flex items-center gap-2 text-secondary font-bold">
                 <ShieldCheck className="w-4 h-4" />
-                <span>MITIGATING EVIDENCE ({mitigatingItems.length})</span>
+                <span>MITIGATING EVIDENCE (<NumberTicker value={mitigatingItems.length} />)</span>
               </div>
               <span className="font-label-sm px-1.5 py-0.5 rounded-sm bg-secondary-container/20 text-secondary border border-secondary/40">
                 REDUCES PRIORITY

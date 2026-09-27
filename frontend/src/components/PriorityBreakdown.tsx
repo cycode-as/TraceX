@@ -2,6 +2,7 @@ import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { Zap, ShieldAlert } from 'lucide-react';
 import type { Priority, PriorityFactors } from '../types/graph';
+import { NumberTicker } from '@/registry/magicui/number-ticker';
 
 interface PriorityBreakdownProps {
   priority?: Priority;
@@ -61,7 +62,7 @@ export const PriorityBreakdown: React.FC<PriorityBreakdownProps> = ({ priority, 
               : 'bg-primary-container/20 text-primary border-primary/40'
           }`}
         >
-          {labelText} PRIORITY ({currentScore}/100)
+          {labelText} PRIORITY (<NumberTicker value={currentScore} />/100)
         </span>
       </div>
 
@@ -70,7 +71,7 @@ export const PriorityBreakdown: React.FC<PriorityBreakdownProps> = ({ priority, 
         {/* Score Circle */}
         <div className="text-center p-3 rounded-md min-w-[90px] bg-surface-container border border-outline-variant">
           <div className={`text-3xl font-extrabold leading-none ${isCritical ? 'text-error' : 'text-primary'}`}>
-            {currentScore}
+            <NumberTicker value={currentScore} />
           </div>
           <div className="font-label-sm text-on-surface-variant mt-1">
             TOTAL SCORE
@@ -160,7 +161,9 @@ export const PriorityBreakdown: React.FC<PriorityBreakdownProps> = ({ priority, 
                     />
                     {f.name}
                   </span>
-                  <span className="font-bold text-on-surface">+{pts} pts</span>
+                  <span className="font-bold text-on-surface">
+                    +<NumberTicker value={pts} /> pts
+                  </span>
                 </div>
                 <p className="font-body-sm text-on-surface-variant">
                   {f.desc}

@@ -12,6 +12,8 @@ import {
 import '@xyflow/react/dist/style.css';
 import { User, Laptop, Key, Database, Activity, GitCommit, X, Info } from 'lucide-react';
 import type { GraphData } from '../types/graph';
+import { NumberTicker } from '@/registry/magicui/number-ticker';
+
 
 interface IncidentGraphProps {
   graphData?: GraphData;
@@ -270,7 +272,13 @@ export const IncidentGraph: React.FC<IncidentGraphProps> = ({
               </div>
               <div className="flex justify-between text-on-surface-variant text-[11px]">
                 <span>Correlation Strength:</span>
-                <span className="text-primary font-bold">{selectedEdge.score}</span>
+                <span className="text-primary font-bold">
+                  {!isNaN(Number(selectedEdge.score)) ? (
+                    <NumberTicker value={Number(selectedEdge.score)} decimalPlaces={2} />
+                  ) : (
+                    selectedEdge.score
+                  )}
+                </span>
               </div>
               <div className="mt-1 text-on-surface bg-surface-container-lowest p-2 rounded-sm border border-outline-variant leading-relaxed">
                 {selectedEdge.reason}

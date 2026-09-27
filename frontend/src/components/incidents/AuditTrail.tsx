@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { FileText, Clock, AlertCircle, RefreshCw } from 'lucide-react';
 import { getIncidentAudit } from '../../services/incidents';
 import type { AuditLogEntry } from '../../types/incident';
+import { NumberTicker } from '@/registry/magicui/number-ticker';
+
 
 interface AuditTrailProps {
   incidentId?: string;
@@ -178,7 +180,7 @@ export const AuditTrail: React.FC<AuditTrailProps> = ({
               color: '#60A5FA',
             }}
           >
-            {auditLogs.length} Entries
+            <NumberTicker value={auditLogs.length} /> Entries
           </span>
         </div>
         <button
