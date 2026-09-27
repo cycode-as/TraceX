@@ -38,11 +38,11 @@ export const Dashboard: React.FC = () => {
   const isLoading = isIncidentsLoading || isEventsLoading;
 
   return (
-    <div className="p-4 sm:p-6 space-y-5 max-w-7xl mx-auto">
+    <div className="p-4 sm:p-6 space-y-5 max-w-7xl mx-auto font-sans" style={{ color: '#E6EAF2' }}>
       {/* ── Page Header ── */}
       <div
         className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4"
-        style={{ borderBottom: '1px solid rgba(30, 41, 59, 0.6)' }}
+        style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.07)' }}
       >
         <div>
           <div className="flex items-center gap-2.5">
@@ -65,7 +65,7 @@ export const Dashboard: React.FC = () => {
               REAL-TIME PIPELINE
             </div>
           </div>
-          <p className="text-xs mt-1 font-body" style={{ color: 'var(--color-muted)' }}>
+          <p className="text-xs mt-1 font-body" style={{ color: '#9AA4B2' }}>
             Automated entity resolution, behavioral anomaly clustering, and dynamic investigation priority.
           </p>
         </div>
@@ -76,22 +76,22 @@ export const Dashboard: React.FC = () => {
           disabled={isLoading}
           className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono font-semibold rounded-lg border transition-all duration-200 disabled:opacity-50 cursor-pointer self-start sm:self-auto"
           style={{
-            background:   'var(--color-surface)',
-            borderColor:  'rgba(30, 41, 59, 0.8)',
-            color:        '#CBD5E1',
+            background:   '#121821',
+            borderColor:  'rgba(255, 255, 255, 0.08)',
+            color:        '#E6EAF2',
           }}
           onMouseEnter={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(247, 147, 26, 0.3)';
-            (e.currentTarget as HTMLButtonElement).style.color       = '#F7931A';
+            (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(59, 130, 246, 0.4)';
+            (e.currentTarget as HTMLButtonElement).style.color       = '#60A5FA';
           }}
           onMouseLeave={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(30, 41, 59, 0.8)';
-            (e.currentTarget as HTMLButtonElement).style.color       = '#CBD5E1';
+            (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(255, 255, 255, 0.08)';
+            (e.currentTarget as HTMLButtonElement).style.color       = '#E6EAF2';
           }}
         >
           <RefreshCw
             className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`}
-            style={{ color: isLoading ? '#F7931A' : 'inherit' }}
+            style={{ color: isLoading ? '#60A5FA' : 'inherit' }}
           />
           Refetch Data
         </button>

@@ -22,26 +22,26 @@ export const Sidebar: React.FC = () => {
     <aside
       className="w-56 flex flex-col h-screen sticky top-0 shrink-0 font-mono"
       style={{
-        backgroundColor: 'var(--color-surface)',
-        borderRight: '1px solid rgba(30, 41, 59, 0.8)',
+        backgroundColor: '#121821',
+        borderRight: '1px solid rgba(255, 255, 255, 0.07)',
       }}
     >
       {/* ── Brand Header ── */}
       <Link
         to="/"
         className="h-14 flex items-center px-4 gap-3 transition-all duration-200 group"
-        style={{ borderBottom: '1px solid rgba(30, 41, 59, 0.8)' }}
+        style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.07)' }}
       >
-        {/* Icon with orange glow */}
+        {/* Icon with Electric Blue glow */}
         <div
           className="p-1.5 rounded-lg flex items-center justify-center transition-all duration-300 group-hover:scale-105"
           style={{
-            background: 'rgba(247, 147, 26, 0.15)',
-            border: '1px solid rgba(247, 147, 26, 0.4)',
-            boxShadow: '0 0 14px rgba(247, 147, 26, 0.2)',
+            background: 'rgba(59, 130, 246, 0.15)',
+            border: '1px solid rgba(59, 130, 246, 0.4)',
+            boxShadow: '0 0 14px rgba(59, 130, 246, 0.25)',
           }}
         >
-          <Shield className="w-4 h-4" style={{ color: '#F7931A' }} />
+          <Shield className="w-4 h-4" style={{ color: '#3B82F6' }} />
         </div>
 
         {/* Brand text */}
@@ -49,7 +49,7 @@ export const Sidebar: React.FC = () => {
           <span
             className="font-bold tracking-widest text-sm leading-none font-heading"
             style={{
-              background: 'linear-gradient(to right, #F7931A, #FFD600)',
+              background: 'linear-gradient(to right, #3B82F6, #60A5FA)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text',
@@ -59,7 +59,7 @@ export const Sidebar: React.FC = () => {
           </span>
           <span
             className="text-[9px] tracking-wider mt-1 font-mono"
-            style={{ color: 'var(--color-muted)' }}
+            style={{ color: '#9AA4B2' }}
           >
             SOC DASHBOARD
           </span>
@@ -83,15 +83,15 @@ export const Sidebar: React.FC = () => {
               style={({ isActive }) =>
                 isActive
                   ? {
-                      background: 'rgba(247, 147, 26, 0.12)',
-                      border: '1px solid rgba(247, 147, 26, 0.35)',
-                      color: '#F7931A',
-                      boxShadow: '0 0 12px rgba(247, 147, 26, 0.15)',
+                      background: '#1A2230',
+                      border: '1px solid rgba(59, 130, 246, 0.5)',
+                      color: '#60A5FA',
+                      boxShadow: '0 0 12px rgba(59, 130, 246, 0.15)',
                     }
                   : {
                       background: 'transparent',
                       border: '1px solid transparent',
-                      color: 'var(--color-muted)',
+                      color: '#9AA4B2',
                     }
               }
             >
@@ -99,7 +99,7 @@ export const Sidebar: React.FC = () => {
                 <>
                   <Icon
                     className="w-4 h-4 shrink-0 transition-colors duration-200"
-                    style={{ color: isActive ? '#F7931A' : 'var(--color-muted)' }}
+                    style={{ color: isActive ? '#3B82F6' : '#9AA4B2' }}
                   />
                   <span>{item.name}</span>
                   {/* Active indicator bar */}
@@ -107,8 +107,8 @@ export const Sidebar: React.FC = () => {
                     <span
                       className="ml-auto w-1 h-4 rounded-full"
                       style={{
-                        background: 'linear-gradient(to bottom, #F7931A, #EA580C)',
-                        boxShadow: '0 0 6px rgba(247, 147, 26, 0.5)',
+                        background: '#3B82F6',
+                        boxShadow: '0 0 8px rgba(59, 130, 246, 0.6)',
                       }}
                     />
                   )}
@@ -122,11 +122,11 @@ export const Sidebar: React.FC = () => {
       {/* ── Footer Status ── */}
       <div
         className="p-3 text-[10px] font-mono"
-        style={{ borderTop: '1px solid rgba(30, 41, 59, 0.8)' }}
+        style={{ borderTop: '1px solid rgba(255, 255, 255, 0.07)' }}
       >
         {/* Engine Status */}
         <div className="flex justify-between items-center">
-          <span style={{ color: 'var(--color-muted)' }}>Engine Status:</span>
+          <span style={{ color: '#9AA4B2' }}>Engine Status:</span>
           <span className="flex items-center gap-1.5 font-bold" style={{ color: '#10B981' }}>
             <span
               className="w-1.5 h-1.5 rounded-full animate-pulse"
@@ -135,14 +135,14 @@ export const Sidebar: React.FC = () => {
             ONLINE
           </span>
         </div>
-        <div className="mt-1" style={{ color: 'rgba(148, 163, 184, 0.4)' }}>
+        <div className="mt-1" style={{ color: 'rgba(154, 164, 178, 0.5)' }}>
           FastAPI backend @ :8000
         </div>
 
-        {/* Thin orange accent line at bottom */}
+        {/* Thin Electric Blue accent line at bottom */}
         <div
           className="mt-3 h-px rounded-full"
-          style={{ background: 'linear-gradient(to right, rgba(234,88,12,0.6), rgba(247,147,26,0.3), transparent)' }}
+          style={{ background: 'linear-gradient(to right, rgba(37,99,235,0.6), rgba(59,130,246,0.3), transparent)' }}
         />
       </div>
     </aside>

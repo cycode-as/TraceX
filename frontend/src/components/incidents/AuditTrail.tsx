@@ -97,25 +97,28 @@ export const AuditTrail: React.FC<AuditTrailProps> = ({
   };
 
   const getActionBadgeStyle = (action: string) => {
-    if (action.includes('CREATED'))
-      return { bg: 'rgba(59,130,246,0.1)', border: 'rgba(59,130,246,0.3)', color: '#60A5FA' };
-    if (action.includes('UPDATED'))
-      return { bg: 'rgba(245,158,11,0.1)', border: 'rgba(245,158,11,0.3)', color: '#FCD34D' };
-    if (action.includes('STATUS'))
-      return { bg: 'rgba(139,92,246,0.1)', border: 'rgba(139,92,246,0.3)', color: '#A78BFA' };
-    return { bg: 'rgba(30,41,59,0.5)', border: 'rgba(30,41,59,0.8)', color: '#94A3B8' };
+    const act = action.toUpperCase();
+    if (act.includes('RESOLV'))
+      return { bg: 'rgba(16,185,129,0.12)', border: 'rgba(16,185,129,0.3)', color: '#10B981' };
+    if (act.includes('DISMISS'))
+      return { bg: 'rgba(245,158,11,0.12)', border: 'rgba(245,158,11,0.3)', color: '#F59E0B' };
+    if (act.includes('CREATED') || act.includes('TRIGGER'))
+      return { bg: 'rgba(59,130,246,0.12)', border: 'rgba(59,130,246,0.3)', color: '#60A5FA' };
+    if (act.includes('STATUS') || act.includes('PRIORITY'))
+      return { bg: 'rgba(139,92,246,0.12)', border: 'rgba(139,92,246,0.3)', color: '#A78BFA' };
+    return { bg: 'rgba(6,182,212,0.12)', border: 'rgba(6,182,212,0.3)', color: '#22D3EE' };
   };
 
   if (isLoading) {
     return (
       <div
         className="rounded-xl p-4 space-y-2.5 animate-pulse"
-        style={{ background: 'var(--color-surface)', border: '1px solid rgba(30, 41, 59, 0.8)' }}
+        style={{ background: '#121821', border: '1px solid rgba(255, 255, 255, 0.06)' }}
       >
-        <div className="h-4 w-32 rounded" style={{ background: 'rgba(30, 41, 59, 0.6)' }} />
+        <div className="h-4 w-32 rounded" style={{ background: '#1A2230' }} />
         <div className="space-y-1.5">
-          <div className="h-9 rounded-lg" style={{ background: 'rgba(30, 41, 59, 0.3)' }} />
-          <div className="h-9 rounded-lg" style={{ background: 'rgba(30, 41, 59, 0.3)' }} />
+          <div className="h-9 rounded-lg" style={{ background: '#1A2230' }} />
+          <div className="h-9 rounded-lg" style={{ background: '#1A2230' }} />
         </div>
       </div>
     );
@@ -126,9 +129,9 @@ export const AuditTrail: React.FC<AuditTrailProps> = ({
       <div
         className="rounded-xl p-3 flex items-center justify-between text-xs font-mono"
         style={{
-          background:  'rgba(239, 68, 68, 0.06)',
-          border:      '1px solid rgba(239, 68, 68, 0.25)',
-          color:       '#F87171',
+          background: 'rgba(239, 68, 68, 0.08)',
+          border: '1px solid rgba(239, 68, 68, 0.3)',
+          color: '#F87171',
         }}
       >
         <div className="flex items-center gap-2">
@@ -139,9 +142,9 @@ export const AuditTrail: React.FC<AuditTrailProps> = ({
           onClick={handleRefreshClick}
           className="px-2.5 py-1 rounded-lg font-medium cursor-pointer transition-all duration-200"
           style={{
-            background:  'rgba(239, 68, 68, 0.1)',
-            border:      '1px solid rgba(239, 68, 68, 0.3)',
-            color:       '#F87171',
+            background: 'rgba(239, 68, 68, 0.15)',
+            border: '1px solid rgba(239, 68, 68, 0.4)',
+            color: '#F87171',
           }}
         >
           Retry
@@ -152,26 +155,27 @@ export const AuditTrail: React.FC<AuditTrailProps> = ({
 
   return (
     <div
-      className="rounded-xl p-4 space-y-3"
+      className="rounded-xl p-4 space-y-3 font-mono"
       style={{
-        background: 'var(--color-surface)',
-        border:     '1px solid rgba(30, 41, 59, 0.8)',
+        background: '#121821',
+        border: '1px solid rgba(255, 255, 255, 0.06)',
+        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.4)',
       }}
     >
       {/* ── Header ── */}
       <div
         className="flex items-center justify-between pb-2.5"
-        style={{ borderBottom: '1px solid rgba(30, 41, 59, 0.7)' }}
+        style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.06)' }}
       >
-        <div className="flex items-center gap-2 font-mono">
-          <FileText className="w-4 h-4" style={{ color: '#F7931A' }} />
+        <div className="flex items-center gap-2">
+          <FileText className="w-4 h-4" style={{ color: '#3B82F6' }} />
           <h2 className="text-xs uppercase tracking-wider text-white font-semibold">{title}</h2>
           <span
-            className="text-xs font-mono px-2 py-0.5 rounded-md"
+            className="text-xs px-2 py-0.5 rounded-md font-bold"
             style={{
-              background:  'rgba(247, 147, 26, 0.1)',
-              border:      '1px solid rgba(247, 147, 26, 0.2)',
-              color:       '#F7931A',
+              background: 'rgba(59, 130, 246, 0.12)',
+              border: '1px solid rgba(59, 130, 246, 0.3)',
+              color: '#60A5FA',
             }}
           >
             {auditLogs.length} Entries
@@ -179,13 +183,13 @@ export const AuditTrail: React.FC<AuditTrailProps> = ({
         </div>
         <button
           onClick={handleRefreshClick}
-          className="text-xs font-mono flex items-center gap-1 cursor-pointer transition-all duration-200"
-          style={{ color: 'var(--color-muted)' }}
+          className="text-xs flex items-center gap-1 cursor-pointer transition-all duration-200"
+          style={{ color: '#9AA4B2' }}
           onMouseEnter={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.color = '#F7931A';
+            (e.currentTarget as HTMLButtonElement).style.color = '#3B82F6';
           }}
           onMouseLeave={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.color = 'var(--color-muted)';
+            (e.currentTarget as HTMLButtonElement).style.color = '#9AA4B2';
           }}
         >
           <RefreshCw className="w-3 h-3" />
@@ -196,21 +200,21 @@ export const AuditTrail: React.FC<AuditTrailProps> = ({
       {/* ── Log Entries ── */}
       {auditLogs.length === 0 ? (
         <div
-          className="p-4 text-center text-xs font-mono rounded-lg"
+          className="p-4 text-center text-xs rounded-lg"
           style={{
-            border:      '1px dashed rgba(30, 41, 59, 0.7)',
-            background:  'rgba(3, 3, 4, 0.5)',
-            color:       'var(--color-muted)',
+            border: '1px dashed rgba(255, 255, 255, 0.08)',
+            background: '#0B0F14',
+            color: '#6B7785',
           }}
         >
           No audit log entries recorded.
         </div>
       ) : (
         <div
-          className="rounded-lg p-2.5 font-mono text-xs space-y-2 max-h-[440px] overflow-y-auto"
+          className="rounded-lg p-2.5 text-xs space-y-2 max-h-[440px] overflow-y-auto"
           style={{
-            background: 'rgba(3, 3, 4, 0.6)',
-            border:     '1px solid rgba(30, 41, 59, 0.7)',
+            background: '#0B0F14',
+            border: '1px solid rgba(255, 255, 255, 0.06)',
           }}
         >
           {auditLogs.map((log, idx) => {
@@ -218,39 +222,39 @@ export const AuditTrail: React.FC<AuditTrailProps> = ({
             return (
               <div
                 key={idx}
-                className="flex flex-col sm:flex-row sm:items-start justify-between gap-1.5 p-2 rounded-lg transition-all duration-200"
+                className="flex flex-col sm:flex-row sm:items-start justify-between gap-1.5 p-2.5 rounded-lg transition-all duration-150"
                 style={{
-                  background:  'rgba(15, 17, 21, 0.7)',
-                  border:      '1px solid rgba(30, 41, 59, 0.6)',
+                  background: '#121821',
+                  border: '1px solid rgba(255, 255, 255, 0.04)',
                 }}
                 onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(247, 147, 26, 0.2)';
+                  (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(59, 130, 246, 0.3)';
                 }}
                 onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(30, 41, 59, 0.6)';
+                  (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(255, 255, 255, 0.04)';
                 }}
               >
-                <div className="space-y-0.5">
+                <div className="space-y-1">
                   <div className="flex items-center gap-2 flex-wrap">
                     <span
                       className="text-[11px] flex items-center gap-1"
-                      style={{ color: 'var(--color-muted)' }}
+                      style={{ color: '#9AA4B2' }}
                     >
-                      <Clock className="w-3 h-3" style={{ color: 'rgba(148, 163, 184, 0.4)' }} />
+                      <Clock className="w-3 h-3" style={{ color: '#6B7785' }} />
                       {formatTimestamp(log.timestamp)}
                     </span>
                     <span
                       className="text-[10px] px-1.5 py-0.5 rounded font-bold border"
                       style={{
-                        background:  badgeStyle.bg,
+                        background: badgeStyle.bg,
                         borderColor: badgeStyle.border,
-                        color:       badgeStyle.color,
+                        color: badgeStyle.color,
                       }}
                     >
                       {log.action}
                     </span>
                   </div>
-                  <p className="text-xs font-sans leading-normal" style={{ color: '#CBD5E1' }}>
+                  <p className="text-xs font-sans leading-normal" style={{ color: '#E6EAF2' }}>
                     {log.description}
                   </p>
                 </div>

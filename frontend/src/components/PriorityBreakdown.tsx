@@ -20,7 +20,7 @@ const DEFAULT_FACTORS: PriorityFactors = {
 const FACTOR_CONFIG: { key: keyof PriorityFactors; name: string; color: string; desc: string }[] = [
   { key: 'behavioral_anomaly',   name: 'Behavioral Anomaly',   color: '#EF4444', desc: 'Deviations from user baseline & location anomalies' },
   { key: 'correlation_strength', name: 'Correlation Strength', color: '#F59E0B', desc: 'Temporal and session alignment across telemetry' },
-  { key: 'asset_criticality',    name: 'Asset Criticality',    color: '#F7931A', desc: 'Sensitivity of target databases, vaults, or assets' },
+  { key: 'asset_criticality',    name: 'Asset Criticality',    color: '#FB923C', desc: 'Sensitivity of target databases, vaults, or assets' },
   { key: 'incident_progression', name: 'Incident Progression', color: '#8B5CF6', desc: 'Multi-stage progression and privilege escalation' },
   { key: 'evidence_strength',    name: 'Evidence Strength',    color: '#10B981', desc: 'Verification confidence & multi-source evidence' },
 ];
@@ -60,7 +60,7 @@ export const PriorityBreakdown: React.FC<PriorityBreakdownProps> = ({ priority, 
         style={{ borderBottom: '1px solid rgba(30, 41, 59, 0.7)' }}
       >
         <div className="flex items-center gap-2">
-          <Zap className="w-4 h-4" style={{ color: '#F7931A' }} />
+          <Zap className="w-4 h-4" style={{ color: '#60A5FA' }} />
           <h3 className="text-xs uppercase font-bold tracking-wider text-white">
             INVESTIGATION PRIORITY BREAKDOWN
           </h3>
@@ -90,14 +90,14 @@ export const PriorityBreakdown: React.FC<PriorityBreakdownProps> = ({ priority, 
           className="text-center p-3 rounded-lg min-w-[90px]"
           style={{
             background: 'var(--color-surface)',
-            border:     '1px solid rgba(247, 147, 26, 0.25)',
-            boxShadow:  '0 0 20px -6px rgba(247, 147, 26, 0.2)',
+            border:     '1px solid rgba(59, 130, 246, 0.3)',
+            boxShadow:  '0 0 20px -6px rgba(59, 130, 246, 0.25)',
           }}
         >
           <div
             className="text-3xl font-extrabold leading-none"
             style={{
-              background:            'linear-gradient(to bottom, #F7931A, #EA580C)',
+              background:            currentScore >= 70 ? 'linear-gradient(to bottom, #F87171, #EF4444)' : 'linear-gradient(to bottom, #60A5FA, #2563EB)',
               WebkitBackgroundClip:  'text',
               WebkitTextFillColor:   'transparent',
               backgroundClip:        'text',
@@ -113,7 +113,7 @@ export const PriorityBreakdown: React.FC<PriorityBreakdownProps> = ({ priority, 
         {/* Description */}
         <div className="space-y-1 text-xs font-sans">
           <span className="text-slate-200 font-semibold flex items-center gap-1.5 font-mono text-xs">
-            <ShieldAlert className="w-3.5 h-3.5" style={{ color: '#F7931A' }} />
+            <ShieldAlert className="w-3.5 h-3.5" style={{ color: '#60A5FA' }} />
             Weighted Intelligence Score
           </span>
           <p className="text-xs leading-relaxed" style={{ color: 'var(--color-muted)' }}>
@@ -160,14 +160,14 @@ export const PriorityBreakdown: React.FC<PriorityBreakdownProps> = ({ priority, 
               <Tooltip
                 contentStyle={{
                   backgroundColor: 'var(--color-surface)',
-                  borderColor:     'rgba(247, 147, 26, 0.25)',
+                  borderColor:     'rgba(59, 130, 246, 0.3)',
                   color:           '#E2E8F0',
                   fontSize:        '11px',
                   fontFamily:      'JetBrains Mono, monospace',
                   borderRadius:    '8px',
                 }}
                 formatter={(val) => [`${val} points`, 'Contribution']}
-                cursor={{ fill: 'rgba(247, 147, 26, 0.04)' }}
+                cursor={{ fill: 'rgba(59, 130, 246, 0.04)' }}
               />
               <Bar dataKey="score" radius={[0, 4, 4, 0]}>
                 {chartData.map((entry, index) => (
@@ -204,7 +204,7 @@ export const PriorityBreakdown: React.FC<PriorityBreakdownProps> = ({ priority, 
                   border:     '1px solid rgba(30, 41, 59, 0.6)',
                 }}
                 onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(247, 147, 26, 0.2)';
+                  (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(59, 130, 246, 0.4)';
                 }}
                 onMouseLeave={(e) => {
                   (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(30, 41, 59, 0.6)';

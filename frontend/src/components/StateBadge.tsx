@@ -55,10 +55,10 @@ const getStyle = (st: string): BadgeConfig => {
       };
     case 'INVESTIGATING':
       return {
-        bg:     'rgba(247, 147, 26, 0.12)',
-        border: 'rgba(247, 147, 26, 0.35)',
-        text:   '#F7931A',
-        dot:    '#F7931A',
+        bg:     'rgba(245, 158, 11, 0.12)',
+        border: 'rgba(245, 158, 11, 0.35)',
+        text:   '#FBBF24',
+        dot:    '#FBBF24',
         label:  'INVESTIGATING',
       };
     case 'CONFIRMED':

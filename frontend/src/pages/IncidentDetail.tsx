@@ -9,8 +9,8 @@ import Timeline from '../components/Timeline';
 import IncidentGraph from '../components/IncidentGraph';
 import EvidencePanel from '../components/EvidencePanel';
 import PriorityBreakdown from '../components/PriorityBreakdown';
-import ConfidenceCard from '../components/ConfidenceCard';
-import AuditPanel from '../components/AuditPanel';
+import ConfidenceCard, { computeConfidenceScore } from '../components/ConfidenceCard';
+import AuditTrail from '../components/incidents/AuditTrail';
 import AIExplanation from '../components/AIExplanation';
 import ActionBar from '../components/ActionBar';
 import type { AnalystActionType, DismissalReason } from '../types/incident';
@@ -50,6 +50,9 @@ export const IncidentDetail: React.FC = () => {
     }
   };
 
+  const confidenceScore = computeConfidenceScore(graphData);
+  const confidencePercent = Math.round(confidenceScore * 100);
+
   if (isIncidentLoading) {
     return (
       <div className="p-5 max-w-7xl mx-auto space-y-4 font-mono animate-pulse">
@@ -66,14 +69,14 @@ export const IncidentDetail: React.FC = () => {
   if (incidentError || !incident) {
     return (
       <div className="p-6 max-w-xl mx-auto font-mono space-y-4 text-center">
-        <Link to="/" className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-cyan-400">
+        <Link to="/" className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-blue-400 transition-colors">
           <ArrowLeft className="w-3.5 h-3.5" /> Back to Dashboard
         </Link>
         <div className="p-6 bg-[#0F1420] border border-red-500/30 rounded-md space-y-3">
           <AlertCircle className="w-10 h-10 text-red-400 mx-auto" />
           <h2 className="text-base font-bold text-white">Incident Not Found</h2>
           <p className="text-xs text-slate-400">{incidentError?.message || `No incident details for ID ${id}`}</p>
-          <button onClick={() => refetch()} className="px-3 py-1.5 bg-cyan-600 hover:bg-cyan-500 text-white rounded text-xs font-semibold cursor-pointer">
+          <button onClick={() => refetch()} className="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded text-xs font-semibold cursor-pointer">
             Retry
           </button>
         </div>
@@ -87,7 +90,7 @@ export const IncidentDetail: React.FC = () => {
     <div className="p-4 sm:p-6 space-y-5 max-w-7xl mx-auto font-sans">
       {/* Top Breadcrumb & Status */}
       <div className="flex items-center justify-between font-mono text-xs text-slate-400">
-        <Link to="/" className="inline-flex items-center gap-1.5 text-slate-400 hover:text-cyan-400 transition-colors">
+        <Link to="/" className="inline-flex items-center gap-1.5 text-slate-400 hover:text-blue-400 transition-colors">
           <ArrowLeft className="w-3.5 h-3.5" /> Back to Dashboard
         </Link>
         <span>Incident ID: <strong className="text-cyan-400">{incident.incident_id}</strong></span>
@@ -126,7 +129,7 @@ export const IncidentDetail: React.FC = () => {
             {/* Confidence Metric Badge (Distinct Vocabulary & Colors) */}
             <div className="flex items-center gap-2 p-2 bg-[#0B0E14] border border-cyan-500/30 rounded-md">
               <div className="text-center px-2">
-                <span className="text-xl font-black text-cyan-400 leading-none">88%</span>
+                <span className="text-xl font-black text-cyan-400 leading-none">{confidencePercent}%</span>
                 <span className="text-[8px] text-cyan-300 block uppercase font-bold mt-0.5">CONFIDENCE</span>
               </div>
               <ShieldCheck className="w-4 h-4 text-cyan-400" />
@@ -232,7 +235,7 @@ export const IncidentDetail: React.FC = () => {
             )}
 
             {activeTab === 'audit' && (
-              <AuditPanel auditLogs={auditLogs} loading={isAuditLoading} />
+              <AuditTrail entries={auditLogs} loading={isAuditLoading} incidentId={id} />
             )}
 
             {activeTab === 'ai' && (

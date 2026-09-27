@@ -24,22 +24,22 @@ export const PipelineStrip: React.FC<PipelineStripProps> = ({ activeStage, class
     <div
       className={`rounded-xl p-3 font-mono ${className}`}
       style={{
-        background: 'var(--color-surface)',
-        border: '1px solid rgba(30, 41, 59, 0.8)',
+        background: '#121821',
+        border: '1px solid rgba(255, 255, 255, 0.07)',
       }}
     >
       {/* ── Header ── */}
       <div
         className="flex items-center justify-between text-[10px] uppercase tracking-wider mb-3"
-        style={{ color: 'var(--color-muted)' }}
+        style={{ color: '#9AA4B2' }}
       >
-        <span className="flex items-center gap-1.5 font-semibold" style={{ color: '#F7931A' }}>
+        <span className="flex items-center gap-1.5 font-semibold" style={{ color: '#60A5FA' }}>
           <Layers className="w-3.5 h-3.5" />
           INTELLIGENCE PIPELINE STAGE
         </span>
-        <span style={{ color: 'var(--color-muted)' }}>
+        <span style={{ color: '#9AA4B2' }}>
           Active:{' '}
-          <strong style={{ color: '#F7931A' }}>{activeStage}</strong>
+          <strong style={{ color: '#60A5FA' }}>{activeStage}</strong>
         </span>
       </div>
 
@@ -61,28 +61,28 @@ export const PipelineStrip: React.FC<PipelineStripProps> = ({ activeStage, class
                 style={
                   isActive
                     ? {
-                        background:  'rgba(247, 147, 26, 0.12)',
-                        border:      '1px solid rgba(247, 147, 26, 0.45)',
-                        color:       '#F7931A',
-                        boxShadow:   '0 0 16px -4px rgba(247, 147, 26, 0.35)',
+                        background:  'rgba(59, 130, 246, 0.15)',
+                        border:      '1px solid rgba(59, 130, 246, 0.5)',
+                        color:       '#60A5FA',
+                        boxShadow:   '0 0 16px -4px rgba(59, 130, 246, 0.35)',
                       }
                     : isPassed
                     ? {
-                        background:  'rgba(30, 41, 59, 0.4)',
-                        border:      '1px solid rgba(30, 41, 59, 0.8)',
-                        color:       '#CBD5E1',
+                        background:  '#1A2230',
+                        border:      '1px solid rgba(255, 255, 255, 0.08)',
+                        color:       '#E6EAF2',
                       }
                     : {
-                        background:  'rgba(3, 3, 4, 0.5)',
-                        border:      '1px solid rgba(30, 41, 59, 0.4)',
-                        color:       'var(--color-muted)',
+                        background:  '#0B0F14',
+                        border:      '1px solid rgba(255, 255, 255, 0.04)',
+                        color:       '#6B7785',
                       }
                 }
               >
                 <Icon
                   className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'animate-pulse' : ''}`}
                   style={{
-                    color: isActive ? '#F7931A' : isPassed ? '#CBD5E1' : 'var(--color-muted)',
+                    color: isActive ? '#60A5FA' : isPassed ? '#93C5FD' : '#6B7785',
                   }}
                 />
                 <span className="truncate">{stage.label}</span>
@@ -91,7 +91,7 @@ export const PipelineStrip: React.FC<PipelineStripProps> = ({ activeStage, class
               {idx < STAGES.length - 1 && (
                 <ChevronRight
                   className="w-3.5 h-3.5 absolute -right-2 z-10 hidden md:block"
-                  style={{ color: isPassed ? 'rgba(247, 147, 26, 0.4)' : 'rgba(30, 41, 59, 0.6)' }}
+                  style={{ color: isPassed ? 'rgba(59, 130, 246, 0.5)' : 'rgba(255, 255, 255, 0.12)' }}
                 />
               )}
             </div>

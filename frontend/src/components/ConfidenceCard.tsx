@@ -22,6 +22,34 @@ interface ConfidenceCardProps {
  * Recommend adding explicit `confidence_score` (0.00 - 1.00) and `confidence_label` ('STRONG' | 'MODERATE' | 'WEAK' | 'TENTATIVE')
  * to the `GET /api/incidents/{id}` or `GET /api/incidents/{id}/priority` endpoints.
  */
+export function computeConfidenceScore(graphData?: GraphData, explicitScore?: number): number {
+  if (typeof explicitScore === 'number') {
+    return explicitScore > 1 ? explicitScore / 100 : explicitScore;
+  }
+
+  if (graphData?.edges && graphData.edges.length > 0) {
+    const scores = graphData.edges
+      .map((e) => {
+        const rawScore = e.data?.score;
+        if (typeof rawScore === 'number') return rawScore > 1 ? rawScore / 100 : rawScore;
+        if (typeof rawScore === 'string') {
+          const parsed = parseFloat(rawScore);
+          return isNaN(parsed) ? null : parsed > 1 ? parsed / 100 : parsed;
+        }
+        return null;
+      })
+      .filter((s): s is number => s !== null);
+
+    if (scores.length > 0) {
+      const sum = scores.reduce((acc, curr) => acc + curr, 0);
+      return sum / scores.length;
+    }
+  }
+
+  // Default fallback proxy (0.88 / 88% strong correlation)
+  return 0.88;
+}
+
 export const ConfidenceCard: React.FC<ConfidenceCardProps> = ({
   graphData,
   explicitScore,
@@ -29,31 +57,7 @@ export const ConfidenceCard: React.FC<ConfidenceCardProps> = ({
 }) => {
   // Compute proxy confidence score from graph edge scores if explicitScore is not provided
   const computedScore = React.useMemo(() => {
-    if (typeof explicitScore === 'number') {
-      return explicitScore > 1 ? explicitScore / 100 : explicitScore;
-    }
-
-    if (graphData?.edges && graphData.edges.length > 0) {
-      const scores = graphData.edges
-        .map((e) => {
-          const rawScore = e.data?.score;
-          if (typeof rawScore === 'number') return rawScore > 1 ? rawScore / 100 : rawScore;
-          if (typeof rawScore === 'string') {
-            const parsed = parseFloat(rawScore);
-            return isNaN(parsed) ? null : parsed > 1 ? parsed / 100 : parsed;
-          }
-          return null;
-        })
-        .filter((s): s is number => s !== null);
-
-      if (scores.length > 0) {
-        const sum = scores.reduce((acc, curr) => acc + curr, 0);
-        return sum / scores.length;
-      }
-    }
-
-    // Default fallback proxy (0.88 / 88% strong correlation)
-    return 0.88;
+    return computeConfidenceScore(graphData, explicitScore);
   }, [graphData, explicitScore]);
 
   const percentage = Math.round(computedScore * 100);

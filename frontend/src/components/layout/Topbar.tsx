@@ -11,8 +11,8 @@ export const Topbar: React.FC = () => {
     <header
       className="h-14 px-5 flex items-center justify-between shrink-0 sticky top-0 z-30 font-mono"
       style={{
-        backgroundColor: 'rgba(15, 17, 21, 0.95)',
-        borderBottom: '1px solid rgba(30, 41, 59, 0.8)',
+        backgroundColor: 'rgba(18, 24, 33, 0.95)',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.07)',
         backdropFilter: 'blur(12px)',
         WebkitBackdropFilter: 'blur(12px)',
       }}
@@ -22,18 +22,18 @@ export const Topbar: React.FC = () => {
         <div
           className="w-8 h-8 rounded-lg flex items-center justify-center"
           style={{
-            background: 'rgba(247, 147, 26, 0.15)',
-            border: '1px solid rgba(247, 147, 26, 0.4)',
-            boxShadow: '0 0 16px rgba(247, 147, 26, 0.25)',
+            background: 'rgba(59, 130, 246, 0.15)',
+            border: '1px solid rgba(59, 130, 246, 0.4)',
+            boxShadow: '0 0 16px rgba(59, 130, 246, 0.25)',
           }}
         >
-          <Shield className="w-4 h-4" style={{ color: '#F7931A' }} />
+          <Shield className="w-4 h-4" style={{ color: '#3B82F6' }} />
         </div>
         <div>
           <div className="flex items-center gap-2 text-sm font-extrabold tracking-wider font-heading">
             <span
               style={{
-                background: 'linear-gradient(to right, #F7931A, #FFD600)',
+                background: 'linear-gradient(to right, #3B82F6, #60A5FA)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
                 backgroundClip: 'text',
@@ -44,16 +44,15 @@ export const Topbar: React.FC = () => {
             <span
               className="text-[10px] font-mono font-normal px-1.5 py-0.5 rounded"
               style={{
-                background: 'rgba(247, 147, 26, 0.15)',
-                border: '1px solid rgba(247, 147, 26, 0.3)',
-                color: '#F7931A',
-                WebkitTextFillColor: '#F7931A',
+                background: 'rgba(59, 130, 246, 0.15)',
+                border: '1px solid rgba(59, 130, 246, 0.3)',
+                color: '#60A5FA',
               }}
             >
               SOC v2.4
             </span>
           </div>
-          <div className="text-[10px] font-body" style={{ color: 'var(--color-muted)' }}>
+          <div className="text-[10px] font-body" style={{ color: '#9AA4B2' }}>
             Incident Intelligence System
           </div>
         </div>
@@ -65,12 +64,12 @@ export const Topbar: React.FC = () => {
         <div
           className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs"
           style={{
-            background: 'rgba(3, 3, 4, 0.8)',
-            border: '1px solid rgba(30, 41, 59, 0.8)',
+            background: '#0B0F14',
+            border: '1px solid rgba(255, 255, 255, 0.07)',
           }}
         >
           <Activity className="w-3.5 h-3.5 animate-pulse" style={{ color: '#10B981' }} />
-          <span style={{ color: 'var(--color-muted)' }}>Events:</span>
+          <span style={{ color: '#9AA4B2' }}>Events:</span>
           <strong className="font-bold" style={{ color: '#10B981' }}>
             {events.length}
           </strong>
@@ -80,28 +79,29 @@ export const Topbar: React.FC = () => {
         <div
           className="flex items-center gap-1.5 p-1 rounded-lg"
           style={{
-            background: 'rgba(3, 3, 4, 0.8)',
-            border: '1px solid rgba(30, 41, 59, 0.8)',
+            background: '#0B0F14',
+            border: '1px solid rgba(255, 255, 255, 0.07)',
           }}
         >
-          {/* Next Event — Primary orange button */}
+          {/* Next Event — Primary Electric Blue button */}
           <button
             onClick={() => nextEvent()}
             disabled={isNextLoading}
             title="Process next simulated telemetry event"
             className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg transition-all duration-300 disabled:opacity-50 cursor-pointer"
             style={{
-              background: 'linear-gradient(to right, #EA580C, #F7931A)',
+              background: 'linear-gradient(to right, #2563EB, #3B82F6)',
               color: 'white',
-              boxShadow: '0 0 16px -4px rgba(234, 88, 12, 0.5)',
+              border: '1px solid rgba(59, 130, 246, 0.5)',
+              boxShadow: '0 0 16px -4px rgba(37, 99, 235, 0.5)',
             }}
             onMouseEnter={(e) => {
               (e.currentTarget as HTMLButtonElement).style.transform = 'scale(1.04)';
-              (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 0 24px -4px rgba(247, 147, 26, 0.65)';
+              (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 0 24px -4px rgba(59, 130, 246, 0.65)';
             }}
             onMouseLeave={(e) => {
               (e.currentTarget as HTMLButtonElement).style.transform = 'scale(1)';
-              (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 0 16px -4px rgba(234, 88, 12, 0.5)';
+              (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 0 16px -4px rgba(37, 99, 235, 0.5)';
             }}
           >
             {isNextLoading ? (
@@ -133,8 +133,8 @@ export const Topbar: React.FC = () => {
       <div
         className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-mono"
         style={{
-          background: 'rgba(3, 3, 4, 0.8)',
-          border: '1px solid rgba(30, 41, 59, 0.8)',
+          background: '#0B0F14',
+          border: '1px solid rgba(255, 255, 255, 0.07)',
         }}
       >
         <span
@@ -146,7 +146,7 @@ export const Topbar: React.FC = () => {
         />
         <span style={{ color: '#CBD5E1' }}>
           ANALYST:{' '}
-          <strong style={{ color: '#F7931A' }}>SOC-LEAD</strong>
+          <strong style={{ color: '#60A5FA' }}>SOC-LEAD</strong>
         </span>
       </div>
     </header>

@@ -62,18 +62,18 @@ export const ActionBar: React.FC<ActionBarProps> = ({
             disabled={isPending}
             className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border transition-all duration-200 disabled:opacity-50 cursor-pointer"
             style={{
-              background:   'rgba(247, 147, 26, 0.08)',
-              borderColor:  'rgba(247, 147, 26, 0.25)',
-              color:        '#F7931A',
+              background:   'rgba(59, 130, 246, 0.1)',
+              borderColor:  'rgba(59, 130, 246, 0.3)',
+              color:        '#60A5FA',
             }}
             onMouseEnter={(e) => {
-              (e.currentTarget as HTMLButtonElement).style.background    = 'rgba(247, 147, 26, 0.15)';
-              (e.currentTarget as HTMLButtonElement).style.borderColor   = 'rgba(247, 147, 26, 0.45)';
-              (e.currentTarget as HTMLButtonElement).style.boxShadow     = '0 0 12px rgba(247, 147, 26, 0.2)';
+              (e.currentTarget as HTMLButtonElement).style.background    = 'rgba(59, 130, 246, 0.2)';
+              (e.currentTarget as HTMLButtonElement).style.borderColor   = 'rgba(59, 130, 246, 0.5)';
+              (e.currentTarget as HTMLButtonElement).style.boxShadow     = '0 0 12px rgba(59, 130, 246, 0.25)';
             }}
             onMouseLeave={(e) => {
-              (e.currentTarget as HTMLButtonElement).style.background    = 'rgba(247, 147, 26, 0.08)';
-              (e.currentTarget as HTMLButtonElement).style.borderColor   = 'rgba(247, 147, 26, 0.25)';
+              (e.currentTarget as HTMLButtonElement).style.background    = 'rgba(59, 130, 246, 0.1)';
+              (e.currentTarget as HTMLButtonElement).style.borderColor   = 'rgba(59, 130, 246, 0.3)';
               (e.currentTarget as HTMLButtonElement).style.boxShadow     = '';
             }}
           >
@@ -91,18 +91,18 @@ export const ActionBar: React.FC<ActionBarProps> = ({
             disabled={isPending}
             className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all duration-200 disabled:opacity-50 cursor-pointer"
             style={{
-              background:  'rgba(59, 130, 246, 0.15)',
-              border:      '1px solid rgba(59, 130, 246, 0.35)',
-              color:       '#60A5FA',
-              boxShadow:   '0 0 12px rgba(59, 130, 246, 0.15)',
+              background:  'rgba(59, 130, 246, 0.2)',
+              border:      '1px solid rgba(59, 130, 246, 0.45)',
+              color:       '#93C5FD',
+              boxShadow:   '0 0 12px rgba(59, 130, 246, 0.2)',
             }}
             onMouseEnter={(e) => {
-              (e.currentTarget as HTMLButtonElement).style.background  = 'rgba(59, 130, 246, 0.25)';
-              (e.currentTarget as HTMLButtonElement).style.boxShadow   = '0 0 18px rgba(59, 130, 246, 0.3)';
+              (e.currentTarget as HTMLButtonElement).style.background  = 'rgba(59, 130, 246, 0.3)';
+              (e.currentTarget as HTMLButtonElement).style.boxShadow   = '0 0 18px rgba(59, 130, 246, 0.35)';
             }}
             onMouseLeave={(e) => {
-              (e.currentTarget as HTMLButtonElement).style.background  = 'rgba(59, 130, 246, 0.15)';
-              (e.currentTarget as HTMLButtonElement).style.boxShadow   = '0 0 12px rgba(59, 130, 246, 0.15)';
+              (e.currentTarget as HTMLButtonElement).style.background  = 'rgba(59, 130, 246, 0.2)';
+              (e.currentTarget as HTMLButtonElement).style.boxShadow   = '0 0 12px rgba(59, 130, 246, 0.2)';
             }}
           >
             {isPending && activeAction === 'CONFIRM' ? (
@@ -221,8 +221,8 @@ export const ActionBar: React.FC<ActionBarProps> = ({
                     className="w-full text-left px-2.5 py-1.5 text-xs rounded-lg transition-all duration-150"
                     style={{ color: '#CBD5E1' }}
                     onMouseEnter={(e) => {
-                      (e.currentTarget as HTMLButtonElement).style.background = 'rgba(247, 147, 26, 0.08)';
-                      (e.currentTarget as HTMLButtonElement).style.color      = '#F7931A';
+                      (e.currentTarget as HTMLButtonElement).style.background = 'rgba(59, 130, 246, 0.12)';
+                      (e.currentTarget as HTMLButtonElement).style.color      = '#60A5FA';
                     }}
                     onMouseLeave={(e) => {
                       (e.currentTarget as HTMLButtonElement).style.background = 'transparent';

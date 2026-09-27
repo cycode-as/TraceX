@@ -64,14 +64,14 @@ const COLOR_MAP: Record<string, ColorStyle> = {
     changeText:  '#A78BFA',
   },
   orange: {
-    iconBg:      'rgba(247, 147, 26, 0.12)',
-    iconBorder:  'rgba(247, 147, 26, 0.3)',
-    iconColor:   '#F7931A',
-    hoverBorder: 'rgba(247, 147, 26, 0.45)',
-    hoverGlow:   '0 0 28px -8px rgba(247, 147, 26, 0.3)',
-    changeBg:    'rgba(247, 147, 26, 0.1)',
-    changeBorder:'rgba(247, 147, 26, 0.3)',
-    changeText:  '#F7931A',
+    iconBg:      'rgba(245, 158, 11, 0.12)',
+    iconBorder:  'rgba(245, 158, 11, 0.3)',
+    iconColor:   '#F59E0B',
+    hoverBorder: 'rgba(245, 158, 11, 0.45)',
+    hoverGlow:   '0 0 28px -8px rgba(245, 158, 11, 0.3)',
+    changeBg:    'rgba(245, 158, 11, 0.1)',
+    changeBorder:'rgba(245, 158, 11, 0.3)',
+    changeText:  '#F59E0B',
   },
   blue: {
     iconBg:      'rgba(59, 130, 246, 0.12)',
@@ -91,10 +91,10 @@ export const StatCard: React.FC<StatCardProps> = ({
   subtitle,
   icon: Icon,
   change,
-  colorScheme = 'orange',
+  colorScheme = 'blue',
   loading = false,
 }) => {
-  const c = COLOR_MAP[colorScheme] ?? COLOR_MAP.orange;
+  const c = COLOR_MAP[colorScheme] ?? COLOR_MAP.blue;
 
   if (loading) {
     return (

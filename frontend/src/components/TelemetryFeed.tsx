@@ -55,14 +55,14 @@ export const TelemetryFeed: React.FC<TelemetryFeedProps> = ({ events, loading = 
     <div
       className={`rounded-xl p-4 space-y-3 ${className}`}
       style={{
-        background: 'var(--color-surface)',
-        border:     '1px solid rgba(30, 41, 59, 0.8)',
+        background: '#121821',
+        border:     '1px solid rgba(255, 255, 255, 0.07)',
       }}
     >
       {/* ── Header ── */}
       <div
         className="flex items-center justify-between pb-2.5"
-        style={{ borderBottom: '1px solid rgba(30, 41, 59, 0.7)' }}
+        style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.07)' }}
       >
         <div className="flex items-center gap-2 font-mono">
           <Terminal className="w-4 h-4" style={{ color: '#10B981' }} />
@@ -81,7 +81,7 @@ export const TelemetryFeed: React.FC<TelemetryFeedProps> = ({ events, loading = 
             />
           </span>
         </div>
-        <span className="text-[11px] font-mono" style={{ color: 'var(--color-muted)' }}>
+        <span className="text-[11px] font-mono" style={{ color: '#9AA4B2' }}>
           Auto-refresh stream
         </span>
       </div>
@@ -93,7 +93,7 @@ export const TelemetryFeed: React.FC<TelemetryFeedProps> = ({ events, loading = 
             <div
               key={n}
               className="h-11 rounded-lg animate-pulse"
-              style={{ background: 'rgba(30, 41, 59, 0.3)', border: '1px solid rgba(30, 41, 59, 0.6)' }}
+              style={{ background: '#1A2230', border: '1px solid rgba(255, 255, 255, 0.06)' }}
             />
           ))}
         </div>
@@ -101,12 +101,12 @@ export const TelemetryFeed: React.FC<TelemetryFeedProps> = ({ events, loading = 
         <div
           className="py-10 text-center space-y-2 rounded-lg font-mono"
           style={{
-            border:      '1px dashed rgba(30, 41, 59, 0.7)',
-            background:  'rgba(3, 3, 4, 0.5)',
+            border:      '1px dashed rgba(255, 255, 255, 0.08)',
+            background:  '#0B0F14',
           }}
         >
-          <AlertTriangle className="w-8 h-8 mx-auto" style={{ color: 'var(--color-muted)' }} />
-          <p className="text-xs" style={{ color: 'var(--color-muted)' }}>No telemetry events recorded</p>
+          <AlertTriangle className="w-8 h-8 mx-auto" style={{ color: '#6B7785' }} />
+          <p className="text-xs" style={{ color: '#9AA4B2' }}>No telemetry events recorded</p>
         </div>
       ) : (
         <div className="space-y-1.5 max-h-[380px] overflow-y-auto pr-1">
@@ -123,41 +123,41 @@ export const TelemetryFeed: React.FC<TelemetryFeedProps> = ({ events, loading = 
                   transition={{ duration: 0.2 }}
                   className="p-2.5 rounded-lg font-mono text-xs flex items-center justify-between gap-2 transition-all duration-200"
                   style={{
-                    background: 'rgba(3, 3, 4, 0.6)',
-                    border:     '1px solid rgba(30, 41, 59, 0.6)',
+                    background: '#0B0F14',
+                    border:     '1px solid rgba(255, 255, 255, 0.05)',
                   }}
                   onMouseEnter={(e) => {
-                    (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(247, 147, 26, 0.2)';
-                    (e.currentTarget as HTMLDivElement).style.background   = 'rgba(247, 147, 26, 0.04)';
+                    (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(59, 130, 246, 0.3)';
+                    (e.currentTarget as HTMLDivElement).style.background   = 'rgba(59, 130, 246, 0.04)';
                   }}
                   onMouseLeave={(e) => {
-                    (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(30, 41, 59, 0.6)';
-                    (e.currentTarget as HTMLDivElement).style.background   = 'rgba(3, 3, 4, 0.6)';
+                    (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(255, 255, 255, 0.05)';
+                    (e.currentTarget as HTMLDivElement).style.background   = '#0B0F14';
                   }}
                 >
                   <div className="flex items-center gap-2 truncate">
                     <span
                       className="text-[11px] flex items-center gap-1 shrink-0"
-                      style={{ color: 'var(--color-muted)' }}
+                      style={{ color: '#9AA4B2' }}
                     >
-                      <Clock className="w-3 h-3" style={{ color: 'rgba(148, 163, 184, 0.5)' }} />
+                      <Clock className="w-3 h-3" style={{ color: '#6B7785' }} />
                       {formatTime(evt.timestamp)}
                     </span>
                     <span className="text-slate-200 font-semibold truncate">{evt.event_type}</span>
-                    <span style={{ color: 'rgba(30, 41, 59, 0.8)' }}>·</span>
+                    <span style={{ color: 'rgba(255, 255, 255, 0.15)' }}>·</span>
                     <span
                       className="flex items-center gap-1 shrink-0"
-                      style={{ color: '#F7931A' }}
+                      style={{ color: '#60A5FA' }}
                     >
-                      <User className="w-3 h-3" style={{ color: 'rgba(148, 163, 184, 0.5)' }} />
+                      <User className="w-3 h-3" style={{ color: '#6B7785' }} />
                       {evt.user_id || 'SYSTEM'}
                     </span>
-                    <span style={{ color: 'rgba(30, 41, 59, 0.8)' }}>·</span>
+                    <span style={{ color: 'rgba(255, 255, 255, 0.15)' }}>·</span>
                     <span
                       className="text-[11px] truncate max-w-[130px] flex items-center gap-1"
-                      style={{ color: 'var(--color-muted)' }}
+                      style={{ color: '#9AA4B2' }}
                     >
-                      <HardDrive className="w-3 h-3" style={{ color: 'rgba(148, 163, 184, 0.4)' }} />
+                      <HardDrive className="w-3 h-3" style={{ color: '#6B7785' }} />
                       {detail}
                     </span>
                   </div>
