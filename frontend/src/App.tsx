@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import AppLayout from './components/layout/AppLayout';
 import Dashboard from './pages/Dashboard';
@@ -20,21 +20,15 @@ const queryClient = new QueryClient({
 });
 
 function MainRoutes() {
-  const location = useLocation();
-  const [hasEntered, setHasEntered] = useState<boolean>(() => {
-    // Direct navigation to subpages immediately bypasses landing page
-    if (location.pathname !== '/') {
-      return true;
-    }
-    return sessionStorage.getItem('tracex_entered') === 'true';
-  });
+  const navigate = useNavigate();
+  const [hasEntered, setHasEntered] = useState<boolean>(false);
 
   const handleEnterDashboard = () => {
-    sessionStorage.setItem('tracex_entered', 'true');
     setHasEntered(true);
+    navigate('/');
   };
 
-  if (!hasEntered && location.pathname === '/') {
+  if (!hasEntered) {
     return <LandingScreen onEnter={handleEnterDashboard} />;
   }
 
