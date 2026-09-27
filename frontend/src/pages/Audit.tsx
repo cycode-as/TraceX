@@ -198,7 +198,7 @@ export const Audit: React.FC = () => {
       {/* ── KPI Summary Cards ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 font-code-sm">
         {/* Total Records */}
-        <div className="p-4 rounded-md space-y-2 bg-surface-container border border-outline-variant">
+        <div className="p-4 rounded-xl space-y-2 bg-surface-container-lowest border border-outline-variant/70 shadow-lg shadow-black/40">
           <div className="flex items-center justify-between">
             <span className="font-label-sm text-on-surface-variant">
               Total Log Entries
@@ -206,13 +206,13 @@ export const Audit: React.FC = () => {
             <FileText className="w-4 h-4 text-primary" />
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-2xl sm:text-3xl font-extrabold text-on-surface">{stats.total}</span>
+            <span className="text-2xl sm:text-3xl font-black text-on-surface font-mono">{stats.total}</span>
             <span className="font-code-sm text-on-surface-variant">RECORDS</span>
           </div>
         </div>
 
         {/* Analyst Actions */}
-        <div className="p-4 rounded-md space-y-2 bg-surface-container border border-outline-variant">
+        <div className="p-4 rounded-xl space-y-2 bg-surface-container-lowest border border-outline-variant/70 shadow-lg shadow-black/40">
           <div className="flex items-center justify-between">
             <span className="font-label-sm text-on-surface-variant">
               Analyst Actions
@@ -220,13 +220,13 @@ export const Audit: React.FC = () => {
             <UserCheck className="w-4 h-4 text-secondary" />
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-2xl sm:text-3xl font-extrabold text-on-surface">{stats.analyst}</span>
+            <span className="text-2xl sm:text-3xl font-black text-on-surface font-mono">{stats.analyst}</span>
             <span className="font-code-sm text-secondary">TRIAGE EVENTS</span>
           </div>
         </div>
 
         {/* State Transitions */}
-        <div className="p-4 rounded-md space-y-2 bg-surface-container border border-outline-variant">
+        <div className="p-4 rounded-xl space-y-2 bg-surface-container-lowest border border-outline-variant/70 shadow-lg shadow-black/40">
           <div className="flex items-center justify-between">
             <span className="font-label-sm text-on-surface-variant">
               State & Priority
@@ -234,13 +234,13 @@ export const Audit: React.FC = () => {
             <ShieldAlert className="w-4 h-4 text-tertiary" />
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-2xl sm:text-3xl font-extrabold text-on-surface">{stats.state}</span>
+            <span className="text-2xl sm:text-3xl font-black text-on-surface font-mono">{stats.state}</span>
             <span className="font-code-sm text-tertiary">MUTATIONS</span>
           </div>
         </div>
 
         {/* Pipeline & Telemetry */}
-        <div className="p-4 rounded-md space-y-2 bg-surface-container border border-outline-variant">
+        <div className="p-4 rounded-xl space-y-2 bg-surface-container-lowest border border-outline-variant/70 shadow-lg shadow-black/40">
           <div className="flex items-center justify-between">
             <span className="font-label-sm text-on-surface-variant">
               Pipeline Telemetry
@@ -248,7 +248,7 @@ export const Audit: React.FC = () => {
             <Activity className="w-4 h-4 text-primary" />
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-2xl sm:text-3xl font-extrabold text-on-surface">{stats.pipeline}</span>
+            <span className="text-2xl sm:text-3xl font-black text-on-surface font-mono">{stats.pipeline}</span>
             <span className="font-code-sm text-primary">NORMALIZED</span>
           </div>
         </div>
@@ -256,7 +256,7 @@ export const Audit: React.FC = () => {
 
       {/* ── Error Banner ── */}
       {error && (
-        <div className="rounded-md p-4 flex items-center justify-between gap-4 font-code-sm bg-error-container/20 border border-error/40 text-error">
+        <div className="rounded-xl p-4 flex items-center justify-between gap-4 font-code-sm bg-error-container/20 border border-error/40 text-error">
           <div className="flex items-center gap-2.5">
             <AlertCircle className="w-5 h-5 shrink-0" />
             <div>
@@ -266,7 +266,7 @@ export const Audit: React.FC = () => {
           </div>
           <button
             onClick={fetchAuditData}
-            className="px-3 py-1.5 rounded-sm font-code-sm bg-error-container text-on-error-container border border-error cursor-pointer"
+            className="px-3 py-1.5 rounded-lg font-code-sm bg-error-container text-on-error-container border border-error cursor-pointer"
           >
             Retry Connection
           </button>
@@ -274,7 +274,7 @@ export const Audit: React.FC = () => {
       )}
 
       {/* ── Filter & Search Toolbar ── */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3.5 p-3 rounded-md font-code-sm bg-surface-container border border-outline-variant">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3.5 p-3 rounded-xl font-code-sm bg-surface-container-lowest border border-outline-variant/70 shadow-lg shadow-black/40">
         {/* Category Tabs */}
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0">
           {(
@@ -290,7 +290,7 @@ export const Audit: React.FC = () => {
               <button
                 key={tab.id}
                 onClick={() => setSelectedCategory(tab.id)}
-                className={`flex items-center gap-2 px-3 py-1.5 rounded-sm text-xs font-semibold cursor-pointer whitespace-nowrap transition-colors ${
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer whitespace-nowrap transition-colors ${
                   isActive
                     ? 'bg-surface-container-high border border-primary text-primary'
                     : 'bg-transparent border border-transparent text-on-surface-variant hover:text-on-surface'
@@ -298,7 +298,7 @@ export const Audit: React.FC = () => {
               >
                 <span>{tab.label}</span>
                 <span
-                  className={`px-1.5 py-0.2 rounded-sm text-[10px] font-bold ${
+                  className={`px-1.5 py-0.2 rounded-md text-[10px] font-bold ${
                     isActive
                       ? 'bg-primary-container/30 text-primary'
                       : 'bg-surface-container-lowest border border-outline-variant text-on-surface-variant'
@@ -319,7 +319,7 @@ export const Audit: React.FC = () => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search action, entity ID, description..."
-            className="w-full pl-9 pr-8 py-1.5 font-code-sm rounded-sm bg-surface-container-lowest border border-outline-variant text-on-surface focus:border-primary focus:outline-none"
+            className="w-full pl-9 pr-8 py-1.5 font-code-sm rounded-lg bg-surface-container-low border border-outline-variant text-on-surface focus:border-primary focus:outline-none"
           />
           {searchQuery && (
             <button
@@ -333,7 +333,7 @@ export const Audit: React.FC = () => {
       </div>
 
       {/* ── Main Audit Table Console ── */}
-      <div className="rounded-md overflow-hidden font-code-sm bg-surface-container border border-outline-variant">
+      <div className="rounded-xl overflow-hidden font-code-sm bg-surface-container-lowest border border-outline-variant/70 shadow-lg shadow-black/40">
         {loading ? (
           <div className="p-6 space-y-3">
             {[1, 2, 3, 4, 5, 6].map((n) => (

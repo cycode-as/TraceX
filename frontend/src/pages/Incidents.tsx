@@ -246,7 +246,7 @@ export const Incidents: React.FC = () => {
       )}
 
       {/* ── Control Bar: Tabs + Search ── */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 p-2.5 rounded-md font-code-sm bg-surface-container border border-outline-variant">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 p-3 rounded-xl font-code-sm bg-surface-container-lowest border border-outline-variant/70 shadow-lg shadow-black/40">
         {/* Filter Tabs */}
         <div className="flex items-center gap-1 overflow-x-auto pb-1 md:pb-0">
           {(['All', 'High', 'Investigating', 'Unresolved'] as FilterTab[]).map((tab) => {
@@ -256,7 +256,7 @@ export const Incidents: React.FC = () => {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-xs font-semibold cursor-pointer whitespace-nowrap transition-colors ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer whitespace-nowrap transition-colors ${
                   isActive
                     ? 'bg-surface-container-high border border-primary text-primary'
                     : 'bg-transparent border border-transparent text-on-surface-variant hover:text-on-surface'
@@ -264,7 +264,7 @@ export const Incidents: React.FC = () => {
               >
                 <span>{tab}</span>
                 <span
-                  className={`px-1.5 py-0.5 rounded-sm text-[10px] font-bold ${
+                  className={`px-1.5 py-0.5 rounded-md text-[10px] font-bold ${
                     isActive
                       ? 'bg-primary-container/30 text-primary'
                       : 'bg-surface-container-lowest border border-outline-variant text-on-surface-variant'
@@ -285,7 +285,7 @@ export const Incidents: React.FC = () => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Filter by ID, title, status..."
-            className="w-full pl-8 pr-7 py-1.5 font-code-sm rounded-sm bg-surface-container-lowest border border-outline-variant text-on-surface focus:border-primary focus:outline-none"
+            className="w-full pl-8 pr-7 py-1.5 font-code-sm rounded-lg bg-surface-container-low border border-outline-variant text-on-surface focus:border-primary focus:outline-none"
           />
           {searchQuery && (
             <button
@@ -299,7 +299,7 @@ export const Incidents: React.FC = () => {
       </div>
 
       {/* ── Main Table Panel ── */}
-      <div className="rounded-md overflow-hidden font-code-sm bg-surface-container border border-outline-variant">
+      <div className="rounded-xl overflow-hidden font-code-sm bg-surface-container-lowest border border-outline-variant/70 shadow-lg shadow-black/40">
         {loading ? (
           <div className="p-4 space-y-2">
             {[1, 2, 3, 4, 5].map((n) => (

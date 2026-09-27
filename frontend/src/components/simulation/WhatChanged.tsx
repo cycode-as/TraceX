@@ -100,15 +100,15 @@ export const WhatChanged: React.FC<WhatChangedProps> = ({ previousState, current
     login:            `Session Auth Log #${currentEvent?.event_id ?? ''} verified`,
   };
   const hypothesisMap: Record<string, string> = {
-    privilege_change: `Privilege Escalation for Data Staging (CONF: ${Math.min(99, currentScore + 15)}%)`,
-    resource_access:  `Internal Recon & Schema Extraction (CONF: ${Math.min(99, currentScore + 12)}%)`,
-    large_transfer:   `Bulk Exfiltration to External Bucket (CONF: ${Math.min(99, currentScore + 5)}%)`,
-    new_device:       `Unmanaged Device Lateral Movement (CONF: ${Math.min(99, currentScore + 8)}%)`,
-    mfa_failure:      `Credential Spray / Account Takeover (CONF: ${Math.min(99, currentScore + 10)}%)`,
-    login:            `Anomalous Geographic Access (CONF: ${Math.min(99, currentScore + 3)}%)`,
+    privilege_change: 'Privilege Escalation for Data Staging',
+    resource_access:  'Internal Recon & Schema Extraction',
+    large_transfer:   'Bulk Exfiltration to External Bucket',
+    new_device:       'Unmanaged Device Lateral Movement',
+    mfa_failure:      'Credential Spray / Account Takeover',
+    login:            'Anomalous Geographic Access',
   };
   const factText       = currentEvent ? (factMap[currentEvent.event_type]       ?? `Audit Log #${currentEvent.event_id} recorded`) : '';
-  const hypothesisText = currentEvent ? (hypothesisMap[currentEvent.event_type] ?? `Threat actor persistence (CONF: ${currentScore}%)`) : '';
+  const hypothesisText = currentEvent ? (hypothesisMap[currentEvent.event_type] ?? 'Threat actor persistence') : '';
 
   const hasDelta = scoreDelta !== 0;
 

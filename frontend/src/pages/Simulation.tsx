@@ -10,6 +10,8 @@ import type { SimulationState, SimulationScenario } from '../types/incident';
 import type { NormalizedEvent } from '../types/event';
 import type { Priority } from '../types/graph';
 import WhatChanged from '../components/simulation/WhatChanged';
+import Terminal from '../components/simulation/Terminal';
+import { getSimulationThreatScore, getThreatSeverity } from '../services/threatScore';
 
 // ─── MD3 SOC Palette (inline style constants) ────────────────────────────────
 const C = {
@@ -261,6 +263,8 @@ export const Simulation: React.FC = () => {
   const prevScore      = prevPriority?.score ?? 0;
   const scoreDelta     = currentScore - prevScore;
   const currentStep    = processedEvts.length;
+  const simThreatScore    = getSimulationThreatScore(currentStep, scenario);
+  const simThreatSeverity = getThreatSeverity(simThreatScore);
   const pipeline       = scenario === 'suspicious' ? SUSPICIOUS_PIPELINE : BENIGN_PIPELINE;
   const totalSteps     = scenario === 'suspicious' ? 6 : 3;
   const isAtStart      = currentStep <= 0;
@@ -731,6 +735,15 @@ export const Simulation: React.FC = () => {
       </div>
 
       {/* ══════════════════════════════════════════════════════════════════════
+          Live Event Processing Console Terminal (Magic UI Animation)
+      ══════════════════════════════════════════════════════════════════════ */}
+      <Terminal
+        currentState={currentState}
+        currentStep={currentStep}
+        scenario={scenario}
+      />
+
+      {/* ══════════════════════════════════════════════════════════════════════
           Section 3 — "What Changed?" Intelligence Delta Banner
       ══════════════════════════════════════════════════════════════════════ */}
       {currentState && (
@@ -874,7 +887,7 @@ export const Simulation: React.FC = () => {
                       color:      currentScore >= 60 ? C.onErrorContainer  : C.onSurfaceVariantMd3,
                     }}
                   >
-                    {currentScore >= 60 ? 'CONFIDENCE HIGH' : currentScore >= 30 ? 'CONFIDENCE MEDIUM' : 'CONFIDENCE LOW'}
+                    {currentScore >= 60 ? 'HEURISTIC HIGH' : currentScore >= 30 ? 'HEURISTIC MEDIUM' : 'HEURISTIC LOW'}
                   </span>
                 </div>
 
@@ -1047,6 +1060,71 @@ export const Simulation: React.FC = () => {
                 )}
               </div>
             </div>
+          </div>
+
+          {/* Threat Score Card */}
+          <div
+            className="p-4 rounded-xl space-y-3"
+            style={{ background: C.surfaceContainerLowest, boxShadow: '0 8px 32px rgba(0,0,0,0.5)' }}
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <svg className="w-5 h-5 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>
+                </svg>
+                <span className="text-[14px] font-semibold" style={{ color: C.onSurfaceMd3 }}>
+                  Threat Score
+                </span>
+                <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-semibold" style={{ background: C.surfaceContainerHigh, color: C.outlineMd3, border: `1px solid ${C.outlineVariantMd3}` }}>
+                  MOCK DATA
+                </span>
+              </div>
+              <span
+                className="px-2 py-0.5 rounded text-[10px] font-mono font-bold"
+                style={{
+                  background: simThreatScore >= 60 ? 'rgba(147,0,10,0.3)' : simThreatScore >= 40 ? 'rgba(245,158,11,0.2)' : simThreatScore >= 20 ? 'rgba(77,142,255,0.2)' : C.surfaceContainerHigh,
+                  color:      simThreatScore >= 60 ? C.errorMd3 : simThreatScore >= 40 ? '#f59e0b' : simThreatScore >= 20 ? C.primaryMd3 : C.onSurfaceVariantMd3,
+                  border:     `1px solid ${simThreatScore >= 60 ? 'rgba(255,180,171,0.4)' : simThreatScore >= 40 ? 'rgba(245,158,11,0.4)' : 'rgba(173,198,255,0.4)'}`,
+                }}
+              >
+                {simThreatSeverity.toUpperCase()} SEVERITY
+              </span>
+            </div>
+
+            <div className="flex items-baseline justify-between">
+              <div className="flex items-baseline gap-1.5 font-mono">
+                <span className="text-3xl font-black leading-none" style={{ color: C.onSurfaceMd3, fontFamily: 'Inter, sans-serif' }}>
+                  {simThreatScore}
+                </span>
+                <span className="text-xs font-medium" style={{ color: C.outlineMd3 }}>/ 100</span>
+              </div>
+              <span className="text-xs font-mono" style={{ color: C.onSurfaceVariantMd3 }}>
+                Suspicious Behavior Severity
+              </span>
+            </div>
+
+            {/* Progress bar capped <= 79 */}
+            <div className="w-full h-2 rounded-full overflow-hidden" style={{ background: C.surfaceContainerHigh }}>
+              <div
+                className="h-full rounded-full transition-all duration-500"
+                style={{
+                  width: `${Math.min(79, simThreatScore)}%`,
+                  background: simThreatScore >= 60 ? C.errorMd3 : simThreatScore >= 40 ? '#f59e0b' : simThreatScore >= 20 ? C.primaryMd3 : C.secondaryMd3,
+                }}
+              />
+            </div>
+
+            <p className="text-[11px] font-mono leading-tight" style={{ color: C.onSurfaceVariantMd3 }}>
+              {scenario === 'benign'
+                ? 'Normal user baseline activity. No threat signals detected.'
+                : simThreatScore >= 70
+                ? 'Correlated MFA bypass, privilege escalation, and exfiltration staging detected.'
+                : simThreatScore >= 40
+                ? 'Suspicious authentication anomalies and internal resource probing detected.'
+                : simThreatScore > 0
+                ? 'Initial geographic anomaly and authentication failure recorded.'
+                : 'Awaiting event telemetry to calculate real-time threat score.'}
+            </p>
           </div>
 
           {/* Synthesized Incident Narrative */}

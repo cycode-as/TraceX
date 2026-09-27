@@ -159,7 +159,7 @@ export const Events: React.FC = () => {
       )}
 
       {/* ── Control Bar: Search Input ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-2.5 rounded-md font-code-sm bg-surface-container border border-outline-variant">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 rounded-xl font-code-sm bg-surface-container-lowest border border-outline-variant/70 shadow-lg shadow-black/40">
         <div className="flex items-center gap-2 text-on-surface-variant font-code-sm">
           <Activity className="w-3.5 h-3.5 text-primary" />
           <span>
@@ -177,7 +177,7 @@ export const Events: React.FC = () => {
               setCurrentPage(1);
             }}
             placeholder="Search user, device, type..."
-            className="w-full pl-8 pr-7 py-1.5 font-code-sm rounded-sm bg-surface-container-lowest border border-outline-variant text-on-surface focus:border-primary focus:outline-none"
+            className="w-full pl-8 pr-7 py-1.5 font-code-sm rounded-lg bg-surface-container-low border border-outline-variant text-on-surface focus:border-primary focus:outline-none"
           />
           {searchQuery && (
             <button
@@ -194,7 +194,7 @@ export const Events: React.FC = () => {
       </div>
 
       {/* ── Events Table Container ── */}
-      <div className="rounded-md overflow-hidden font-code-sm bg-surface-container border border-outline-variant">
+      <div className="rounded-xl overflow-hidden font-code-sm bg-surface-container-lowest border border-outline-variant/70 shadow-lg shadow-black/40">
         {loading ? (
           <div className="p-4 space-y-2">
             {[1, 2, 3, 4, 5].map((n) => (

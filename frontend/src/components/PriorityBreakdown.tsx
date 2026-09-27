@@ -22,7 +22,7 @@ const FACTOR_CONFIG: { key: keyof PriorityFactors; name: string; color: string; 
   { key: 'correlation_strength', name: 'Correlation Strength', color: '#adc6ff', desc: 'Temporal and session alignment across telemetry' },
   { key: 'asset_criticality',    name: 'Asset Criticality',    color: '#d0bcff', desc: 'Sensitivity of target databases, vaults, or assets' },
   { key: 'incident_progression', name: 'Incident Progression', color: '#4edea3', desc: 'Multi-stage progression and privilege escalation' },
-  { key: 'evidence_strength',    name: 'Evidence Strength',    color: '#8c909f', desc: 'Verification confidence & multi-source evidence' },
+  { key: 'evidence_strength',    name: 'Evidence Strength',    color: '#8c909f', desc: 'Verification strength & multi-source evidence' },
 ];
 
 export const PriorityBreakdown: React.FC<PriorityBreakdownProps> = ({ priority, score: propScore, className = '' }) => {

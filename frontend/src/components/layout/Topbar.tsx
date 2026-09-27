@@ -1,23 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import {
-  Play,
-  RotateCcw,
-  Shield,
-  Activity,
-  RefreshCw,
-} from 'lucide-react';
-import { useSimulation } from '../../hooks/useSimulation';
-import { useEvents } from '../../hooks/useEvents';
+import { Shield } from 'lucide-react';
 import Dock from './Dock';
 
 export const Topbar: React.FC = () => {
-  const { nextEvent, resetSimulation, isNextLoading, isResetLoading } = useSimulation();
-  const { data: events = [] } = useEvents();
-
   return (
     <header className="sticky top-0 z-30 flex flex-col shrink-0 font-code-sm bg-surface-container border-b border-outline-variant">
-      {/* ── Row 1: Brand Header & Control Bar ── */}
+      {/* ── Row 1: Brand Header & Analyst Info ── */}
       <div className="h-14 px-5 flex items-center justify-between border-b border-outline-variant/60">
         {/* Brand Header */}
         <Link to="/" className="flex items-center gap-3 group">
@@ -33,51 +22,6 @@ export const Topbar: React.FC = () => {
             </div>
           </div>
         </Link>
-
-        {/* Center: Controls */}
-        <div className="flex items-center gap-3">
-          {/* Live Event Counter */}
-          <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-md font-code-sm bg-surface-container-lowest border border-outline-variant text-on-surface-variant">
-            <Activity className="w-3.5 h-3.5 text-secondary animate-pulse" />
-            <span>Events:</span>
-            <strong className="font-bold text-secondary">
-              {events.length}
-            </strong>
-          </div>
-
-          {/* Simulation Controls */}
-          <div className="flex items-center gap-1.5 p-1 rounded-md bg-surface-container-lowest border border-outline-variant">
-            {/* Next Event Button */}
-            <button
-              onClick={() => nextEvent()}
-              disabled={isNextLoading}
-              title="Process next simulated telemetry event"
-              className="btn-primary"
-            >
-              {isNextLoading ? (
-                <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-              ) : (
-                <Play className="w-3.5 h-3.5 fill-current" />
-              )}
-              Next Event
-            </button>
-
-            {/* Reset Button */}
-            <button
-              onClick={() => resetSimulation()}
-              disabled={isResetLoading}
-              title="Reset active simulation scenario"
-              className="btn-ghost"
-            >
-              {isResetLoading ? (
-                <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-              ) : (
-                <RotateCcw className="w-3.5 h-3.5" />
-              )}
-              Reset
-            </button>
-          </div>
-        </div>
 
         {/* Right: Analyst Badge */}
         <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-md font-code-sm bg-surface-container-lowest border border-outline-variant text-on-surface-variant">

@@ -46,7 +46,7 @@ export const TelemetryFeed: React.FC<TelemetryFeedProps> = ({ events, loading = 
   };
 
   return (
-    <div className={`rounded-md p-4 space-y-3 bg-surface-container border border-outline-variant ${className}`}>
+    <div className={`rounded-xl p-4 space-y-3 bg-surface-container-lowest border border-outline-variant/70 shadow-lg shadow-black/40 ${className}`}>
       {/* ── Header ── */}
       <div className="flex items-center justify-between pb-2.5 border-b border-outline-variant font-code-sm">
         <div className="flex items-center gap-2">

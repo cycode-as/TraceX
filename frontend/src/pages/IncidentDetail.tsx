@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Clock, User, FileText, Zap, History, Bot, AlertCircle, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, Clock, User, FileText, Zap, History, Bot, AlertCircle, Flame } from 'lucide-react';
 import { useIncident, useIncidentTimeline, useIncidentGraph, useIncidentEvidence, useIncidentAudit, useIncidentExplanation, usePerformAction } from '../hooks/useIncident';
 import { useSimulation } from '../hooks/useSimulation';
 import StateBadge from '../components/StateBadge';
@@ -9,10 +9,10 @@ import Timeline from '../components/Timeline';
 import IncidentGraph from '../components/IncidentGraph';
 import EvidencePanel from '../components/EvidencePanel';
 import PriorityBreakdown from '../components/PriorityBreakdown';
-import ConfidenceCard, { computeConfidenceScore } from '../components/ConfidenceCard';
 import AuditTrail from '../components/incidents/AuditTrail';
 import AIExplanation from '../components/AIExplanation';
 import ActionBar from '../components/ActionBar';
+import { getThreatScoreForIncident } from '../services/threatScore';
 import type { AnalystActionType, DismissalReason } from '../types/incident';
 
 export const IncidentDetail: React.FC = () => {
@@ -50,9 +50,6 @@ export const IncidentDetail: React.FC = () => {
     }
   };
 
-  const confidenceScore = computeConfidenceScore(graphData);
-  const confidencePercent = Math.round(confidenceScore * 100);
-
   if (isIncidentLoading) {
     return (
       <div className="p-5 max-w-7xl mx-auto space-y-4 font-code-sm animate-pulse">
@@ -85,6 +82,9 @@ export const IncidentDetail: React.FC = () => {
   }
 
   const primaryUser = incident.primary_user || incident.user_id || 'USR-007';
+  const threatData = getThreatScoreForIncident(incident.incident_id);
+  const threatScore = Math.min(79, Math.max(0, threatData.threat_score));
+  const threatSeverity = threatData.severity;
 
   return (
     <div className="p-4 sm:p-6 space-y-5 max-w-7xl mx-auto font-body-md text-on-surface">
@@ -97,44 +97,133 @@ export const IncidentDetail: React.FC = () => {
       </div>
 
       {/* Header Banner */}
-      <div className="rounded-md p-5 space-y-3 font-code-sm bg-surface-container border border-outline-variant">
+      <div className="rounded-xl p-5 space-y-3 font-code-sm bg-surface-container-lowest border border-outline-variant/70 shadow-lg shadow-black/40">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="space-y-1.5">
             <div className="flex items-center gap-3 flex-wrap">
               <span className="font-headline-md text-primary">{incident.incident_id}</span>
               <StateBadge status={incident.status} size="md" />
-              <span className="font-code-sm flex items-center gap-1 px-2 py-0.5 rounded-sm border bg-surface-container-lowest border-outline-variant text-on-surface">
+              <span className="font-code-sm flex items-center gap-1 px-2 py-0.5 rounded-sm border bg-surface-container-low border-outline-variant text-on-surface">
                 <User className="w-3.5 h-3.5 text-on-surface-variant" />
                 Primary User: <strong className="text-on-surface">{primaryUser}</strong>
               </span>
-              <span className="font-code-sm flex items-center gap-1 px-2 py-0.5 rounded-sm border bg-surface-container-lowest border-outline-variant text-on-surface-variant">
+              <span className="font-code-sm flex items-center gap-1 px-2 py-0.5 rounded-sm border bg-surface-container-low border-outline-variant text-on-surface-variant">
                 <Clock className="w-3.5 h-3.5 text-on-surface-variant" />
                 Time Window: <strong className="text-on-surface">{getTimeWindow()}</strong>
               </span>
             </div>
             <h1 className="font-headline-lg text-on-surface">{incident.title}</h1>
           </div>
+        </div>
+      </div>
 
-          {/* Dual Score Metrics: Priority (Impact) vs Confidence (Certainty) */}
-          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-            {/* Priority Metric Badge */}
-            <div className="flex items-center gap-2 p-2 rounded-md bg-surface-container-lowest border border-outline-variant">
-              <div className="text-center px-2">
-                <span className="text-xl font-extrabold leading-none text-error">{incident.priority}</span>
-                <span className="font-label-sm block text-on-surface-variant mt-0.5">PRIORITY</span>
-              </div>
-              <div className="w-1 h-7 rounded-sm bg-error" />
+      {/* ── Prominent Score Cards: Priority Score & Threat Score ── */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 font-code-sm">
+        {/* Card 1: Priority Score */}
+        <div className="p-4.5 rounded-xl bg-surface-container-lowest border border-outline-variant/70 shadow-lg shadow-black/40 space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Zap className="w-4 h-4 text-error" />
+              <span className="font-label-md text-on-surface-variant font-bold tracking-wider">
+                PRIORITY SCORE
+              </span>
             </div>
-
-            {/* Confidence Metric Badge */}
-            <div className="flex items-center gap-2 p-2 rounded-md bg-surface-container-lowest border border-primary/40">
-              <div className="text-center px-2">
-                <span className="text-xl font-extrabold leading-none text-primary">{confidencePercent}%</span>
-                <span className="font-label-sm block text-primary mt-0.5">CONFIDENCE</span>
-              </div>
-              <ShieldCheck className="w-4 h-4 text-primary" />
-            </div>
+            <span
+              className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold border ${
+                incident.priority >= 70
+                  ? 'bg-error-container/30 text-error border-error/50'
+                  : incident.priority >= 40
+                  ? 'bg-amber-500/20 text-amber-400 border-amber-500/40'
+                  : 'bg-primary-container/20 text-primary border-primary/40'
+              }`}
+            >
+              {incident.priority >= 70 ? 'SEV-1 CRITICAL' : incident.priority >= 40 ? 'SEV-2 ELEVATED' : 'MONITORING'}
+            </span>
           </div>
+
+          <div className="flex items-baseline justify-between">
+            <div className="flex items-baseline gap-1.5 font-mono">
+              <span className="text-3xl sm:text-4xl font-black text-on-surface leading-none">
+                {incident.priority}
+              </span>
+              <span className="text-xs text-on-surface-variant font-medium">/100</span>
+            </div>
+            <span className="text-xs font-mono text-on-surface-variant">
+              Dynamic Operational Urgency
+            </span>
+          </div>
+
+          {/* Progress bar */}
+          <div className="w-full h-2 rounded-full bg-surface-container-high overflow-hidden">
+            <div
+              className={`h-full rounded-full transition-all duration-500 ${
+                incident.priority >= 70 ? 'bg-error' : incident.priority >= 40 ? 'bg-amber-400' : 'bg-primary'
+              }`}
+              style={{ width: `${Math.min(100, incident.priority)}%` }}
+            />
+          </div>
+          <p className="text-[11px] font-mono text-on-surface-variant/80">
+            Calculated from asset criticality, kill-chain progression, and evidence strength.
+          </p>
+        </div>
+
+        {/* Card 2: Threat Score */}
+        <div className="p-4.5 rounded-xl bg-surface-container-lowest border border-outline-variant/70 shadow-lg shadow-black/40 space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Flame className="w-4 h-4 text-amber-400" />
+              <span className="font-label-md text-on-surface-variant font-bold tracking-wider">
+                THREAT SCORE
+              </span>
+              <span className="px-1.5 py-0.2 rounded text-[9px] font-mono font-semibold bg-surface-container-high text-on-surface-variant/80 border border-outline-variant/60">
+                MOCK DATA
+              </span>
+            </div>
+            <span
+              className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold border ${
+                threatScore >= 60
+                  ? 'bg-error-container/30 text-error border-error/50'
+                  : threatScore >= 40
+                  ? 'bg-amber-500/20 text-amber-400 border-amber-500/40'
+                  : threatScore >= 20
+                  ? 'bg-primary-container/20 text-primary border-primary/40'
+                  : 'bg-surface-container-high text-on-surface-variant border-outline-variant'
+              }`}
+            >
+              {threatSeverity.toUpperCase()} SEVERITY
+            </span>
+          </div>
+
+          <div className="flex items-baseline justify-between">
+            <div className="flex items-baseline gap-1.5 font-mono">
+              <span className="text-3xl sm:text-4xl font-black text-on-surface leading-none">
+                {threatScore}
+              </span>
+              <span className="text-xs text-on-surface-variant font-medium">/100</span>
+            </div>
+            <span className="text-xs font-mono text-on-surface-variant">
+              Suspicious Behavior Severity
+            </span>
+          </div>
+
+          {/* Progress bar */}
+          <div className="w-full h-2 rounded-full bg-surface-container-high overflow-hidden">
+            <div
+              className={`h-full rounded-full transition-all duration-500 ${
+                threatScore >= 60
+                  ? 'bg-error'
+                  : threatScore >= 40
+                  ? 'bg-amber-400'
+                  : threatScore >= 20
+                  ? 'bg-primary'
+                  : 'bg-secondary'
+              }`}
+              style={{ width: `${Math.min(79, threatScore)}%` }}
+            />
+          </div>
+          <p className="text-[11px] font-mono text-on-surface-variant/90 leading-tight">
+            {threatData.explanation}
+          </p>
         </div>
       </div>
 
@@ -229,7 +318,6 @@ export const IncidentDetail: React.FC = () => {
 
             {activeTab === 'priority' && (
               <div className="space-y-4">
-                <ConfidenceCard graphData={graphData} />
                 <PriorityBreakdown score={incident.priority} />
               </div>
             )}
