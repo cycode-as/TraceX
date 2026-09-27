@@ -96,20 +96,26 @@ export const AuditTrail: React.FC<AuditTrailProps> = ({
     }
   };
 
-  const getActionBadgeColor = (action: string) => {
-    if (action.includes('CREATED')) return 'bg-blue-500/10 text-blue-400 border-blue-500/20';
-    if (action.includes('UPDATED')) return 'bg-amber-500/10 text-amber-400 border-amber-500/20';
-    if (action.includes('STATUS')) return 'bg-purple-500/10 text-purple-400 border-purple-500/20';
-    return 'bg-slate-800 text-slate-300 border-slate-700/60';
+  const getActionBadgeStyle = (action: string) => {
+    if (action.includes('CREATED'))
+      return { bg: 'rgba(59,130,246,0.1)', border: 'rgba(59,130,246,0.3)', color: '#60A5FA' };
+    if (action.includes('UPDATED'))
+      return { bg: 'rgba(245,158,11,0.1)', border: 'rgba(245,158,11,0.3)', color: '#FCD34D' };
+    if (action.includes('STATUS'))
+      return { bg: 'rgba(139,92,246,0.1)', border: 'rgba(139,92,246,0.3)', color: '#A78BFA' };
+    return { bg: 'rgba(30,41,59,0.5)', border: 'rgba(30,41,59,0.8)', color: '#94A3B8' };
   };
 
   if (isLoading) {
     return (
-      <div className="bg-slate-900 border border-slate-800/60 rounded-md p-4 space-y-2.5 animate-pulse">
-        <div className="h-4 w-32 bg-slate-800 rounded" />
+      <div
+        className="rounded-xl p-4 space-y-2.5 animate-pulse"
+        style={{ background: 'var(--color-surface)', border: '1px solid rgba(30, 41, 59, 0.8)' }}
+      >
+        <div className="h-4 w-32 rounded" style={{ background: 'rgba(30, 41, 59, 0.6)' }} />
         <div className="space-y-1.5">
-          <div className="h-9 bg-slate-800/40 rounded-md" />
-          <div className="h-9 bg-slate-800/40 rounded-md" />
+          <div className="h-9 rounded-lg" style={{ background: 'rgba(30, 41, 59, 0.3)' }} />
+          <div className="h-9 rounded-lg" style={{ background: 'rgba(30, 41, 59, 0.3)' }} />
         </div>
       </div>
     );
@@ -117,14 +123,26 @@ export const AuditTrail: React.FC<AuditTrailProps> = ({
 
   if (displayError) {
     return (
-      <div className="bg-slate-900 border border-slate-800/60 rounded-md p-3 flex items-center justify-between text-xs text-red-400 font-mono">
+      <div
+        className="rounded-xl p-3 flex items-center justify-between text-xs font-mono"
+        style={{
+          background:  'rgba(239, 68, 68, 0.06)',
+          border:      '1px solid rgba(239, 68, 68, 0.25)',
+          color:       '#F87171',
+        }}
+      >
         <div className="flex items-center gap-2">
           <AlertCircle className="w-4 h-4 shrink-0" />
           <span>Audit trail failed: {displayError}</span>
         </div>
         <button
           onClick={handleRefreshClick}
-          className="px-2.5 py-1 bg-red-500/10 hover:bg-red-500/20 text-red-300 border border-red-500/30 rounded-md font-medium cursor-pointer"
+          className="px-2.5 py-1 rounded-lg font-medium cursor-pointer transition-all duration-200"
+          style={{
+            background:  'rgba(239, 68, 68, 0.1)',
+            border:      '1px solid rgba(239, 68, 68, 0.3)',
+            color:       '#F87171',
+          }}
         >
           Retry
         </button>
@@ -133,57 +151,112 @@ export const AuditTrail: React.FC<AuditTrailProps> = ({
   }
 
   return (
-    <div className="bg-slate-900 border border-slate-800/60 rounded-md p-4 space-y-3">
-      {/* Header */}
-      <div className="flex items-center justify-between border-b border-slate-800/60 pb-2.5">
-        <div className="flex items-center gap-2">
-          <FileText className="w-4 h-4 text-slate-400" />
-          <h2 className="text-xs font-mono uppercase tracking-wider text-slate-400 font-semibold">{title}</h2>
-          <span className="text-xs font-mono px-2 py-0.2 rounded-md bg-slate-950 text-slate-400 border border-slate-800">
+    <div
+      className="rounded-xl p-4 space-y-3"
+      style={{
+        background: 'var(--color-surface)',
+        border:     '1px solid rgba(30, 41, 59, 0.8)',
+      }}
+    >
+      {/* ── Header ── */}
+      <div
+        className="flex items-center justify-between pb-2.5"
+        style={{ borderBottom: '1px solid rgba(30, 41, 59, 0.7)' }}
+      >
+        <div className="flex items-center gap-2 font-mono">
+          <FileText className="w-4 h-4" style={{ color: '#F7931A' }} />
+          <h2 className="text-xs uppercase tracking-wider text-white font-semibold">{title}</h2>
+          <span
+            className="text-xs font-mono px-2 py-0.5 rounded-md"
+            style={{
+              background:  'rgba(247, 147, 26, 0.1)',
+              border:      '1px solid rgba(247, 147, 26, 0.2)',
+              color:       '#F7931A',
+            }}
+          >
             {auditLogs.length} Entries
           </span>
         </div>
         <button
           onClick={handleRefreshClick}
-          className="text-xs font-mono text-slate-400 hover:text-slate-200 flex items-center gap-1 cursor-pointer"
+          className="text-xs font-mono flex items-center gap-1 cursor-pointer transition-all duration-200"
+          style={{ color: 'var(--color-muted)' }}
+          onMouseEnter={(e) => {
+            (e.currentTarget as HTMLButtonElement).style.color = '#F7931A';
+          }}
+          onMouseLeave={(e) => {
+            (e.currentTarget as HTMLButtonElement).style.color = 'var(--color-muted)';
+          }}
         >
           <RefreshCw className="w-3 h-3" />
           Refresh
         </button>
       </div>
 
-      {/* System Log Console view */}
+      {/* ── Log Entries ── */}
       {auditLogs.length === 0 ? (
-        <div className="p-4 text-center text-xs font-mono text-slate-500 border border-dashed border-slate-800/80 rounded-md bg-slate-950/40">
+        <div
+          className="p-4 text-center text-xs font-mono rounded-lg"
+          style={{
+            border:      '1px dashed rgba(30, 41, 59, 0.7)',
+            background:  'rgba(3, 3, 4, 0.5)',
+            color:       'var(--color-muted)',
+          }}
+        >
           No audit log entries recorded.
         </div>
       ) : (
-        <div className="bg-slate-950 border border-slate-800/80 rounded-md p-2.5 font-mono text-xs space-y-2 max-h-[440px] overflow-y-auto">
-          {auditLogs.map((log, idx) => (
-            <div
-              key={idx}
-              className="flex flex-col sm:flex-row sm:items-start justify-between gap-1.5 p-2 rounded-md bg-slate-900/60 border border-slate-800/60 hover:border-slate-700/60 transition-colors"
-            >
-              <div className="space-y-0.5">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-[11px] text-slate-500 flex items-center gap-1">
-                    <Clock className="w-3 h-3 text-slate-600" />
-                    {formatTimestamp(log.timestamp)}
-                  </span>
-                  <span
-                    className={`text-[10px] px-1.5 py-0.2 rounded font-bold border ${getActionBadgeColor(
-                      log.action
-                    )}`}
-                  >
-                    {log.action}
-                  </span>
+        <div
+          className="rounded-lg p-2.5 font-mono text-xs space-y-2 max-h-[440px] overflow-y-auto"
+          style={{
+            background: 'rgba(3, 3, 4, 0.6)',
+            border:     '1px solid rgba(30, 41, 59, 0.7)',
+          }}
+        >
+          {auditLogs.map((log, idx) => {
+            const badgeStyle = getActionBadgeStyle(log.action);
+            return (
+              <div
+                key={idx}
+                className="flex flex-col sm:flex-row sm:items-start justify-between gap-1.5 p-2 rounded-lg transition-all duration-200"
+                style={{
+                  background:  'rgba(15, 17, 21, 0.7)',
+                  border:      '1px solid rgba(30, 41, 59, 0.6)',
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(247, 147, 26, 0.2)';
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(30, 41, 59, 0.6)';
+                }}
+              >
+                <div className="space-y-0.5">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span
+                      className="text-[11px] flex items-center gap-1"
+                      style={{ color: 'var(--color-muted)' }}
+                    >
+                      <Clock className="w-3 h-3" style={{ color: 'rgba(148, 163, 184, 0.4)' }} />
+                      {formatTimestamp(log.timestamp)}
+                    </span>
+                    <span
+                      className="text-[10px] px-1.5 py-0.5 rounded font-bold border"
+                      style={{
+                        background:  badgeStyle.bg,
+                        borderColor: badgeStyle.border,
+                        color:       badgeStyle.color,
+                      }}
+                    >
+                      {log.action}
+                    </span>
+                  </div>
+                  <p className="text-xs font-sans leading-normal" style={{ color: '#CBD5E1' }}>
+                    {log.description}
+                  </p>
                 </div>
-                <p className="text-slate-300 text-xs font-sans leading-normal">
-                  {log.description}
-                </p>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

@@ -6,8 +6,11 @@ import type { Priority } from './graph';
  * Reference: CONTRACTS.md (Section 3 - Allowed status values)
  */
 export type IncidentStatus =
+  | 'ANOMALY'
+  | 'SUSPICIOUS_PATTERN'
   | 'INCIDENT_CANDIDATE'
   | 'HIGH_PRIORITY'
+  | 'INVESTIGATING'
   | 'CONFIRMED'
   | 'DISMISSED'
   | 'RESOLVED';
@@ -24,6 +27,8 @@ export interface Incident {
   created_at: string;
   updated_at: string;
   event_ids: string[];
+  user_id?: string;
+  primary_user?: string;
 }
 
 /**
@@ -38,12 +43,15 @@ export type AnalystActionType =
   | 'RESOLVE';
 
 /**
- * Allowed dismissal reasons.
- * Reference: CONTRACTS.md (Section 6 - Optional dismissal reasons)
+ * Allowed dismissal reasons as per design requirements.
  */
 export type DismissalReason =
-  | 'false_positive'
+  | 'expected_behavior'
+  | 'approved_maintenance'
+  | 'known_device'
+  | 'false_correlation'
   | 'approved_activity'
+  | 'false_positive'
   | 'known_admin'
   | 'maintenance'
   | 'other';

@@ -178,22 +178,26 @@ export const Incidents: React.FC = () => {
   };
 
   const getPriorityPill = (score: number) => {
-    let colorClass = 'text-blue-400 bg-blue-500/10 border-blue-500/20';
-    if (score >= 70) colorClass = 'text-red-400 bg-red-500/10 border-red-500/20';
-    else if (score >= 40) colorClass = 'text-amber-400 bg-amber-500/10 border-amber-500/20';
+    const s =
+      score >= 70
+        ? { color: '#F87171', bg: 'rgba(239,68,68,0.1)', border: 'rgba(239,68,68,0.25)', bar: '#EF4444' }
+        : score >= 40
+        ? { color: '#FCD34D', bg: 'rgba(245,158,11,0.1)', border: 'rgba(245,158,11,0.25)', bar: '#F59E0B' }
+        : { color: '#60A5FA', bg: 'rgba(59,130,246,0.1)', border: 'rgba(59,130,246,0.2)', bar: '#3B82F6' };
 
     return (
       <div className="flex items-center gap-2">
-        <span className={`px-1.5 py-0.2 rounded text-[11px] font-mono font-bold border ${colorClass}`}>
+        <span
+          className="px-1.5 py-0.5 rounded text-[11px] font-mono font-bold border"
+          style={{ color: s.color, background: s.bg, borderColor: s.border }}
+        >
           {score}
         </span>
-        <div className="w-12 h-1 bg-slate-800 rounded-full overflow-hidden hidden sm:block">
-          <div
-            className={`h-full ${
-              score >= 70 ? 'bg-red-500' : score >= 40 ? 'bg-amber-500' : 'bg-blue-500'
-            }`}
-            style={{ width: `${Math.min(100, score)}%` }}
-          />
+        <div
+          className="w-12 h-1 rounded-full overflow-hidden hidden sm:block"
+          style={{ background: 'rgba(30, 41, 59, 0.8)' }}
+        >
+          <div className="h-full rounded-full" style={{ width: `${Math.min(100, score)}%`, background: s.bar }} />
         </div>
       </div>
     );
@@ -201,16 +205,26 @@ export const Incidents: React.FC = () => {
 
   return (
     <div className="p-5 space-y-5 max-w-7xl mx-auto">
-      {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-800/60">
+      {/* ── Page Header ── */}
+      <div
+        className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4"
+        style={{ borderBottom: '1px solid rgba(30, 41, 59, 0.6)' }}
+      >
         <div>
           <div className="flex items-center gap-2.5">
-            <h1 className="text-xl font-bold tracking-tight text-slate-100">Incidents</h1>
-            <span className="text-[11px] font-mono px-2 py-0.2 rounded-md bg-slate-900 text-slate-400 border border-slate-800">
+            <h1 className="text-xl font-bold tracking-tight text-white font-heading">Incidents</h1>
+            <span
+              className="text-[11px] font-mono px-2 py-0.5 rounded-full"
+              style={{
+                background:  'rgba(247, 147, 26, 0.1)',
+                border:      '1px solid rgba(247, 147, 26, 0.25)',
+                color:       '#F7931A',
+              }}
+            >
               {incidents.length} Total
             </span>
           </div>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <p className="text-xs mt-1 font-body" style={{ color: 'var(--color-muted)' }}>
             Security incident queue, threat triage, and active response management.
           </p>
         </div>
@@ -218,34 +232,50 @@ export const Incidents: React.FC = () => {
         <button
           onClick={fetchIncidentsData}
           disabled={loading}
-          className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium bg-slate-900 hover:bg-slate-800 border border-slate-700/80 text-slate-200 rounded-md transition-colors disabled:opacity-50 cursor-pointer self-start sm:self-auto font-mono"
+          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono font-semibold rounded-lg border transition-all duration-200 disabled:opacity-50 cursor-pointer self-start sm:self-auto"
+          style={{ background: 'var(--color-surface)', borderColor: 'rgba(30, 41, 59, 0.8)', color: '#CBD5E1' }}
+          onMouseEnter={(e) => {
+            (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(247, 147, 26, 0.3)';
+            (e.currentTarget as HTMLButtonElement).style.color = '#F7931A';
+          }}
+          onMouseLeave={(e) => {
+            (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(30, 41, 59, 0.8)';
+            (e.currentTarget as HTMLButtonElement).style.color = '#CBD5E1';
+          }}
         >
-          <RefreshCw className={`w-3 h-3 ${loading ? 'animate-spin' : ''}`} />
+          <RefreshCw className={`w-3 h-3 ${loading ? 'animate-spin' : ''}`} style={{ color: loading ? '#F7931A' : 'inherit' }} />
           Refresh
         </button>
       </div>
 
-      {/* Global Error Banner */}
+      {/* ── Error Banner ── */}
       {error && (
-        <div className="bg-red-500/10 border border-red-500/30 rounded-md p-3 flex items-center justify-between gap-4 text-red-400 text-xs font-mono">
+        <div
+          className="rounded-xl p-3 flex items-center justify-between gap-4 text-xs font-mono"
+          style={{ background: 'rgba(239,68,68,0.06)', border: '1px solid rgba(239,68,68,0.25)', color: '#F87171' }}
+        >
           <div className="flex items-center gap-2">
             <AlertCircle className="w-4 h-4 shrink-0" />
             <div>
               <p className="font-semibold">Unable to fetch incidents queue</p>
-              <p className="text-[11px] text-red-400/80 mt-0.5">{error}</p>
+              <p className="text-[11px] mt-0.5" style={{ color: 'rgba(248,113,113,0.7)' }}>{error}</p>
             </div>
           </div>
           <button
             onClick={fetchIncidentsData}
-            className="px-2.5 py-1 bg-red-500/20 hover:bg-red-500/30 text-red-200 border border-red-500/40 rounded-md text-xs font-semibold transition-colors cursor-pointer"
+            className="px-2.5 py-1 rounded-lg text-xs font-semibold cursor-pointer transition-all duration-200"
+            style={{ background: 'rgba(239,68,68,0.15)', border: '1px solid rgba(239,68,68,0.3)', color: '#F87171' }}
           >
             Retry
           </button>
         </div>
       )}
 
-      {/* Control Bar: Tabs + Search Bar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-slate-900 p-2.5 rounded-md border border-slate-800/60">
+      {/* ── Control Bar: Tabs + Search ── */}
+      <div
+        className="flex flex-col md:flex-row md:items-center justify-between gap-3 p-2.5 rounded-xl"
+        style={{ background: 'var(--color-surface)', border: '1px solid rgba(30, 41, 59, 0.8)' }}
+      >
         {/* Filter Tabs */}
         <div className="flex items-center gap-1 overflow-x-auto pb-1 md:pb-0 font-mono">
           {(['All', 'High', 'Investigating', 'Unresolved'] as FilterTab[]).map((tab) => {
@@ -255,19 +285,29 @@ export const Incidents: React.FC = () => {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium transition-colors cursor-pointer whitespace-nowrap ${
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium cursor-pointer whitespace-nowrap transition-all duration-200"
+                style={
                   isActive
-                    ? 'bg-blue-600 text-white border border-blue-500'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 border border-transparent'
-                }`}
+                    ? {
+                        background:  'rgba(247, 147, 26, 0.15)',
+                        border:      '1px solid rgba(247, 147, 26, 0.4)',
+                        color:       '#F7931A',
+                      }
+                    : {
+                        background:  'transparent',
+                        border:      '1px solid transparent',
+                        color:       'var(--color-muted)',
+                      }
+                }
               >
                 <span>{tab}</span>
                 <span
-                  className={`px-1 py-0.2 rounded text-[10px] ${
+                  className="px-1 py-0.5 rounded text-[10px]"
+                  style={
                     isActive
-                      ? 'bg-blue-700 text-white'
-                      : 'bg-slate-950 text-slate-500 border border-slate-800'
-                  }`}
+                      ? { background: 'rgba(247,147,26,0.2)', color: '#F7931A' }
+                      : { background: 'rgba(3,3,4,0.7)', border: '1px solid rgba(30,41,59,0.7)', color: 'var(--color-muted)' }
+                  }
                 >
                   {count}
                 </span>
@@ -278,18 +318,33 @@ export const Incidents: React.FC = () => {
 
         {/* Search Input */}
         <div className="relative w-full md:w-72">
-          <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+          <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--color-muted)' }} />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Filter by ID, title, status..."
-            className="w-full pl-8 pr-7 py-1 text-xs bg-slate-950 border border-slate-800 rounded-md text-slate-200 placeholder-slate-500 focus:outline-none focus:border-slate-700 transition-colors font-mono"
+            className="w-full pl-8 pr-7 py-1.5 text-xs rounded-lg font-mono transition-all duration-200"
+            style={{
+              background:   'rgba(3, 3, 4, 0.7)',
+              border:       '1px solid rgba(30, 41, 59, 0.8)',
+              color:        '#E2E8F0',
+              outline:      'none',
+            }}
+            onFocus={(e) => {
+              (e.currentTarget as HTMLInputElement).style.borderColor = 'rgba(247, 147, 26, 0.5)';
+              (e.currentTarget as HTMLInputElement).style.boxShadow   = '0 0 12px -4px rgba(247, 147, 26, 0.2)';
+            }}
+            onBlur={(e) => {
+              (e.currentTarget as HTMLInputElement).style.borderColor = 'rgba(30, 41, 59, 0.8)';
+              (e.currentTarget as HTMLInputElement).style.boxShadow   = '';
+            }}
           />
           {searchQuery && (
             <button
               onClick={() => setSearchQuery('')}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300"
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 cursor-pointer transition-colors duration-200"
+              style={{ color: 'var(--color-muted)' }}
             >
               <X className="w-3 h-3" />
             </button>
@@ -297,30 +352,39 @@ export const Incidents: React.FC = () => {
         </div>
       </div>
 
-      {/* Main Incidents Table Panel */}
-      <div className="bg-slate-900 border border-slate-800/60 rounded-md overflow-hidden">
+      {/* ── Main Table Panel ── */}
+      <div
+        className="rounded-xl overflow-hidden"
+        style={{ background: 'var(--color-surface)', border: '1px solid rgba(30, 41, 59, 0.8)' }}
+      >
         {loading ? (
           <div className="p-4 space-y-2">
             {[1, 2, 3, 4, 5].map((n) => (
-              <div key={n} className="h-10 bg-slate-800/40 rounded-md animate-pulse" />
+              <div
+                key={n}
+                className="h-10 rounded-lg animate-pulse"
+                style={{ background: 'rgba(30, 41, 59, 0.3)' }}
+              />
             ))}
           </div>
         ) : filteredIncidents.length === 0 ? (
           <div className="py-12 text-center space-y-2 px-4 font-mono">
-            <Filter className="w-10 h-10 text-slate-600 mx-auto" />
+            <Filter className="w-10 h-10 mx-auto" style={{ color: 'var(--color-muted)' }} />
             <div>
-              <h3 className="text-sm font-medium text-slate-200">No incidents match active filters</h3>
-              <p className="text-xs text-slate-500 mt-0.5 max-w-sm mx-auto">
+              <h3 className="text-sm font-medium text-white font-heading">No incidents match active filters</h3>
+              <p className="text-xs mt-0.5 max-w-sm mx-auto" style={{ color: 'var(--color-muted)' }}>
                 Reset search query or filter tab.
               </p>
             </div>
             {(searchQuery || activeTab !== 'All') && (
               <button
-                onClick={() => {
-                  setSearchQuery('');
-                  setActiveTab('All');
+                onClick={() => { setSearchQuery(''); setActiveTab('All'); }}
+                className="mt-2 px-3 py-1.5 text-xs font-medium rounded-lg border cursor-pointer transition-all duration-200"
+                style={{
+                  background:  'rgba(247, 147, 26, 0.08)',
+                  border:      '1px solid rgba(247, 147, 26, 0.25)',
+                  color:       '#F7931A',
                 }}
-                className="mt-2 px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium rounded-md transition-colors cursor-pointer"
               >
                 Clear all filters
               </button>
@@ -328,84 +392,111 @@ export const Incidents: React.FC = () => {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-[13px] text-slate-300">
-              <thead className="bg-slate-950 text-slate-400 uppercase font-mono text-[11px] tracking-wider border-b border-slate-800/80">
-                <tr>
+            <table className="w-full text-left text-[13px]">
+              <thead>
+                <tr
+                  className="font-mono text-[11px] uppercase tracking-wider"
+                  style={{
+                    background:   'rgba(3, 3, 4, 0.7)',
+                    borderBottom: '1px solid rgba(30, 41, 59, 0.8)',
+                    color:        'var(--color-muted)',
+                  }}
+                >
                   <th className="py-2.5 px-3.5 font-semibold">Incident ID</th>
                   <th className="py-2.5 px-3.5 font-semibold">Title</th>
                   <th className="py-2.5 px-3.5 font-semibold">Status</th>
                   <th
-                    className="py-2.5 px-3.5 font-semibold cursor-pointer hover:text-slate-200 transition-colors select-none"
+                    className="py-2.5 px-3.5 font-semibold cursor-pointer select-none transition-colors duration-200"
                     onClick={() => toggleSort('priority')}
+                    onMouseEnter={(e) => { (e.currentTarget as HTMLTableCellElement).style.color = '#F7931A'; }}
+                    onMouseLeave={(e) => { (e.currentTarget as HTMLTableCellElement).style.color = 'var(--color-muted)'; }}
                   >
                     <div className="flex items-center gap-1">
                       <span>Priority</span>
                       {sortField === 'priority' ? (
-                        sortDirection === 'desc' ? (
-                          <ArrowDown className="w-3 h-3 text-blue-400" />
-                        ) : (
-                          <ArrowUp className="w-3 h-3 text-blue-400" />
-                        )
+                        sortDirection === 'desc'
+                          ? <ArrowDown className="w-3 h-3" style={{ color: '#F7931A' }} />
+                          : <ArrowUp className="w-3 h-3" style={{ color: '#F7931A' }} />
                       ) : (
-                        <ArrowUpDown className="w-3 h-3 text-slate-600" />
+                        <ArrowUpDown className="w-3 h-3" style={{ color: 'rgba(30,41,59,0.9)' }} />
                       )}
                     </div>
                   </th>
                   <th className="py-2.5 px-3.5 font-semibold">Entity</th>
                   <th className="py-2.5 px-3.5 font-semibold text-center">Events</th>
                   <th
-                    className="py-2.5 px-3.5 font-semibold cursor-pointer hover:text-slate-200 transition-colors select-none text-right"
+                    className="py-2.5 px-3.5 font-semibold cursor-pointer select-none transition-colors duration-200 text-right"
                     onClick={() => toggleSort('updated_at')}
+                    onMouseEnter={(e) => { (e.currentTarget as HTMLTableCellElement).style.color = '#F7931A'; }}
+                    onMouseLeave={(e) => { (e.currentTarget as HTMLTableCellElement).style.color = 'var(--color-muted)'; }}
                   >
                     <div className="flex items-center justify-end gap-1">
                       <span>Updated</span>
                       {sortField === 'updated_at' ? (
-                        sortDirection === 'desc' ? (
-                          <ArrowDown className="w-3 h-3 text-blue-400" />
-                        ) : (
-                          <ArrowUp className="w-3 h-3 text-blue-400" />
-                        )
+                        sortDirection === 'desc'
+                          ? <ArrowDown className="w-3 h-3" style={{ color: '#F7931A' }} />
+                          : <ArrowUp className="w-3 h-3" style={{ color: '#F7931A' }} />
                       ) : (
-                        <ArrowUpDown className="w-3 h-3 text-slate-600" />
+                        <ArrowUpDown className="w-3 h-3" style={{ color: 'rgba(30,41,59,0.9)' }} />
                       )}
                     </div>
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/40">
+              <tbody>
                 {filteredIncidents.map((inc) => {
                   const entity = extractEntity(inc);
                   return (
                     <tr
                       key={inc.incident_id}
                       onClick={() => navigate(`/incidents/${inc.incident_id}`)}
-                      className="hover:bg-slate-800/40 cursor-pointer transition-colors group"
+                      className="cursor-pointer group transition-all duration-200 font-mono"
+                      style={{ borderBottom: '1px solid rgba(30, 41, 59, 0.4)' }}
+                      onMouseEnter={(e) => { (e.currentTarget as HTMLTableRowElement).style.background = 'rgba(247, 147, 26, 0.04)'; }}
+                      onMouseLeave={(e) => { (e.currentTarget as HTMLTableRowElement).style.background = 'transparent'; }}
                     >
-                      <td className="py-2.5 px-3.5 font-mono font-semibold text-slate-200 group-hover:text-blue-400 transition-colors">
+                      <td
+                        className="py-2.5 px-3.5 font-mono font-semibold transition-colors group-hover:underline"
+                        style={{ color: '#F7931A' }}
+                      >
                         {inc.incident_id}
                       </td>
-                      <td className="py-2.5 px-3.5 font-medium text-slate-200 max-w-sm truncate">
+                      <td className="py-2.5 px-3.5 font-medium max-w-sm truncate" style={{ color: '#E2E8F0' }}>
                         {inc.title}
                       </td>
                       <td className="py-2.5 px-3.5">
                         <StatusBadge status={inc.status} />
                       </td>
                       <td className="py-2.5 px-3.5">{getPriorityPill(inc.priority)}</td>
-                      <td className="py-2.5 px-3.5 font-mono text-slate-300">
-                        <span className="inline-flex items-center gap-1 bg-slate-950 px-1.5 py-0.5 rounded border border-slate-800 text-slate-300 text-xs">
-                          <User className="w-3 h-3 text-slate-500" />
+                      <td className="py-2.5 px-3.5">
+                        <span
+                          className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs"
+                          style={{
+                            background:  'rgba(3, 3, 4, 0.7)',
+                            border:      '1px solid rgba(30, 41, 59, 0.7)',
+                            color:       '#CBD5E1',
+                          }}
+                        >
+                          <User className="w-3 h-3" style={{ color: 'var(--color-muted)' }} />
                           {entity}
                         </span>
                       </td>
-                      <td className="py-2.5 px-3.5 text-center font-mono">
-                        <span className="inline-flex items-center gap-1 bg-slate-950 px-2 py-0.5 rounded text-slate-300 border border-slate-800 text-xs">
-                          <Layers className="w-3 h-3 text-slate-500" />
+                      <td className="py-2.5 px-3.5 text-center">
+                        <span
+                          className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs"
+                          style={{
+                            background:  'rgba(3, 3, 4, 0.7)',
+                            border:      '1px solid rgba(30, 41, 59, 0.7)',
+                            color:       '#CBD5E1',
+                          }}
+                        >
+                          <Layers className="w-3 h-3" style={{ color: 'var(--color-muted)' }} />
                           {inc.event_ids.length}
                         </span>
                       </td>
-                      <td className="py-2.5 px-3.5 text-right font-mono text-slate-400 text-xs">
+                      <td className="py-2.5 px-3.5 text-right text-xs" style={{ color: 'var(--color-muted)' }}>
                         <span className="inline-flex items-center justify-end gap-1">
-                          <Clock className="w-3 h-3 text-slate-500" />
+                          <Clock className="w-3 h-3" style={{ color: 'rgba(148,163,184,0.4)' }} />
                           {formatRelativeTime(inc.updated_at)}
                         </span>
                       </td>

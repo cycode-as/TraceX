@@ -1,42 +1,153 @@
 import React from 'react';
-import { Search, Bell, User } from 'lucide-react';
+import { Play, RotateCcw, Shield, Activity, RefreshCw } from 'lucide-react';
+import { useSimulation } from '../../hooks/useSimulation';
+import { useEvents } from '../../hooks/useEvents';
 
-const Topbar: React.FC = () => {
+export const Topbar: React.FC = () => {
+  const { nextEvent, resetSimulation, isNextLoading, isResetLoading } = useSimulation();
+  const { data: events = [] } = useEvents();
+
   return (
-    <header className="h-14 bg-slate-900 border-b border-slate-800/80 px-6 flex items-center justify-between shrink-0 sticky top-0 z-10">
-      {/* Search Bar */}
-      <div className="relative w-80">
-        <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
-        <input
-          type="text"
-          placeholder="Search entities, events, hashes, or IPs..."
-          className="w-full pl-8 pr-3 py-1 text-xs bg-slate-950 border border-slate-800 rounded-md text-slate-200 placeholder-slate-500 focus:outline-none focus:border-slate-700 transition-colors font-mono"
-        />
-      </div>
-
-      {/* Right Actions & Status Indicator */}
+    <header
+      className="h-14 px-5 flex items-center justify-between shrink-0 sticky top-0 z-30 font-mono"
+      style={{
+        backgroundColor: 'rgba(15, 17, 21, 0.95)',
+        borderBottom: '1px solid rgba(30, 41, 59, 0.8)',
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
+      }}
+    >
+      {/* ── Brand ── */}
       <div className="flex items-center gap-3">
-        {/* LIVE Status Indicator */}
-        <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-slate-950 border border-slate-800 text-[11px] font-mono font-semibold">
-          <span className="inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-          <span className="text-emerald-400 tracking-wider">LIVE</span>
+        <div
+          className="w-8 h-8 rounded-lg flex items-center justify-center"
+          style={{
+            background: 'rgba(247, 147, 26, 0.15)',
+            border: '1px solid rgba(247, 147, 26, 0.4)',
+            boxShadow: '0 0 16px rgba(247, 147, 26, 0.25)',
+          }}
+        >
+          <Shield className="w-4 h-4" style={{ color: '#F7931A' }} />
         </div>
-
-        {/* Action Icons */}
-        <div className="flex items-center gap-1 border-l border-slate-800 pl-3">
-          <button className="p-1.5 text-slate-400 hover:text-slate-200 hover:bg-slate-800 rounded-md transition-colors cursor-pointer">
-            <Bell className="w-3.5 h-3.5" />
-          </button>
-          <div className="flex items-center gap-2 pl-2">
-            <div className="w-7 h-7 rounded-md bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-300">
-              <User className="w-3.5 h-3.5" />
-            </div>
-            <div className="hidden md:flex flex-col text-[11px] leading-tight">
-              <span className="text-slate-200 font-medium">SOC Analyst</span>
-              <span className="text-slate-500 font-mono text-[10px]">Level 2</span>
-            </div>
+        <div>
+          <div className="flex items-center gap-2 text-sm font-extrabold tracking-wider font-heading">
+            <span
+              style={{
+                background: 'linear-gradient(to right, #F7931A, #FFD600)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+              }}
+            >
+              TraceX
+            </span>
+            <span
+              className="text-[10px] font-mono font-normal px-1.5 py-0.5 rounded"
+              style={{
+                background: 'rgba(247, 147, 26, 0.15)',
+                border: '1px solid rgba(247, 147, 26, 0.3)',
+                color: '#F7931A',
+                WebkitTextFillColor: '#F7931A',
+              }}
+            >
+              SOC v2.4
+            </span>
+          </div>
+          <div className="text-[10px] font-body" style={{ color: 'var(--color-muted)' }}>
+            Incident Intelligence System
           </div>
         </div>
+      </div>
+
+      {/* ── Center: Controls ── */}
+      <div className="flex items-center gap-3">
+        {/* Live Event Counter */}
+        <div
+          className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs"
+          style={{
+            background: 'rgba(3, 3, 4, 0.8)',
+            border: '1px solid rgba(30, 41, 59, 0.8)',
+          }}
+        >
+          <Activity className="w-3.5 h-3.5 animate-pulse" style={{ color: '#10B981' }} />
+          <span style={{ color: 'var(--color-muted)' }}>Events:</span>
+          <strong className="font-bold" style={{ color: '#10B981' }}>
+            {events.length}
+          </strong>
+        </div>
+
+        {/* Simulation Controls */}
+        <div
+          className="flex items-center gap-1.5 p-1 rounded-lg"
+          style={{
+            background: 'rgba(3, 3, 4, 0.8)',
+            border: '1px solid rgba(30, 41, 59, 0.8)',
+          }}
+        >
+          {/* Next Event — Primary orange button */}
+          <button
+            onClick={() => nextEvent()}
+            disabled={isNextLoading}
+            title="Process next simulated telemetry event"
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg transition-all duration-300 disabled:opacity-50 cursor-pointer"
+            style={{
+              background: 'linear-gradient(to right, #EA580C, #F7931A)',
+              color: 'white',
+              boxShadow: '0 0 16px -4px rgba(234, 88, 12, 0.5)',
+            }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.transform = 'scale(1.04)';
+              (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 0 24px -4px rgba(247, 147, 26, 0.65)';
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.transform = 'scale(1)';
+              (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 0 16px -4px rgba(234, 88, 12, 0.5)';
+            }}
+          >
+            {isNextLoading ? (
+              <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+            ) : (
+              <Play className="w-3.5 h-3.5 fill-current" />
+            )}
+            Next Event
+          </button>
+
+          {/* Reset — Ghost button */}
+          <button
+            onClick={() => resetSimulation()}
+            disabled={isResetLoading}
+            title="Reset active simulation scenario"
+            className="btn-ghost flex items-center gap-1.5 px-2.5 py-1.5 text-xs rounded-lg transition-all duration-200 disabled:opacity-50 cursor-pointer"
+          >
+            {isResetLoading ? (
+              <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+            ) : (
+              <RotateCcw className="w-3.5 h-3.5" />
+            )}
+            Reset
+          </button>
+        </div>
+      </div>
+
+      {/* ── Right: Analyst Badge ── */}
+      <div
+        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-mono"
+        style={{
+          background: 'rgba(3, 3, 4, 0.8)',
+          border: '1px solid rgba(30, 41, 59, 0.8)',
+        }}
+      >
+        <span
+          className="w-2 h-2 rounded-full animate-pulse"
+          style={{
+            background: '#10B981',
+            boxShadow: '0 0 6px #10B981',
+          }}
+        />
+        <span style={{ color: '#CBD5E1' }}>
+          ANALYST:{' '}
+          <strong style={{ color: '#F7931A' }}>SOC-LEAD</strong>
+        </span>
       </div>
     </header>
   );
