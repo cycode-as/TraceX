@@ -58,7 +58,7 @@ export const WhatChangedBanner: React.FC<WhatChangedBannerProps> = ({ diffs, cla
         transition={{ duration: 0.3, ease: 'easeOut' }}
         className={`rounded-xl p-3 font-mono ${className}`}
         style={{
-          background:  'linear-gradient(to right, rgba(37, 99, 235, 0.12), #121821, #121821)',
+          background:  'linear-gradient(to right, rgba(59, 130, 246, 0.15), #050505, #050505)',
           border:      '1px solid rgba(59, 130, 246, 0.3)',
           boxShadow:   '0 0 20px -8px rgba(59, 130, 246, 0.25)',
         }}

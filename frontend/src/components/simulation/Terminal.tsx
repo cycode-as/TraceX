@@ -353,7 +353,7 @@ export const Terminal: React.FC<TerminalProps> = ({
       </div>
 
       {/* ── Terminal Body ── */}
-      <div className="p-4 space-y-3 bg-[#0a0e16] min-h-[220px] max-h-[380px] overflow-y-auto custom-scrollbar font-mono text-xs">
+      <div className="p-4 space-y-3 bg-[#030303] min-h-[220px] max-h-[380px] overflow-y-auto custom-scrollbar font-mono text-xs">
         {/* Command Line Prompt */}
         <div className="flex items-center gap-2 text-on-surface border-b border-outline-variant/30 pb-2">
           <span className="text-[#3B82F6] font-bold">$</span>

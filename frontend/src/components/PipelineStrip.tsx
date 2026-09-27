@@ -24,8 +24,8 @@ export const PipelineStrip: React.FC<PipelineStripProps> = ({ activeStage, class
     <div
       className={`rounded-xl p-3 font-mono ${className}`}
       style={{
-        background: '#121821',
-        border: '1px solid rgba(255, 255, 255, 0.07)',
+        background: '#050505',
+        border: '1px solid #1a1a1a',
       }}
     >
       {/* ── Header ── */}
@@ -68,13 +68,13 @@ export const PipelineStrip: React.FC<PipelineStripProps> = ({ activeStage, class
                       }
                     : isPassed
                     ? {
-                        background:  '#1A2230',
-                        border:      '1px solid rgba(255, 255, 255, 0.08)',
+                        background:  '#0a0a0a',
+                        border:      '1px solid #1a1a1a',
                         color:       '#E6EAF2',
                       }
                     : {
-                        background:  '#0B0F14',
-                        border:      '1px solid rgba(255, 255, 255, 0.04)',
+                        background:  '#030303',
+                        border:      '1px solid #121212',
                         color:       '#6B7785',
                       }
                 }

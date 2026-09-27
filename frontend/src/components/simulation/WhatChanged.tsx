@@ -11,23 +11,23 @@ interface WhatChangedProps {
   currentState: SimulationState;
 }
 
-// MD3 palette inline style values
+// Pitch-black palette inline style values
 const C = {
-  surfaceContainer:        '#1c2028',
-  surfaceContainerLow:     '#181c24',
-  surfaceContainerLowest:  '#0a0e16',
-  surfaceBright:           '#353942',
-  errorContainer:          '#93000a',
-  onErrorContainer:        '#ffdad6',
-  errorMd3:                '#ffb4ab',
-  primaryMd3:              '#adc6ff',
-  primaryContainerMd3:     '#4d8eff',
-  onPrimaryContainer:      '#00285d',
-  secondaryMd3:            '#4edea3',
-  tertiaryMd3:             '#d0bcff',
-  outlineMd3:              '#8c909f',
-  onSurfaceMd3:            '#dfe2ee',
-  onSurfaceVariantMd3:     '#c2c6d6',
+  surfaceContainer:        '#080808',
+  surfaceContainerLow:     '#050505',
+  surfaceContainerLowest:  '#030303',
+  surfaceBright:           '#1c1c1c',
+  errorContainer:          '#b91c1c',
+  onErrorContainer:        '#fef2f2',
+  errorMd3:                '#EF4444',
+  primaryMd3:              '#3B82F6',
+  primaryContainerMd3:     '#1d4ed8',
+  onPrimaryContainer:      '#ffffff',
+  secondaryMd3:            '#10B981',
+  tertiaryMd3:             '#A78BFA',
+  outlineMd3:              '#262626',
+  onSurfaceMd3:            '#E6EAF2',
+  onSurfaceVariantMd3:     '#9AA4B2',
 } as const;
 
 export const WhatChanged: React.FC<WhatChangedProps> = ({ previousState, currentState }) => {

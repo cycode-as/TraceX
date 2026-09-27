@@ -3,66 +3,66 @@
 
 /* ─── Obsidian Telemetry Design System Tokens ─────────────────────────────── */
 @theme {
-  /* Surface Hierarchy */
-  --color-surface:                  #0f131c;
-  --color-surface-dim:              #0f131c;
-  --color-surface-bright:           #353942;
-  --color-surface-container-lowest: #0a0e16;
-  --color-surface-container-low:    #181c24;
-  --color-surface-container:        #1c2028;
-  --color-surface-container-high:   #262a33;
-  --color-surface-container-highest:#31353e;
-  --color-surface-variant:          #31353e;
+  /* Surface Hierarchy — Pitch Black System */
+  --color-surface:                  #000000;
+  --color-surface-dim:              #000000;
+  --color-surface-bright:           #121212;
+  --color-surface-container-lowest: #030303;
+  --color-surface-container-low:    #050505;
+  --color-surface-container:        #080808;
+  --color-surface-container-high:   #0d0d0d;
+  --color-surface-container-highest:#141414;
+  --color-surface-variant:          #141414;
 
   /* On-Surface & Contrast Text */
-  --color-on-surface:               #dfe2ee;
-  --color-on-surface-variant:       #c2c6d6;
-  --color-inverse-surface:          #dfe2ee;
-  --color-inverse-on-surface:       #2c3039;
-  --color-background:               #0f131c;
-  --color-on-background:            #dfe2ee;
+  --color-on-surface:               #E6EAF2;
+  --color-on-surface-variant:       #9AA4B2;
+  --color-inverse-surface:          #E6EAF2;
+  --color-inverse-on-surface:       #080808;
+  --color-background:               #000000;
+  --color-on-background:            #E6EAF2;
 
-  /* Boundaries & Outlines */
-  --color-outline:                  #8c909f;
-  --color-outline-variant:          #424754;
+  /* Boundaries & Outlines — Subtle & Thin */
+  --color-outline:                  #262626;
+  --color-outline-variant:          #1a1a1a;
 
-  /* Primary (Periwinkle Blue) */
-  --color-primary:                  #adc6ff;
-  --color-on-primary:               #002e6a;
-  --color-primary-container:        #4d8eff;
-  --color-on-primary-container:     #00285d;
-  --color-inverse-primary:          #005ac2;
-  --color-surface-tint:             #adc6ff;
-  --color-primary-fixed:            #d8e2ff;
-  --color-primary-fixed-dim:        #adc6ff;
+  /* Primary (Electric Blue) */
+  --color-primary:                  #3B82F6;
+  --color-on-primary:               #ffffff;
+  --color-primary-container:        #1d4ed8;
+  --color-on-primary-container:     #ffffff;
+  --color-inverse-primary:          #2563eb;
+  --color-surface-tint:             #3B82F6;
+  --color-primary-fixed:            #60a5fa;
+  --color-primary-fixed-dim:        #3B82F6;
   --color-on-primary-fixed:         #001a42;
   --color-on-primary-fixed-variant: #004395;
 
-  /* Secondary (Mint Teal) */
-  --color-secondary:                #4edea3;
+  /* Secondary (Mint Teal / Green) */
+  --color-secondary:                #10B981;
   --color-on-secondary:             #003824;
-  --color-secondary-container:      #00a572;
-  --color-on-secondary-container:   #00311f;
-  --color-secondary-fixed:          #6ffbbe;
-  --color-secondary-fixed-dim:      #4edea3;
+  --color-secondary-container:      #047857;
+  --color-on-secondary-container:   #ecfdf5;
+  --color-secondary-fixed:          #34d399;
+  --color-secondary-fixed-dim:      #10B981;
   --color-on-secondary-fixed:       #002113;
   --color-on-secondary-fixed-variant: #005236;
 
-  /* Tertiary (Lavender) */
-  --color-tertiary:                 #d0bcff;
+  /* Tertiary (Lavender / Purple) */
+  --color-tertiary:                 #A78BFA;
   --color-on-tertiary:              #3c0091;
-  --color-tertiary-container:       #a078ff;
-  --color-on-tertiary-container:    #340080;
-  --color-tertiary-fixed:           #e9ddff;
-  --color-tertiary-fixed-dim:       #d0bcff;
+  --color-tertiary-container:       #7c3aed;
+  --color-on-tertiary-container:    #f5f3ff;
+  --color-tertiary-fixed:           #c4b5fd;
+  --color-tertiary-fixed-dim:       #A78BFA;
   --color-on-tertiary-fixed:        #23005c;
   --color-on-tertiary-fixed-variant:#5516be;
 
-  /* Error / Alert */
-  --color-error:                    #ffb4ab;
-  --color-on-error:                 #690005;
-  --color-error-container:          #93000a;
-  --color-on-error-container:       #ffdad6;
+  /* Error / Alert (Red) */
+  --color-error:                    #EF4444;
+  --color-on-error:                 #ffffff;
+  --color-error-container:          #b91c1c;
+  --color-on-error-container:       #fef2f2;
 
   /* Radii */
   --radius-sm: 0.125rem;
